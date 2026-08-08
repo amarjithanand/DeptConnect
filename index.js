@@ -290,7 +290,7 @@ document
                 () => {
 
                     window.location.href =
-                        "teacher/login.html";
+                        "Faculty/login.html";
 
                 },
                 150

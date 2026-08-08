@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        DeptConnect - Faculty Login
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles/login.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+<main class="login-container">
+
+
+    <!-- LEFT SIDE -->
+
+    <section class="brand-section">
+
+        <div class="image-overlay"></div>
+
+
+        <div class="brand-card">
+
+            <div class="brand-logo">
+
+                <span class="logo-icon">
+                    🎓
+                </span>
+
+                <h2>
+                    DeptConnect
+                </h2>
+
+            </div>
+
+
+            <p>
+                Smart Academic Query Management Portal
+            </p>
+
+
+            <span class="portal-badge">
+                FACULTY PORTAL
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- RIGHT SIDE -->
+
+    <section class="login-section">
+
+        <div class="login-content">
+
+
+            <div class="heading">
+
+                <span class="portal-label">
+                    FACULTY PORTAL
+                </span>
+
+
+                <h1>
+                    Sign In
+                </h1>
+
+
+                <p>
+                    Access your faculty query management dashboard.
+                </p>
+
+            </div>
+
+
+
+            <!-- LOGIN FORM -->
+
+            <form id="facultyLoginForm">
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Institutional Email
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            ✉
+                        </span>
+
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="faculty@university.edu"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <small
+                        class="error-message"
+                        id="emailError"
+                    ></small>
+
+                </div>
+
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <div class="password-header">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+
+                        <a
+                            href="#"
+                            id="forgotPassword"
+                        >
+                            Forgot Password?
+                        </a>
+
+                    </div>
+
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            🔒
+                        </span>
+
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <small
+                        class="error-message"
+                        id="passwordError"
+                    ></small>
+
+                </div>
+
+
+
+                <!-- REMEMBER ME -->
+
+                <div class="remember-container">
+
+                    <label class="remember-label">
+
+                        <input
+                            type="checkbox"
+                            id="rememberMe"
+                        >
+
+                        <span class="custom-checkbox"></span>
+
+                        <span>
+                            Remember me
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+
+                <!-- SIGN IN -->
+
+                <button
+                    type="submit"
+                    class="signin-button"
+                    id="signinButton"
+                >
+
+                    <span id="buttonText">
+                        Sign In
+                    </span>
+
+
+                    <span
+                        class="loader"
+                        id="loader"
+                    ></span>
+
+                </button>
+
+
+
+                <!-- GENERAL ERROR -->
+
+                <div
+                    class="login-error"
+                    id="loginError"
+                ></div>
+
+            </form>
+
+
+            <div class="login-footer">
+
+                <span>
+                    Authorized faculty access only
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script
+    type="module"
+    src="scripts/login.js"
+></script>
+
+</body>
+
+</html>
