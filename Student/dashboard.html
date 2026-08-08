@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect - Dashboard</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+<!-- =========================================
+     NAVIGATION BAR
+========================================= -->
+
+<header class="navbar">
+
+    <!-- LOGO -->
+
+    <a href="dashboard.html" class="brand">
+        DeptConnect
+    </a>
+
+
+    <!-- MAIN NAVIGATION -->
+
+    <nav class="nav-links">
+
+        <a
+            href="dashboard.html"
+            class="nav-link active"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="ask-query.html"
+            class="nav-link"
+        >
+            Ask a Query
+        </a>
+
+        <a
+            href="my-queries.html"
+            class="nav-link"
+        >
+            My Queries
+        </a>
+
+        <a
+            href="knowledge-base.html"
+            class="nav-link"
+        >
+            Knowledge Base
+        </a>
+
+    </nav>
+
+
+    <!-- NAVIGATION ACTIONS -->
+
+    <div class="nav-actions">
+
+        <!-- Notification -->
+
+        <button
+            class="icon-button notification-button"
+            id="notificationButton"
+            title="Notifications"
+        >
+
+            <span class="notification-icon">
+                ♧
+            </span>
+
+            <span
+                class="notification-dot"
+                id="notificationDot"
+            ></span>
+
+        </button>
+
+
+        <!-- Profile -->
+
+        <button
+            class="profile-button"
+            id="profileButton"
+        >
+
+            <span class="profile-avatar">
+                A
+            </span>
+
+        </button>
+
+
+        <!-- Profile Dropdown -->
+
+        <div
+            class="profile-menu"
+            id="profileMenu"
+        >
+
+            <div class="profile-menu-header">
+
+                <div class="profile-menu-avatar">
+                    A
+                </div>
+
+                <div>
+
+                    <strong id="menuStudentName">
+                        Amarjith
+                    </strong>
+
+                    <span>
+                        Student
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="menu-divider"></div>
+
+
+            <a href="profile.html">
+                <span>👤</span>
+                My Profile
+            </a>
+
+            <a href="settings.html">
+                <span>⚙</span>
+                Settings
+            </a>
+
+
+            <div class="menu-divider"></div>
+
+
+            <button id="logoutButton">
+                <span>↪</span>
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     MAIN CONTENT
+========================================= -->
+
+<main class="dashboard">
+
+    <!-- =====================================
+         PAGE HEADER
+    ====================================== -->
+
+    <section class="page-header">
+
+        <div>
+
+            <h1>
+                Welcome back,
+                <span id="studentName">
+                    Amarjith
+                </span>.
+            </h1>
+
+            <p>
+                Here is the status of your academic inquiries.
+            </p>
+
+        </div>
+
+
+        <!-- KNOWLEDGE SEARCH -->
+
+        <div class="quick-search">
+
+            <span class="search-icon">
+                ⌕
+            </span>
+
+            <input
+                type="text"
+                id="knowledgeSearch"
+                placeholder="Quick Knowledge Base Search..."
+            >
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         DASHBOARD TOP CARDS
+    ====================================== -->
+
+    <section class="dashboard-grid">
+
+
+        <!-- SUBMIT QUERY CARD -->
+
+        <article class="submit-card">
+
+            <div class="submit-icon">
+                +
+            </div>
+
+            <h2>
+                Submit New<br>
+                Query
+            </h2>
+
+            <p>
+                Ask a question to faculty or our
+                AI assistant.
+            </p>
+
+            <a
+                href="ask-query.html"
+                class="start-query-button"
+            >
+                START QUERY
+            </a>
+
+        </article>
+
+
+        <!-- TOTAL QUERIES -->
+
+        <article class="stat-card">
+
+            <div class="stat-header">
+
+                <span>
+                    TOTAL QUERIES
+                </span>
+
+                <span class="stat-icon">
+                    □
+                </span>
+
+            </div>
+
+            <strong id="totalQueries">
+                12
+            </strong>
+
+        </article>
+
+
+        <!-- PENDING -->
+
+        <article class="stat-card">
+
+            <div class="stat-header">
+
+                <span>
+                    PENDING
+                </span>
+
+                <span class="stat-icon">
+                    ⋯
+                </span>
+
+            </div>
+
+            <strong id="pendingQueries">
+                3
+            </strong>
+
+        </article>
+
+
+        <!-- AI RESOLUTION -->
+
+        <article class="ai-resolution-card">
+
+            <div class="ai-content">
+
+                <div class="ai-title">
+                    ✨
+                    <span>
+                        INSTANT AI RESOLUTIONS
+                    </span>
+                </div>
+
+                <p>
+                    Queries resolved automatically
+                    without faculty wait time.
+                </p>
+
+            </div>
+
+            <strong id="aiResolvedQueries">
+                8
+            </strong>
+
+        </article>
+
+
+    </section>
+
+
+    <!-- =====================================
+         RECENT QUERIES
+    ====================================== -->
+
+    <section class="recent-section">
+
+
+        <div class="section-header">
+
+            <h2>
+                Recent Queries
+            </h2>
+
+            <a href="my-queries.html">
+                VIEW ALL
+            </a>
+
+        </div>
+
+
+        <div class="query-list">
+
+
+            <!-- QUERY 1 -->
+
+            <article
+                class="query-item"
+                data-query-id="1"
+            >
+
+                <div class="query-main">
+
+                    <div class="query-meta">
+
+                        <span class="status awaiting">
+                            AWAITING FACULTY
+                        </span>
+
+                        <span>
+                            CS101 · 2 hours ago
+                        </span>
+
+                    </div>
+
+                    <h3>
+                        Clarification on Project 2 Requirements
+                    </h3>
+
+                </div>
+
+
+                <div class="query-right">
+
+                    <span>
+                        Est. Response: 24h
+                    </span>
+
+                    <span class="arrow">
+                        ›
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- QUERY 2 -->
+
+            <article
+                class="query-item resolved"
+                data-query-id="2"
+            >
+
+                <div class="query-main">
+
+                    <div class="query-meta">
+
+                        <span class="status resolved-status">
+                            ✨ AI RESOLVED
+                        </span>
+
+                        <span>
+                            Registrar · 1 day ago
+                        </span>
+
+                    </div>
+
+                    <h3>
+                        Deadline for Add/Drop Period Spring 2024
+                    </h3>
+
+                </div>
+
+
+                <div class="query-right">
+
+                    <span>
+                        Instant
+                    </span>
+
+                    <span class="arrow">
+                        ›
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <!-- QUERY 3 -->
+
+            <article
+                class="query-item"
+                data-query-id="3"
+            >
+
+                <div class="query-main">
+
+                    <div class="query-meta">
+
+                        <span class="status assigned">
+                            ASSIGNED TO ADVISOR
+                        </span>
+
+                        <span>
+                            Advising · 2 days ago
+                        </span>
+
+                    </div>
+
+                    <h3>
+                        Request for Override: Advanced Machine Learning
+                    </h3>
+
+                </div>
+
+
+                <div class="query-right">
+
+                    <span>
+                        In Progress
+                    </span>
+
+                    <span class="arrow">
+                        ›
+                    </span>
+
+                </div>
+
+            </article>
+
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================
+     FOOTER
+========================================= -->
+
+<footer class="footer">
+
+    <div class="footer-brand">
+        DeptConnect
+    </div>
+
+    <p>
+        © 2026 Institutional Query Management.
+        Powered by DeptConnect.
+    </p>
+
+    <div class="footer-links">
+
+        <a href="#">
+            Institutional Policy
+        </a>
+
+        <a href="#">
+            Help Center
+        </a>
+
+        <a href="#">
+            Support Contact
+        </a>
+
+    </div>
+
+</footer>
+
+
+<script src="dashboard.js"></script>
+
+</body>
+</html>

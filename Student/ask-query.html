@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect - Ask a Query</title>
+
+    <link
+        rel="stylesheet"
+        href="ask-query.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     NAVBAR
+========================================= -->
+
+<header class="navbar">
+
+    <a
+        href="dashboard.html"
+        class="brand"
+    >
+        DeptConnect
+    </a>
+
+
+    <nav class="nav-links">
+
+        <a
+            href="dashboard.html"
+            class="nav-link"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="ask-query.html"
+            class="nav-link active"
+        >
+            Ask a Query
+        </a>
+
+        <a
+            href="my-queries.html"
+            class="nav-link"
+        >
+            My Queries
+        </a>
+
+        <a
+            href="knowledge-base.html"
+            class="nav-link"
+        >
+            Knowledge Base
+        </a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+        <button
+            class="icon-button"
+            id="notificationButton"
+            title="Notifications"
+        >
+            ♧
+
+            <span class="notification-dot"></span>
+
+        </button>
+
+
+        <button
+            class="profile-button"
+            id="profileButton"
+        >
+            <span class="profile-avatar">
+                A
+            </span>
+        </button>
+
+
+        <div
+            class="profile-menu"
+            id="profileMenu"
+        >
+
+            <a href="profile.html">
+                👤 My Profile
+            </a>
+
+            <a href="settings.html">
+                ⚙ Settings
+            </a>
+
+            <button id="logoutButton">
+                ↪ Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="page-container">
+
+
+    <!-- PAGE HEADER -->
+
+    <section class="page-header">
+
+        <div>
+
+            <div class="breadcrumb">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <span>›</span>
+
+                <span>Ask a Query</span>
+
+            </div>
+
+
+            <h1>
+                Ask a Query
+            </h1>
+
+            <p>
+                Submit your academic question and let
+                DeptConnect find the best answer for you.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         QUERY FORM
+    ====================================== -->
+
+    <section class="query-layout">
+
+
+        <!-- LEFT FORM -->
+
+        <form
+            id="queryForm"
+            class="query-form"
+        >
+
+
+            <!-- BASIC INFORMATION -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <span class="section-number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            Query Information
+                        </h2>
+
+                        <p>
+                            Tell us what you need help with.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DEPARTMENT + SUBJECT -->
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label for="department">
+                            Department
+                            <span>*</span>
+                        </label>
+
+                        <select
+                            id="department"
+                            required
+                        >
+
+                            <option value="">
+                                Select department
+                            </option>
+
+                            <option value="computer-science">
+                                Computer Science
+                            </option>
+
+                            <option value="commerce">
+                                Commerce
+                            </option>
+
+                            <option value="management">
+                                Management
+                            </option>
+
+                            <option value="mathematics">
+                                Mathematics
+                            </option>
+
+                            <option value="general">
+                                General Administration
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="subject">
+                            Subject / Course
+                            <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="subject"
+                            placeholder="e.g. Data Science"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- TITLE -->
+
+                <div class="form-group">
+
+                    <label for="queryTitle">
+                        Query Title
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="queryTitle"
+                        maxlength="100"
+                        placeholder="Briefly describe your question"
+                        required
+                    >
+
+                    <div class="input-hint">
+                        Keep the title short and specific.
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Describe your Query
+                        <span>*</span>
+                    </label>
+
+                    <textarea
+                        id="description"
+                        maxlength="1500"
+                        placeholder="Explain your question or issue in detail..."
+                        required
+                    ></textarea>
+
+
+                    <div class="textarea-footer">
+
+                        <span>
+                            Be as specific as possible so AI can
+                            understand your query accurately.
+                        </span>
+
+                        <span id="characterCount">
+                            0 / 1500
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 PRIORITY
+            ================================== -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <span class="section-number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            Priority
+                        </h2>
+
+                        <p>
+                            How urgently do you need assistance?
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="priority-options">
+
+
+                    <label class="priority-option">
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            value="low"
+                        >
+
+                        <div class="priority-card">
+
+                            <strong>
+                                Low
+                            </strong>
+
+                            <span>
+                                General questions
+                            </span>
+
+                        </div>
+
+                    </label>
+
+
+                    <label class="priority-option">
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            value="normal"
+                            checked
+                        >
+
+                        <div class="priority-card">
+
+                            <strong>
+                                Normal
+                            </strong>
+
+                            <span>
+                                Regular academic query
+                            </span>
+
+                        </div>
+
+                    </label>
+
+
+                    <label class="priority-option">
+
+                        <input
+                            type="radio"
+                            name="priority"
+                            value="high"
+                        >
+
+                        <div class="priority-card">
+
+                            <strong>
+                                High
+                            </strong>
+
+                            <span>
+                                Time-sensitive issue
+                            </span>
+
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 ATTACHMENT
+            ================================== -->
+
+            <div class="form-section">
+
+                <div class="section-title">
+
+                    <span class="section-number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            Supporting Document
+                        </h2>
+
+                        <p>
+                            Add a file if it helps explain your query.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <label
+                    class="upload-area"
+                    for="attachment"
+                >
+
+                    <div class="upload-icon">
+                        ↑
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Upload a document
+                        </strong>
+
+                        <span>
+                            PDF, JPG, PNG or DOCX · Maximum 5 MB
+                        </span>
+
+                    </div>
+
+                    <input
+                        type="file"
+                        id="attachment"
+                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    >
+
+                </label>
+
+
+                <div
+                    id="fileName"
+                    class="file-name"
+                ></div>
+
+            </div>
+
+
+            <!-- =================================
+                 AI NOTICE
+            ================================== -->
+
+            <div class="ai-notice">
+
+                <div class="ai-notice-icon">
+                    ✨
+                </div>
+
+                <div>
+
+                    <strong>
+                        AI-powered query processing
+                    </strong>
+
+                    <p>
+                        DeptConnect will analyse your query,
+                        check for similar questions and search
+                        the knowledge base before routing it
+                        to the appropriate department.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- FORM ACTIONS -->
+
+            <div class="form-actions">
+
+                <a
+                    href="dashboard.html"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                    id="submitButton"
+                >
+
+                    <span>
+                        Submit Query
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+        <!-- =====================================
+             RIGHT INFORMATION PANEL
+        ====================================== -->
+
+        <aside class="info-panel">
+
+
+            <div class="info-card">
+
+                <div class="info-icon">
+                    ✨
+                </div>
+
+                <h3>
+                    How DeptConnect helps
+                </h3>
+
+                <div class="process-step">
+
+                    <span>01</span>
+
+                    <div>
+
+                        <strong>
+                            Understand
+                        </strong>
+
+                        <p>
+                            AI analyses the meaning of your query.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <span>02</span>
+
+                    <div>
+
+                        <strong>
+                            Compare
+                        </strong>
+
+                        <p>
+                            Similar previous queries are identified.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <span>03</span>
+
+                    <div>
+
+                        <strong>
+                            Resolve
+                        </strong>
+
+                        <p>
+                            An existing answer or knowledge-base
+                            solution is suggested when available.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-step">
+
+                    <span>04</span>
+
+                    <div>
+
+                        <strong>
+                            Route
+                        </strong>
+
+                        <p>
+                            Unresolved queries are forwarded to
+                            the appropriate department.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="help-card">
+
+                <span>
+                    💡
+                </span>
+
+                <div>
+
+                    <strong>
+                        Before submitting
+                    </strong>
+
+                    <p>
+                        You can search the Knowledge Base
+                        to see if your question has already
+                        been answered.
+                    </p>
+
+                    <a href="knowledge-base.html">
+                        Search Knowledge Base →
+                    </a>
+
+                </div>
+
+            </div>
+
+
+        </aside>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================
+     AI PROCESSING MODAL
+========================================= -->
+
+<div
+    class="modal-overlay"
+    id="aiModal"
+>
+
+    <div class="ai-modal">
+
+
+        <!-- PROCESSING STATE -->
+
+        <div
+            id="processingState"
+            class="modal-state"
+        >
+
+            <div class="ai-animation">
+
+                <div class="pulse-circle">
+                    ✨
+                </div>
+
+            </div>
+
+
+            <h2>
+                Analysing your query
+            </h2>
+
+            <p>
+                DeptConnect AI is processing your request.
+            </p>
+
+
+            <div class="processing-steps">
+
+
+                <div
+                    class="processing-step"
+                    id="step1"
+                >
+
+                    <span class="step-icon">
+                        ○
+                    </span>
+
+                    <span>
+                        Understanding your query
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="processing-step"
+                    id="step2"
+                >
+
+                    <span class="step-icon">
+                        ○
+                    </span>
+
+                    <span>
+                        Finding similar queries
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="processing-step"
+                    id="step3"
+                >
+
+                    <span class="step-icon">
+                        ○
+                    </span>
+
+                    <span>
+                        Checking knowledge base
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="processing-step"
+                    id="step4"
+                >
+
+                    <span class="step-icon">
+                        ○
+                    </span>
+
+                    <span>
+                        Determining best response
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESULT STATE -->
+
+        <div
+            id="resultState"
+            class="modal-state result-state"
+        >
+
+            <div class="result-icon">
+                ✓
+            </div>
+
+            <h2>
+                Query analysed successfully
+            </h2>
+
+            <p>
+                We've analysed your query and checked
+                our available knowledge.
+            </p>
+
+
+            <div class="analysis-result">
+
+                <div>
+
+                    <span>
+                        Category
+                    </span>
+
+                    <strong id="resultCategory">
+                        Academic Query
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Similarity Check
+                    </span>
+
+                    <strong id="resultSimilarity">
+                        No duplicate found
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Next Step
+                    </span>
+
+                    <strong id="resultNextStep">
+                        Forwarded to Department
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="continueButton"
+                class="continue-button"
+            >
+                Continue
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script src="ask-query.js"></script>
+
+</body>
+</html>

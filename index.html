@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect</title>
+
+    <link
+        rel="stylesheet"
+        href="index.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+<body>
+
+
+<!-- =========================================
+     SPLASH SCREEN
+========================================= -->
+
+<section
+    class="splash-screen"
+    id="splashScreen"
+>
+
+
+    <div class="splash-content">
+
+
+        <!-- LOGO -->
+
+        <div
+            class="logo-container"
+            id="logoContainer"
+        >
+
+            <div class="logo-mark">
+
+                <div class="logo-symbol">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BRAND -->
+
+        <div
+            class="brand-container"
+            id="brandContainer"
+        >
+
+            <h1>
+                DeptConnect
+            </h1>
+
+            <p>
+                Student Query Management System
+            </p>
+
+        </div>
+
+
+        <!-- PROGRESS -->
+
+        <div
+            class="progress-container"
+            id="progressContainer"
+        >
+
+            <div class="progress-circle">
+
+                <svg
+                    viewBox="0 0 100 100"
+                >
+
+                    <circle
+                        class="progress-background"
+                        cx="50"
+                        cy="50"
+                        r="42"
+                    ></circle>
+
+
+                    <circle
+                        class="progress-bar"
+                        id="progressBar"
+                        cx="50"
+                        cy="50"
+                        r="42"
+                    ></circle>
+
+                </svg>
+
+
+                <span
+                    id="progressText"
+                >
+                    0%
+                </span>
+
+            </div>
+
+
+            <p id="loadingText">
+                Initializing...
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     ROLE SELECTION
+========================================= -->
+
+<section
+    class="role-screen"
+    id="roleScreen"
+>
+
+
+    <div class="role-content">
+
+
+        <!-- TOP BRAND -->
+
+        <div class="role-brand">
+
+            <div class="small-logo">
+
+                <div class="small-logo-symbol">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <span>
+                DeptConnect
+            </span>
+
+        </div>
+
+
+        <!-- HEADING -->
+
+        <div class="role-heading">
+
+            <span class="eyebrow">
+                WELCOME
+            </span>
+
+            <h1>
+                How would you like<br>
+                to continue?
+            </h1>
+
+            <p>
+                Select your role to access
+                the DeptConnect platform.
+            </p>
+
+        </div>
+
+
+        <!-- ROLE CARDS -->
+
+        <div class="role-cards">
+
+
+            <!-- STUDENT -->
+
+            <button
+                class="role-card"
+                id="studentButton"
+            >
+
+                <div class="role-icon student-icon">
+
+                    <span>
+                        ♙
+                    </span>
+
+                </div>
+
+
+                <div class="role-info">
+
+                    <span class="role-label">
+                        I AM A
+                    </span>
+
+                    <h2>
+                        Student
+                    </h2>
+
+                    <p>
+                        Ask queries, track responses,
+                        explore the Knowledge Base and
+                        manage your requests.
+                    </p>
+
+                </div>
+
+
+                <span class="role-arrow">
+                    →
+                </span>
+
+            </button>
+
+
+            <!-- TEACHER -->
+
+            <button
+                class="role-card"
+                id="teacherButton"
+            >
+
+                <div class="role-icon teacher-icon">
+
+                    <span>
+                        ♙
+                    </span>
+
+                </div>
+
+
+                <div class="role-info">
+
+                    <span class="role-label">
+                        I AM A
+                    </span>
+
+                    <h2>
+                        Teacher
+                    </h2>
+
+                    <p>
+                        Review assigned queries,
+                        provide solutions and manage
+                        student requests.
+                    </p>
+
+                </div>
+
+
+                <span class="role-arrow">
+                    →
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="role-footer">
+
+            <span>
+                DeptConnect
+            </span>
+
+            <span>
+                •
+            </span>
+
+            <span>
+                Intelligent Academic Support
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script src="index.js"></script>
+
+</body>
+</html>
