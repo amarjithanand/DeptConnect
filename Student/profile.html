@@ -92,7 +92,6 @@
             id="notificationButton"
             title="Notifications"
         >
-
             ♧
 
             <span class="notification-dot"></span>
@@ -103,6 +102,7 @@
         <button
             class="profile-button active-profile"
             id="profileButton"
+            title="Profile"
         >
 
             <span
@@ -213,6 +213,7 @@
                     class="camera-button"
                     id="changePhotoButton"
                     title="Change profile photo"
+                    type="button"
                 >
                     ✎
                 </button>
@@ -222,16 +223,19 @@
 
             <div class="profile-identity">
 
-                <h2>
-                    Amarjith Anand
+                <h2 id="profileName">
+                    Loading...
                 </h2>
 
-                <p>
-                    MCA Student
+                <p id="profileProgramme">
+                    Loading...
                 </p>
 
                 <span>
-                    Student ID: MCA2025XXX
+                    Student ID:
+                    <span id="profileStudentId">
+                        Loading...
+                    </span>
                 </span>
 
             </div>
@@ -243,7 +247,9 @@
 
             <span class="status-dot"></span>
 
-            Active Student
+            <span id="profileStatus">
+                Loading...
+            </span>
 
         </div>
 
@@ -290,6 +296,7 @@
             <button
                 class="edit-button"
                 data-section="personal"
+                type="button"
             >
                 ✎ Edit
             </button>
@@ -300,28 +307,29 @@
         <div class="information-grid">
 
 
+            <!-- FULL NAME -->
+
             <div class="information-item">
 
                 <label>
                     Full Name
                 </label>
 
-                <p
-                    id="fullName"
-                    data-value="Amarjith Anand"
-                >
-                    Amarjith Anand
+                <p id="fullName">
+                    Loading...
                 </p>
 
                 <input
                     class="edit-input"
                     id="fullNameInput"
-                    value="Amarjith Anand"
+                    type="text"
                     hidden
                 >
 
             </div>
 
+
+            <!-- STUDENT ID -->
 
             <div class="information-item">
 
@@ -329,12 +337,14 @@
                     Student ID
                 </label>
 
-                <p>
-                    MCA2025XXX
+                <p id="studentId">
+                    Loading...
                 </p>
 
             </div>
 
+
+            <!-- EMAIL -->
 
             <div class="information-item">
 
@@ -342,12 +352,14 @@
                     Email Address
                 </label>
 
-                <p>
-                    student@example.com
+                <p id="email">
+                    Loading...
                 </p>
 
             </div>
 
+
+            <!-- PHONE -->
 
             <div class="information-item">
 
@@ -355,22 +367,21 @@
                     Phone Number
                 </label>
 
-                <p
-                    id="phoneNumber"
-                    data-value="+91 XXXXX XXXXX"
-                >
-                    +91 XXXXX XXXXX
+                <p id="phoneNumber">
+                    Not provided
                 </p>
 
                 <input
                     class="edit-input"
                     id="phoneInput"
-                    value="+91 XXXXX XXXXX"
+                    type="tel"
                     hidden
                 >
 
             </div>
 
+
+            <!-- DOB -->
 
             <div class="information-item">
 
@@ -378,12 +389,14 @@
                     Date of Birth
                 </label>
 
-                <p>
-                    XX / XX / XXXX
+                <p id="dob">
+                    Loading...
                 </p>
 
             </div>
 
+
+            <!-- GENDER -->
 
             <div class="information-item">
 
@@ -391,14 +404,16 @@
                     Gender
                 </label>
 
-                <p>
-                    Not specified
+                <p id="gender">
+                    Loading...
                 </p>
 
             </div>
 
         </div>
 
+
+        <!-- EDIT ACTIONS -->
 
         <div
             class="section-actions"
@@ -409,6 +424,7 @@
             <button
                 class="cancel-button"
                 data-cancel="personal"
+                type="button"
             >
                 Cancel
             </button>
@@ -416,6 +432,7 @@
             <button
                 class="save-button"
                 data-save="personal"
+                type="button"
             >
                 Save Changes
             </button>
@@ -461,8 +478,8 @@
                     Programme
                 </label>
 
-                <p>
-                    Master of Computer Applications
+                <p id="programme">
+                    Loading...
                 </p>
 
             </div>
@@ -474,8 +491,8 @@
                     Department
                 </label>
 
-                <p>
-                    Computer Applications
+                <p id="department">
+                    Loading...
                 </p>
 
             </div>
@@ -487,8 +504,8 @@
                     Semester
                 </label>
 
-                <p>
-                    3rd Semester
+                <p id="semester">
+                    Loading...
                 </p>
 
             </div>
@@ -500,8 +517,8 @@
                     Batch
                 </label>
 
-                <p>
-                    2025 – 2027
+                <p id="batch">
+                    Loading...
                 </p>
 
             </div>
@@ -513,8 +530,8 @@
                     Academic Year
                 </label>
 
-                <p>
-                    2026 – 2027
+                <p id="academicYear">
+                    Loading...
                 </p>
 
             </div>
@@ -526,8 +543,8 @@
                     Student Status
                 </label>
 
-                <p>
-                    Active
+                <p id="studentStatus">
+                    Loading...
                 </p>
 
             </div>
@@ -579,8 +596,8 @@
                         Account Status
                     </span>
 
-                    <strong>
-                        Active
+                    <strong id="accountStatus">
+                        Loading...
                     </strong>
 
                 </div>
@@ -600,8 +617,8 @@
                         Member Since
                     </span>
 
-                    <strong>
-                        August 2025
+                    <strong id="memberSince">
+                        Loading...
                     </strong>
 
                 </div>
@@ -621,8 +638,8 @@
                         Last Updated
                     </span>
 
-                    <strong>
-                        Just now
+                    <strong id="lastUpdated">
+                        Not available
                     </strong>
 
                 </div>
@@ -635,7 +652,7 @@
 
 
     <!-- =====================================
-         DANGER / LOGOUT
+         LOGOUT
     ====================================== -->
 
     <section class="logout-section">
@@ -657,6 +674,7 @@
         <button
             id="pageLogoutButton"
             class="logout-button"
+            type="button"
         >
             Logout
         </button>
@@ -680,6 +698,7 @@
         <button
             class="close-button"
             id="closePhotoModal"
+            type="button"
         >
             ×
         </button>
@@ -724,6 +743,7 @@
             <button
                 id="uploadPhotoButton"
                 class="primary-photo-button"
+                type="button"
             >
                 Upload New Photo
             </button>
@@ -732,6 +752,7 @@
             <button
                 id="removePhotoButton"
                 class="remove-photo-button"
+                type="button"
             >
                 Remove Photo
             </button>
@@ -749,6 +770,7 @@
             <button
                 id="cancelPhotoButton"
                 class="cancel-button"
+                type="button"
             >
                 Cancel
             </button>
@@ -756,6 +778,7 @@
             <button
                 id="savePhotoButton"
                 class="save-button"
+                type="button"
             >
                 Save Photo
             </button>
@@ -768,7 +791,7 @@
 
 
 <!-- =========================================
-     SUCCESS MESSAGE
+     TOAST
 ========================================= -->
 
 <div
@@ -779,7 +802,11 @@
 </div>
 
 
-<script src="profile.js"></script>
+<!-- IMPORTANT: Firebase requires module -->
+<script
+    type="module"
+    src="profile.js"
+></script>
 
 </body>
 </html>
