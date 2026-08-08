@@ -1,0 +1,888 @@
+/* =========================================
+   GLOBAL
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+
+    font-family: "Inter", sans-serif;
+
+    background: #f7f8fc;
+
+    color: #111827;
+}
+
+button {
+    font-family: inherit;
+}
+
+
+/* =========================================
+   SPLASH SCREEN
+========================================= */
+
+.splash-screen {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    background: #000;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transition:
+        opacity .7s ease,
+        visibility .7s ease;
+
+}
+
+
+.splash-screen.hide {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+}
+
+
+.splash-content {
+
+    width: 100%;
+
+    max-width: 500px;
+
+    padding: 30px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.logo-container {
+
+    opacity: 0;
+
+    transform:
+        scale(.5)
+        rotate(-10deg);
+
+    animation:
+        logoEntrance
+        1s
+        cubic-bezier(.2,.8,.2,1)
+        forwards;
+
+}
+
+
+.logo-mark {
+
+    width: 92px;
+
+    height: 92px;
+
+    border-radius: 23px;
+
+    background: #79e7dc;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,.1),
+        0 0 45px rgba(121,231,220,.22);
+
+}
+
+
+.logo-symbol {
+
+    width: 48px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    gap: 5px;
+
+}
+
+
+.logo-symbol span {
+
+    display: block;
+
+    width: 9px;
+
+    background: #000;
+
+    border-radius: 3px 3px 0 0;
+
+}
+
+
+.logo-symbol span:nth-child(1) {
+
+    height: 25px;
+
+    transform:
+        rotate(-12deg);
+
+}
+
+
+.logo-symbol span:nth-child(2) {
+
+    height: 39px;
+
+}
+
+
+.logo-symbol span:nth-child(3) {
+
+    height: 29px;
+
+    transform:
+        rotate(12deg);
+
+}
+
+
+@keyframes logoEntrance {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            scale(.5)
+            rotate(-10deg);
+
+    }
+
+    70% {
+
+        opacity: 1;
+
+        transform:
+            scale(1.08)
+            rotate(2deg);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform:
+            scale(1)
+            rotate(0);
+
+    }
+
+}
+
+
+/* =========================================
+   BRAND
+========================================= */
+
+.brand-container {
+
+    margin-top: 23px;
+
+    opacity: 0;
+
+    transform:
+        translateY(15px);
+
+    animation:
+        textEntrance
+        .7s
+        .35s
+        ease
+        forwards;
+
+}
+
+
+.brand-container h1 {
+
+    font-size: 34px;
+
+    font-weight: 700;
+
+    letter-spacing: -1px;
+
+}
+
+
+.brand-container p {
+
+    margin-top: 7px;
+
+    color: #9da7b3;
+
+    font-size: 11px;
+
+    letter-spacing: .4px;
+
+}
+
+
+@keyframes textEntrance {
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* =========================================
+   PROGRESS
+========================================= */
+
+.progress-container {
+
+    margin-top: 48px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    opacity: 0;
+
+    animation:
+        progressEntrance
+        .6s
+        .7s
+        ease
+        forwards;
+
+}
+
+
+@keyframes progressEntrance {
+
+    to {
+
+        opacity: 1;
+
+    }
+
+}
+
+
+.progress-circle {
+
+    width: 68px;
+
+    height: 68px;
+
+    position: relative;
+
+}
+
+
+.progress-circle svg {
+
+    width: 100%;
+
+    height: 100%;
+
+    transform:
+        rotate(-90deg);
+
+}
+
+
+.progress-background {
+
+    fill: none;
+
+    stroke: #252525;
+
+    stroke-width: 6;
+
+}
+
+
+.progress-bar {
+
+    fill: none;
+
+    stroke: #79e7dc;
+
+    stroke-width: 6;
+
+    stroke-linecap: round;
+
+    stroke-dasharray: 263.9;
+
+    stroke-dashoffset: 263.9;
+
+    transition:
+        stroke-dashoffset .08s linear;
+
+}
+
+
+.progress-circle span {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+
+.progress-container p {
+
+    margin-top: 12px;
+
+    color: #69737f;
+
+    font-size: 9px;
+
+    letter-spacing: .5px;
+
+}
+
+
+/* =========================================
+   ROLE SCREEN
+========================================= */
+
+.role-screen {
+
+    min-height: 100vh;
+
+    background: #f7f8fc;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 50px 25px;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translateY(15px);
+
+    transition:
+        opacity .7s ease,
+        transform .7s ease,
+        visibility .7s ease;
+
+}
+
+
+.role-screen.show {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translateY(0);
+
+}
+
+
+.role-content {
+
+    width: 100%;
+
+    max-width: 760px;
+
+}
+
+
+/* =========================================
+   SMALL BRAND
+========================================= */
+
+.role-brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+}
+
+
+.small-logo {
+
+    width: 30px;
+
+    height: 30px;
+
+    border-radius: 8px;
+
+    background: #79e7dc;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.small-logo-symbol {
+
+    width: 17px;
+
+    height: 17px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: center;
+
+    gap: 2px;
+
+}
+
+
+.small-logo-symbol span {
+
+    width: 3px;
+
+    background: #000;
+
+    border-radius: 1px 1px 0 0;
+
+}
+
+
+.small-logo-symbol span:nth-child(1) {
+
+    height: 9px;
+
+}
+
+
+.small-logo-symbol span:nth-child(2) {
+
+    height: 15px;
+
+}
+
+
+.small-logo-symbol span:nth-child(3) {
+
+    height: 11px;
+
+}
+
+
+/* =========================================
+   HEADING
+========================================= */
+
+.role-heading {
+
+    margin-top: 65px;
+
+}
+
+
+.eyebrow {
+
+    color: #08786d;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+}
+
+
+.role-heading h1 {
+
+    margin-top: 9px;
+
+    font-size: 42px;
+
+    line-height: 1.12;
+
+    letter-spacing: -1.5px;
+
+}
+
+
+.role-heading p {
+
+    margin-top: 13px;
+
+    max-width: 500px;
+
+    color: #69727e;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =========================================
+   ROLE CARDS
+========================================= */
+
+.role-cards {
+
+    margin-top: 35px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+
+}
+
+
+.role-card {
+
+    min-height: 245px;
+
+    padding: 25px;
+
+    border: 1px solid #cdd1d7;
+
+    border-radius: 7px;
+
+    background: white;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+
+}
+
+
+.role-card:hover {
+
+    transform:
+        translateY(-4px);
+
+    border-color: #08786d;
+
+    box-shadow:
+        0 14px 35px rgba(0,0,0,.08);
+
+}
+
+
+.role-card:active {
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* =========================================
+   ROLE ICON
+========================================= */
+
+.role-icon {
+
+    width: 52px;
+
+    height: 52px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 27px;
+
+}
+
+
+.student-icon {
+
+    background: #e5f8f4;
+
+    color: #08786d;
+
+}
+
+
+.teacher-icon {
+
+    background: #eef0ff;
+
+    color: #4a45b8;
+
+}
+
+
+/* =========================================
+   ROLE INFO
+========================================= */
+
+.role-info {
+
+    margin-top: 28px;
+
+}
+
+
+.role-label {
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    color: #8b949e;
+
+    letter-spacing: .8px;
+
+}
+
+
+.role-info h2 {
+
+    margin-top: 5px;
+
+    font-size: 23px;
+
+}
+
+
+.role-info p {
+
+    margin-top: 9px;
+
+    max-width: 280px;
+
+    color: #6b7280;
+
+    font-size: 11px;
+
+    line-height: 1.65;
+
+}
+
+
+/* =========================================
+   ARROW
+========================================= */
+
+.role-arrow {
+
+    position: absolute;
+
+    right: 23px;
+
+    bottom: 22px;
+
+    width: 32px;
+
+    height: 32px;
+
+    border-radius: 50%;
+
+    background: #f3f4f6;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #374151;
+
+    font-size: 15px;
+
+    transition: .2s;
+
+}
+
+
+.role-card:hover
+.role-arrow {
+
+    background: #08786d;
+
+    color: white;
+
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.role-footer {
+
+    margin-top: 45px;
+
+    padding-top: 18px;
+
+    border-top: 1px solid #dfe2e6;
+
+    display: flex;
+
+    gap: 9px;
+
+    color: #9aa1aa;
+
+    font-size: 9px;
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 650px) {
+
+    .role-heading {
+
+        margin-top: 45px;
+
+    }
+
+    .role-heading h1 {
+
+        font-size: 34px;
+
+    }
+
+    .role-cards {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .role-card {
+
+        min-height: 205px;
+
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .splash-content {
+
+        padding: 20px;
+
+    }
+
+    .brand-container h1 {
+
+        font-size: 29px;
+
+    }
+
+    .role-screen {
+
+        padding: 35px 18px;
+
+    }
+
+    .role-heading h1 {
+
+        font-size: 31px;
+
+    }
+
+}

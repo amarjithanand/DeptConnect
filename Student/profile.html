@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect - My Profile</title>
+
+    <link
+        rel="stylesheet"
+        href="profile.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+<body>
+
+
+<!-- =========================================
+     NAVBAR
+========================================= -->
+
+<header class="navbar">
+
+    <a
+        href="dashboard.html"
+        class="brand"
+    >
+        DeptConnect
+    </a>
+
+
+    <nav class="nav-links">
+
+        <a
+            href="dashboard.html"
+            class="nav-link"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="ask-query.html"
+            class="nav-link"
+        >
+            Ask a Query
+        </a>
+
+        <a
+            href="my-queries.html"
+            class="nav-link"
+        >
+            My Queries
+        </a>
+
+        <a
+            href="knowledge-base.html"
+            class="nav-link"
+        >
+            Knowledge Base
+        </a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+        <button
+            class="icon-button"
+            id="notificationButton"
+            title="Notifications"
+        >
+
+            ♧
+
+            <span class="notification-dot"></span>
+
+        </button>
+
+
+        <button
+            class="profile-button active-profile"
+            id="profileButton"
+        >
+
+            <span
+                class="profile-avatar"
+                id="navAvatar"
+            >
+                A
+            </span>
+
+        </button>
+
+
+        <div
+            class="profile-menu"
+            id="profileMenu"
+        >
+
+            <a href="profile.html">
+                👤 My Profile
+            </a>
+
+            <a href="settings.html">
+                ⚙ Settings
+            </a>
+
+            <button id="logoutButton">
+                ↪ Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="page-container">
+
+
+    <!-- =====================================
+         HEADER
+    ====================================== -->
+
+    <section class="page-header">
+
+        <div>
+
+            <div class="breadcrumb">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <span>›</span>
+
+                <span>
+                    My Profile
+                </span>
+
+            </div>
+
+
+            <h1>
+                My Profile
+            </h1>
+
+
+            <p>
+                Manage your personal and academic information.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         PROFILE HERO
+    ====================================== -->
+
+    <section class="profile-hero">
+
+        <div class="profile-photo-section">
+
+
+            <div class="profile-photo-wrapper">
+
+                <img
+                    id="profileImage"
+                    src=""
+                    alt="Profile Photo"
+                    class="profile-image"
+                >
+
+                <div
+                    class="profile-placeholder"
+                    id="profilePlaceholder"
+                >
+                    A
+                </div>
+
+
+                <button
+                    class="camera-button"
+                    id="changePhotoButton"
+                    title="Change profile photo"
+                >
+                    ✎
+                </button>
+
+            </div>
+
+
+            <div class="profile-identity">
+
+                <h2>
+                    Amarjith Anand
+                </h2>
+
+                <p>
+                    MCA Student
+                </p>
+
+                <span>
+                    Student ID: MCA2025XXX
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-status">
+
+            <span class="status-dot"></span>
+
+            Active Student
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         PROFILE PHOTO INPUT
+    ====================================== -->
+
+    <input
+        type="file"
+        id="photoInput"
+        accept="image/jpeg,image/png,image/webp"
+        hidden
+    >
+
+
+    <!-- =====================================
+         PERSONAL INFORMATION
+    ====================================== -->
+
+    <section class="profile-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    PERSONAL
+                </span>
+
+                <h2>
+                    Personal Information
+                </h2>
+
+                <p>
+                    Your basic personal information.
+                </p>
+
+            </div>
+
+
+            <button
+                class="edit-button"
+                data-section="personal"
+            >
+                ✎ Edit
+            </button>
+
+        </div>
+
+
+        <div class="information-grid">
+
+
+            <div class="information-item">
+
+                <label>
+                    Full Name
+                </label>
+
+                <p
+                    id="fullName"
+                    data-value="Amarjith Anand"
+                >
+                    Amarjith Anand
+                </p>
+
+                <input
+                    class="edit-input"
+                    id="fullNameInput"
+                    value="Amarjith Anand"
+                    hidden
+                >
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Student ID
+                </label>
+
+                <p>
+                    MCA2025XXX
+                </p>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Email Address
+                </label>
+
+                <p>
+                    student@example.com
+                </p>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Phone Number
+                </label>
+
+                <p
+                    id="phoneNumber"
+                    data-value="+91 XXXXX XXXXX"
+                >
+                    +91 XXXXX XXXXX
+                </p>
+
+                <input
+                    class="edit-input"
+                    id="phoneInput"
+                    value="+91 XXXXX XXXXX"
+                    hidden
+                >
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Date of Birth
+                </label>
+
+                <p>
+                    XX / XX / XXXX
+                </p>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Gender
+                </label>
+
+                <p>
+                    Not specified
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="section-actions"
+            id="personalActions"
+            hidden
+        >
+
+            <button
+                class="cancel-button"
+                data-cancel="personal"
+            >
+                Cancel
+            </button>
+
+            <button
+                class="save-button"
+                data-save="personal"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         ACADEMIC INFORMATION
+    ====================================== -->
+
+    <section class="profile-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    ACADEMIC
+                </span>
+
+                <h2>
+                    Academic Information
+                </h2>
+
+                <p>
+                    Your current academic details.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="information-grid">
+
+
+            <div class="information-item">
+
+                <label>
+                    Programme
+                </label>
+
+                <p>
+                    Master of Computer Applications
+                </p>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Department
+                </label>
+
+                <p>
+                    Computer Applications
+                </p>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Semester
+                </label>
+
+                <p>
+                    3rd Semester
+                </p>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Batch
+                </label>
+
+                <p>
+                    2025 – 2027
+                </p>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Academic Year
+                </label>
+
+                <p>
+                    2026 – 2027
+                </p>
+
+            </div>
+
+
+            <div class="information-item">
+
+                <label>
+                    Student Status
+                </label>
+
+                <p>
+                    Active
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         ACCOUNT INFORMATION
+    ====================================== -->
+
+    <section class="profile-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    ACCOUNT
+                </span>
+
+                <h2>
+                    Account Information
+                </h2>
+
+                <p>
+                    Information about your DeptConnect account.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="account-grid">
+
+
+            <div class="account-item">
+
+                <div class="account-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        Account Status
+                    </span>
+
+                    <strong>
+                        Active
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="account-item">
+
+                <div class="account-icon">
+                    ◷
+                </div>
+
+                <div>
+
+                    <span>
+                        Member Since
+                    </span>
+
+                    <strong>
+                        August 2025
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="account-item">
+
+                <div class="account-icon">
+                    ↻
+                </div>
+
+                <div>
+
+                    <span>
+                        Last Updated
+                    </span>
+
+                    <strong>
+                        Just now
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         DANGER / LOGOUT
+    ====================================== -->
+
+    <section class="logout-section">
+
+        <div>
+
+            <h3>
+                Sign out of DeptConnect
+            </h3>
+
+            <p>
+                You will need to sign in again to access
+                your student account.
+            </p>
+
+        </div>
+
+
+        <button
+            id="pageLogoutButton"
+            class="logout-button"
+        >
+            Logout
+        </button>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================
+     IMAGE EDIT MODAL
+========================================= -->
+
+<div
+    class="modal-overlay"
+    id="photoModal"
+>
+
+    <div class="photo-modal">
+
+        <button
+            class="close-button"
+            id="closePhotoModal"
+        >
+            ×
+        </button>
+
+
+        <div class="modal-heading">
+
+            <span class="section-label">
+                PROFILE
+            </span>
+
+            <h2>
+                Change Profile Photo
+            </h2>
+
+            <p>
+                Upload a clear profile image.
+            </p>
+
+        </div>
+
+
+        <div class="photo-preview">
+
+            <img
+                id="photoPreview"
+                alt="Photo preview"
+            >
+
+            <div
+                id="previewPlaceholder"
+                class="preview-placeholder"
+            >
+                A
+            </div>
+
+        </div>
+
+
+        <div class="photo-options">
+
+            <button
+                id="uploadPhotoButton"
+                class="primary-photo-button"
+            >
+                Upload New Photo
+            </button>
+
+
+            <button
+                id="removePhotoButton"
+                class="remove-photo-button"
+            >
+                Remove Photo
+            </button>
+
+        </div>
+
+
+        <p class="photo-note">
+            JPG, PNG or WEBP · Maximum recommended size: 5 MB
+        </p>
+
+
+        <div class="modal-actions">
+
+            <button
+                id="cancelPhotoButton"
+                class="cancel-button"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="savePhotoButton"
+                class="save-button"
+            >
+                Save Photo
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     SUCCESS MESSAGE
+========================================= -->
+
+<div
+    class="toast"
+    id="toast"
+>
+    ✓ Profile updated successfully
+</div>
+
+
+<script src="profile.js"></script>
+
+</body>
+</html>

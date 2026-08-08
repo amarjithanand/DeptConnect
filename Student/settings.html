@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect - Settings</title>
+
+    <link
+        rel="stylesheet"
+        href="settings.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+<body>
+
+
+<!-- =========================================
+     NAVBAR
+========================================= -->
+
+<header class="navbar">
+
+    <a
+        href="dashboard.html"
+        class="brand"
+    >
+        DeptConnect
+    </a>
+
+
+    <nav class="nav-links">
+
+        <a
+            href="dashboard.html"
+            class="nav-link"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="ask-query.html"
+            class="nav-link"
+        >
+            Ask a Query
+        </a>
+
+        <a
+            href="my-queries.html"
+            class="nav-link"
+        >
+            My Queries
+        </a>
+
+        <a
+            href="knowledge-base.html"
+            class="nav-link"
+        >
+            Knowledge Base
+        </a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+        <button
+            class="icon-button"
+            id="notificationButton"
+        >
+            ♧
+
+            <span class="notification-dot"></span>
+
+        </button>
+
+
+        <button
+            class="profile-button"
+            id="profileButton"
+        >
+
+            <span
+                class="profile-avatar"
+                id="navAvatar"
+            >
+                A
+            </span>
+
+        </button>
+
+
+        <div
+            class="profile-menu"
+            id="profileMenu"
+        >
+
+            <a href="profile.html">
+                👤 My Profile
+            </a>
+
+            <a href="settings.html">
+                ⚙ Settings
+            </a>
+
+            <button id="logoutMenuButton">
+                ↪ Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="page-container">
+
+
+    <!-- HEADER -->
+
+    <section class="page-header">
+
+        <div>
+
+            <div class="breadcrumb">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <span>›</span>
+
+                <span>
+                    Settings
+                </span>
+
+            </div>
+
+
+            <h1>
+                Settings
+            </h1>
+
+
+            <p>
+                Manage your DeptConnect preferences
+                and account settings.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         SETTINGS LAYOUT
+    ====================================== -->
+
+    <div class="settings-layout">
+
+
+        <!-- =================================
+             SIDE MENU
+        ================================== -->
+
+        <aside class="settings-sidebar">
+
+            <button
+                class="settings-nav active"
+                data-target="notifications"
+            >
+                <span>♧</span>
+                Notifications
+            </button>
+
+
+            <button
+                class="settings-nav"
+                data-target="query"
+            >
+                <span>?</span>
+                Query Preferences
+            </button>
+
+
+            <button
+                class="settings-nav"
+                data-target="appearance"
+            >
+                <span>◐</span>
+                Appearance
+            </button>
+
+
+            <button
+                class="settings-nav"
+                data-target="privacy"
+            >
+                <span>◆</span>
+                Privacy & Security
+            </button>
+
+
+            <button
+                class="settings-nav"
+                data-target="help"
+            >
+                <span>?</span>
+                Help & Support
+            </button>
+
+
+            <button
+                class="settings-nav"
+                data-target="account"
+            >
+                <span>○</span>
+                Account
+            </button>
+
+        </aside>
+
+
+        <!-- =================================
+             SETTINGS CONTENT
+        ================================== -->
+
+        <section class="settings-content">
+
+
+            <!-- =================================
+                 NOTIFICATIONS
+            ================================== -->
+
+            <div
+                class="settings-panel active"
+                id="notifications"
+            >
+
+                <div class="panel-heading">
+
+                    <span class="section-label">
+                        PREFERENCES
+                    </span>
+
+                    <h2>
+                        Notifications
+                    </h2>
+
+                    <p>
+                        Choose which notifications you
+                        want to receive.
+                    </p>
+
+                </div>
+
+
+                <div class="setting-group">
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Query Updates
+                            </h3>
+
+                            <p>
+                                Get notified when your query
+                                status changes.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="queryNotifications"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                AI Solution Notifications
+                            </h3>
+
+                            <p>
+                                Notify me when AI generates
+                                a solution for my query.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="aiNotifications"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Faculty Responses
+                            </h3>
+
+                            <p>
+                                Notify me when a faculty member
+                                responds to my query.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="facultyNotifications"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Knowledge Base Updates
+                            </h3>
+
+                            <p>
+                                Receive notifications when
+                                useful articles are added.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="knowledgeNotifications"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="save-area">
+
+                    <button
+                        class="save-button"
+                        data-save="notifications"
+                    >
+                        Save Preferences
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 QUERY PREFERENCES
+            ================================== -->
+
+            <div
+                class="settings-panel"
+                id="query"
+            >
+
+                <div class="panel-heading">
+
+                    <span class="section-label">
+                        QUERY SYSTEM
+                    </span>
+
+                    <h2>
+                        Query Preferences
+                    </h2>
+
+                    <p>
+                        Configure how DeptConnect processes
+                        your queries.
+                    </p>
+
+                </div>
+
+
+                <div class="setting-group">
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                AI Auto-Processing
+                            </h3>
+
+                            <p>
+                                Automatically analyse submitted
+                                queries using the AI processing engine.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="aiProcessing"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Show Similar Knowledge Base Articles
+                            </h3>
+
+                            <p>
+                                Display potentially relevant existing
+                                answers before submitting a query.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="similarArticles"
+                                checked
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Query Confirmation
+                            </h3>
+
+                            <p>
+                                Ask for confirmation before
+                                submitting a new query.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="queryConfirmation"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="info-box">
+
+                    <span>
+                        AI
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Smart Query Processing
+                        </strong>
+
+                        <p>
+                            DeptConnect analyses your query
+                            before deciding whether it can be
+                            answered automatically or requires
+                            further assistance.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="save-area">
+
+                    <button
+                        class="save-button"
+                        data-save="query"
+                    >
+                        Save Preferences
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 APPEARANCE
+            ================================== -->
+
+            <div
+                class="settings-panel"
+                id="appearance"
+            >
+
+                <div class="panel-heading">
+
+                    <span class="section-label">
+                        INTERFACE
+                    </span>
+
+                    <h2>
+                        Appearance
+                    </h2>
+
+                    <p>
+                        Customize how DeptConnect
+                        looks on your device.
+                    </p>
+
+                </div>
+
+
+                <div class="setting-group">
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Interface Density
+                            </h3>
+
+                            <p>
+                                Choose how much information
+                                is displayed on the screen.
+                            </p>
+
+                        </div>
+
+
+                        <select
+                            class="settings-select"
+                            id="densitySelect"
+                        >
+
+                            <option value="comfortable">
+                                Comfortable
+                            </option>
+
+                            <option value="compact">
+                                Compact
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="setting-row">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Reduce Animations
+                            </h3>
+
+                            <p>
+                                Minimize interface animations
+                                and transitions.
+                            </p>
+
+                        </div>
+
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                id="reduceAnimations"
+                            >
+
+                            <span class="slider"></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="appearance-preview">
+
+                    <span>
+                        PREVIEW
+                    </span>
+
+                    <div class="preview-card">
+
+                        <div class="preview-line large"></div>
+
+                        <div class="preview-line"></div>
+
+                        <div class="preview-line short"></div>
+
+                        <div class="preview-button">
+                            DeptConnect
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="save-area">
+
+                    <button
+                        class="save-button"
+                        data-save="appearance"
+                    >
+                        Save Preferences
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 PRIVACY
+            ================================== -->
+
+            <div
+                class="settings-panel"
+                id="privacy"
+            >
+
+                <div class="panel-heading">
+
+                    <span class="section-label">
+                        SECURITY
+                    </span>
+
+                    <h2>
+                        Privacy & Security
+                    </h2>
+
+                    <p>
+                        Manage your account security
+                        and active sessions.
+                    </p>
+
+                </div>
+
+
+                <div class="security-card">
+
+                    <div class="security-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Account Security
+                        </h3>
+
+                        <p>
+                            Your account is currently
+                            protected.
+                        </p>
+
+                    </div>
+
+                    <span class="secure-badge">
+                        Secure
+                    </span>
+
+                </div>
+
+
+                <div class="setting-group">
+
+
+                    <div class="setting-row clickable">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Login Activity
+                            </h3>
+
+                            <p>
+                                Review recent activity
+                                on your account.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </div>
+
+
+                    <div class="setting-row clickable">
+
+                        <div class="setting-info">
+
+                            <h3>
+                                Active Sessions
+                            </h3>
+
+                            <p>
+                                Manage devices currently
+                                signed into your account.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="security-note">
+
+                    <strong>
+                        Note
+                    </strong>
+
+                    <p>
+                        Never share your account credentials
+                        with anyone.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 HELP
+            ================================== -->
+
+            <div
+                class="settings-panel"
+                id="help"
+            >
+
+                <div class="panel-heading">
+
+                    <span class="section-label">
+                        SUPPORT
+                    </span>
+
+                    <h2>
+                        Help & Support
+                    </h2>
+
+                    <p>
+                        Get assistance with using DeptConnect.
+                    </p>
+
+                </div>
+
+
+                <div class="help-grid">
+
+
+                    <a
+                        href="knowledge-base.html"
+                        class="help-card"
+                    >
+
+                        <span class="help-icon">
+                            ?
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Knowledge Base
+                            </h3>
+
+                            <p>
+                                Find answers to frequently
+                                asked questions.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <button
+                        class="help-card"
+                        id="reportProblemButton"
+                    >
+
+                        <span class="help-icon">
+                            !
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Report a Problem
+                            </h3>
+
+                            <p>
+                                Tell us about an issue
+                                with DeptConnect.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        class="help-card"
+                        id="contactSupportButton"
+                    >
+
+                        <span class="help-icon">
+                            @
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Contact Support
+                            </h3>
+
+                            <p>
+                                Get in touch with the
+                                support team.
+                            </p>
+
+                        </div>
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================
+                 ACCOUNT
+            ================================== -->
+
+            <div
+                class="settings-panel"
+                id="account"
+            >
+
+                <div class="panel-heading">
+
+                    <span class="section-label">
+                        ACCOUNT
+                    </span>
+
+                    <h2>
+                        Account
+                    </h2>
+
+                    <p>
+                        Manage your DeptConnect account.
+                    </p>
+
+                </div>
+
+
+                <div class="account-details">
+
+                    <div>
+
+                        <span>
+                            ACCOUNT STATUS
+                        </span>
+
+                        <strong>
+                            Active
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            ACCOUNT TYPE
+                        </span>
+
+                        <strong>
+                            Student
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            AUTHENTICATION
+                        </span>
+
+                        <strong>
+                            Institutional Account
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="danger-zone">
+
+                    <div>
+
+                        <span class="danger-label">
+                            ACCOUNT ACTION
+                        </span>
+
+                        <h3>
+                            Sign out
+                        </h3>
+
+                        <p>
+                            Sign out of your DeptConnect
+                            student account on this device.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="logout-button"
+                        id="logoutButton"
+                    >
+                        Logout
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- =========================================
+     TOAST
+========================================= -->
+
+<div
+    class="toast"
+    id="toast"
+>
+    ✓ Settings saved
+</div>
+
+
+<script src="settings.js"></script>
+
+</body>
+</html>

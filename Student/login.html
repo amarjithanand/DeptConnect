@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DeptConnect - Smart Academic Query Management Portal</title>
+
+    <link rel="stylesheet" href="login.css">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <main class="login-container">
+
+        <!-- LEFT SECTION -->
+        <section class="brand-section">
+
+            <div class="image-overlay"></div>
+
+            <div class="brand-card">
+
+                <div class="brand-logo">
+                    <span class="logo-icon">🎓</span>
+                    <h2>DeptConnect</h2>
+                </div>
+
+                <p>Smart Academic Query Management Portal</p>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SECTION -->
+        <section class="login-section">
+
+            <div class="login-content">
+
+                <div class="heading">
+
+                    <h1>Sign In</h1>
+
+                    <p>
+                        Access your institutional query management dashboard.
+                    </p>
+
+                </div>
+
+
+                <!-- LOGIN FORM -->
+                <form id="loginForm">
+
+                    <!-- EMAIL -->
+                    <div class="form-group">
+
+                        <label for="email">
+                            Institutional Email
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">✉</span>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="student@university.edu"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                        <small class="error-message" id="emailError"></small>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+                    <div class="form-group">
+
+                        <div class="password-header">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <a href="#" id="forgotPassword">
+                                Forgot Password?
+                            </a>
+
+                        </div>
+
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">🔒</span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="••••••••"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                        </div>
+
+                        <small class="error-message" id="passwordError"></small>
+
+                    </div>
+
+
+                    <!-- REMEMBER ME -->
+                    <div class="remember-container">
+
+                        <label class="remember-label">
+
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                            >
+
+                            <span class="custom-checkbox"></span>
+
+                            <span>Remember me</span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- SIGN IN BUTTON -->
+                    <button
+                        type="submit"
+                        class="signin-button"
+                        id="signinButton"
+                    >
+                        <span id="buttonText">Sign In</span>
+
+                        <span
+                            class="loader"
+                            id="loader"
+                        ></span>
+                    </button>
+
+
+                    <!-- GENERAL ERROR -->
+                    <div
+                        class="login-error"
+                        id="loginError"
+                    ></div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="login.js"></script>
+
+</body>
+</html>
