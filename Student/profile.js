@@ -1,92 +1,1114 @@
 /* =========================================
-   PROFILE PHOTO ELEMENTS
+   FIREBASE IMPORTS
 ========================================= */
 
-const profileImage =
-    document.getElementById(
-        "profileImage"
-    );
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
-const profilePlaceholder =
-    document.getElementById(
-        "profilePlaceholder"
-    );
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-const navAvatar =
-    document.getElementById(
-        "navAvatar"
-    );
-
-const photoInput =
-    document.getElementById(
-        "photoInput"
-    );
-
-const photoModal =
-    document.getElementById(
-        "photoModal"
-    );
-
-const photoPreview =
-    document.getElementById(
-        "photoPreview"
-    );
-
-const previewPlaceholder =
-    document.getElementById(
-        "previewPlaceholder"
-    );
-
-let selectedPhoto = null;
-
-let removePhoto = false;
+import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 
 /* =========================================
-   OPEN PHOTO MODAL
+   FIREBASE CONFIGURATION
+========================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+
+    authDomain:
+        "deptconnect-8b81c.firebaseapp.com",
+
+    projectId:
+        "deptconnect-8b81c",
+
+    storageBucket:
+        "deptconnect-8b81c.firebasestorage.app",
+
+    messagingSenderId:
+        "916956737819",
+
+    appId:
+        "1:916956737819:web:8fc9920e834ac99e66e3be",
+
+    measurementId:
+        "G-2B4VN12YW5"
+
+};
+
+
+/* =========================================
+   INITIALIZE FIREBASE
+========================================= */
+
+const app =
+    initializeApp(firebaseConfig);
+
+const auth =
+    getAuth(app);
+
+const db =
+    getFirestore(app);
+
+
+/* =========================================
+   DOM ELEMENTS
+========================================= */
+
+const profileImage =
+    document.getElementById("profileImage");
+
+const profilePlaceholder =
+    document.getElementById("profilePlaceholder");
+
+const navAvatar =
+    document.getElementById("navAvatar");
+
+const profileName =
+    document.getElementById("profileName");
+
+const profileProgramme =
+    document.getElementById("profileProgramme");
+
+const profileStudentId =
+    document.getElementById("profileStudentId");
+
+const profileStatus =
+    document.getElementById("profileStatus");
+
+const fullName =
+    document.getElementById("fullName");
+
+const fullNameInput =
+    document.getElementById("fullNameInput");
+
+const studentId =
+    document.getElementById("studentId");
+
+const email =
+    document.getElementById("email");
+
+const phoneNumber =
+    document.getElementById("phoneNumber");
+
+const phoneInput =
+    document.getElementById("phoneInput");
+
+const dob =
+    document.getElementById("dob");
+
+const gender =
+    document.getElementById("gender");
+
+const programme =
+    document.getElementById("programme");
+
+const department =
+    document.getElementById("department");
+
+const semester =
+    document.getElementById("semester");
+
+const batch =
+    document.getElementById("batch");
+
+const academicYear =
+    document.getElementById("academicYear");
+
+const studentStatus =
+    document.getElementById("studentStatus");
+
+const accountStatus =
+    document.getElementById("accountStatus");
+
+const memberSince =
+    document.getElementById("memberSince");
+
+const lastUpdated =
+    document.getElementById("lastUpdated");
+
+
+/* =========================================
+   PROFILE PHOTO ELEMENTS
+========================================= */
+
+const photoModal =
+    document.getElementById("photoModal");
+
+const photoInput =
+    document.getElementById("photoInput");
+
+const photoPreview =
+    document.getElementById("photoPreview");
+
+const previewPlaceholder =
+    document.getElementById("previewPlaceholder");
+
+const changePhotoButton =
+    document.getElementById("changePhotoButton");
+
+const uploadPhotoButton =
+    document.getElementById("uploadPhotoButton");
+
+const removePhotoButton =
+    document.getElementById("removePhotoButton");
+
+const savePhotoButton =
+    document.getElementById("savePhotoButton");
+
+const cancelPhotoButton =
+    document.getElementById("cancelPhotoButton");
+
+const closePhotoModal =
+    document.getElementById("closePhotoModal");
+
+
+/* =========================================
+   OTHER ELEMENTS
+========================================= */
+
+const profileButton =
+    document.getElementById("profileButton");
+
+const profileMenu =
+    document.getElementById("profileMenu");
+
+const notificationButton =
+    document.getElementById("notificationButton");
+
+
+/* =========================================
+   CURRENT STUDENT
+========================================= */
+
+let currentStudent = null;
+
+let currentStudentDocument = null;
+
+let selectedPhotoUrl = null;
+
+
+/* =========================================
+   AUTHENTICATION
+========================================= */
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        if (!user) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        console.log(
+            "Authenticated UID:",
+            user.uid
+        );
+
+
+        await loadStudentProfile(
+            user.uid
+        );
+
+    }
+);
+
+
+/* =========================================
+   LOAD STUDENT PROFILE
+========================================= */
+
+async function loadStudentProfile(uid) {
+
+    try {
+
+        console.log(
+            "Fetching student profile..."
+        );
+
+
+        const studentQuery =
+            query(
+                collection(
+                    db,
+                    "students"
+                ),
+                where(
+                    "uid",
+                    "==",
+                    uid
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                studentQuery
+            );
+
+
+        console.log(
+            "Student documents found:",
+            snapshot.size
+        );
+
+
+        if (snapshot.empty) {
+
+            console.error(
+                "Student profile not found."
+            );
+
+            showToast(
+                "Student profile not found"
+            );
+
+            return;
+
+        }
+
+
+        currentStudentDocument =
+            snapshot.docs[0];
+
+
+        currentStudent =
+            currentStudentDocument.data();
+
+
+        console.log(
+            "Student data:",
+            currentStudent
+        );
+
+
+        populateProfile(
+            currentStudent
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+
+        showToast(
+            "Unable to load profile"
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   POPULATE PROFILE
+========================================= */
+
+function populateProfile(data) {
+
+    const name =
+        data.name || "Student";
+
+
+    /* -------------------------------
+       PROFILE HERO
+    -------------------------------- */
+
+    profileName.textContent =
+        name;
+
+
+    profileProgramme.textContent =
+        `${data.programme || "Student"} Student`;
+
+
+    profileStudentId.textContent =
+        data.studentId ||
+        "Not available";
+
+
+    /* -------------------------------
+       PERSONAL
+    -------------------------------- */
+
+    fullName.textContent =
+        name;
+
+
+    fullNameInput.value =
+        name;
+
+
+    studentId.textContent =
+        data.studentId ||
+        "Not available";
+
+
+    email.textContent =
+        data.email ||
+        "Not available";
+
+
+    if (data.phone) {
+
+        phoneNumber.textContent =
+            data.phone;
+
+        phoneInput.value =
+            data.phone;
+
+    } else {
+
+        phoneNumber.textContent =
+            "Not provided";
+
+        phoneInput.value =
+            "";
+
+    }
+
+
+    dob.textContent =
+        formatDate(
+            data.dob
+        );
+
+
+    gender.textContent =
+        formatGender(
+            data.gender
+        );
+
+
+    /* -------------------------------
+       ACADEMIC
+    -------------------------------- */
+
+    programme.textContent =
+        data.programme ||
+        "Not available";
+
+
+    department.textContent =
+        data.department ||
+        "Not available";
+
+
+    semester.textContent =
+        formatSemester(
+            data.semester
+        );
+
+
+    batch.textContent =
+        formatBatch(
+            data.batch
+        );
+
+
+    academicYear.textContent =
+        calculateAcademicYear(
+            data.batch,
+            data.semester
+        );
+
+
+    const activeStudent =
+        data.student_status === true;
+
+
+    studentStatus.textContent =
+        activeStudent
+            ? "Active"
+            : "Inactive";
+
+
+    /* -------------------------------
+       ACCOUNT
+    -------------------------------- */
+
+    const activeAccount =
+        data.account_status === true;
+
+
+    accountStatus.textContent =
+        activeAccount
+            ? "Active"
+            : "Inactive";
+
+
+    profileStatus.textContent =
+        activeStudent
+            ? "Active Student"
+            : "Inactive Student";
+
+
+    memberSince.textContent =
+        formatMemberSince(
+            data.createdAt
+        );
+
+
+    if (data.updatedAt) {
+
+        lastUpdated.textContent =
+            formatDateTime(
+                data.updatedAt
+            );
+
+    } else {
+
+        lastUpdated.textContent =
+            "Not available";
+
+    }
+
+
+    /* -------------------------------
+       PROFILE IMAGE
+    -------------------------------- */
+
+    setProfileImage(
+        data.profileImg,
+        name
+    );
+
+}
+
+
+/* =========================================
+   SET PROFILE IMAGE
+========================================= */
+
+function setProfileImage(
+    imageUrl,
+    name
+) {
+
+    const firstLetter =
+        name
+            .trim()
+            .charAt(0)
+            .toUpperCase();
+
+
+    navAvatar.textContent =
+        firstLetter;
+
+
+    profilePlaceholder.textContent =
+        firstLetter;
+
+
+    if (
+        imageUrl &&
+        imageUrl.trim() !== ""
+    ) {
+
+        profileImage.src =
+            imageUrl;
+
+        profileImage.style.display =
+            "block";
+
+        profilePlaceholder.style.display =
+            "none";
+
+    } else {
+
+        profileImage.removeAttribute(
+            "src"
+        );
+
+        profileImage.style.display =
+            "none";
+
+        profilePlaceholder.style.display =
+            "flex";
+
+    }
+
+}
+
+
+/* =========================================
+   DATE FORMAT
+========================================= */
+
+function getDateFromFirebaseValue(
+    value
+) {
+
+    if (!value) {
+
+        return null;
+
+    }
+
+
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
+
+        return value.toDate();
+
+    }
+
+
+    if (
+        value.seconds !== undefined
+    ) {
+
+        return new Date(
+            value.seconds * 1000
+        );
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    return date;
+
+}
+
+
+function formatDate(value) {
+
+    const date =
+        getDateFromFirebaseValue(
+            value
+        );
+
+
+    if (!date) {
+
+        return "Not available";
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+function formatDateTime(value) {
+
+    const date =
+        getDateFromFirebaseValue(
+            value
+        );
+
+
+    if (!date) {
+
+        return "Not available";
+
+    }
+
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+
+}
+
+
+function formatMemberSince(value) {
+
+    const date =
+        getDateFromFirebaseValue(
+            value
+        );
+
+
+    if (!date) {
+
+        return "Not available";
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            month: "long",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =========================================
+   FORMAT GENDER
+========================================= */
+
+function formatGender(value) {
+
+    if (!value) {
+
+        return "Not specified";
+
+    }
+
+
+    return (
+        value.charAt(0).toUpperCase()
+        +
+        value.slice(1)
+    );
+
+}
+
+
+/* =========================================
+   FORMAT SEMESTER
+========================================= */
+
+function formatSemester(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "Not available";
+
+    }
+
+
+    const suffix =
+        value === 1
+            ? "st"
+            : value === 2
+                ? "nd"
+                : value === 3
+                    ? "rd"
+                    : "th";
+
+
+    return `${value}${suffix} Semester`;
+
+}
+
+
+/* =========================================
+   FORMAT BATCH
+========================================= */
+
+function formatBatch(value) {
+
+    if (!value) {
+
+        return "Not available";
+
+    }
+
+
+    return value.replace(
+        "-",
+        " – "
+    );
+
+}
+
+
+/* =========================================
+   ACADEMIC YEAR
+========================================= */
+
+function calculateAcademicYear(
+    batchValue,
+    semesterValue
+) {
+
+    if (
+        !batchValue ||
+        semesterValue === null ||
+        semesterValue === undefined
+    ) {
+
+        return "Not available";
+
+    }
+
+
+    const parts =
+        batchValue.split("-");
+
+
+    if (parts.length !== 2) {
+
+        return "Not available";
+
+    }
+
+
+    const startYear =
+        parseInt(
+            parts[0],
+            10
+        );
+
+
+    if (
+        Number.isNaN(startYear)
+    ) {
+
+        return "Not available";
+
+    }
+
+
+    /*
+        Example:
+
+        Batch: 2025-27
+
+        Semester 1/2
+        → 2025-26
+
+        Semester 3/4
+        → 2026-27
+
+        Semester 5/6
+        → 2027-28
+    */
+
+    const academicStartYear =
+        startYear +
+        Math.floor(
+            (semesterValue - 1) / 2
+        );
+
+
+    const academicEndYear =
+        academicStartYear + 1;
+
+
+    return `${academicStartYear} – ${academicEndYear}`;
+
+}
+
+
+/* =========================================
+   EDIT PERSONAL INFORMATION
 ========================================= */
 
 document
-    .getElementById(
-        "changePhotoButton"
+    .querySelectorAll(
+        ".edit-button"
     )
-    .addEventListener(
-        "click",
-        () => {
+    .forEach(
+        button => {
 
-            selectedPhoto = null;
+            button.addEventListener(
+                "click",
+                () => {
 
-            removePhoto = false;
+                    if (
+                        button.dataset.section !==
+                        "personal"
+                    ) {
 
-            loadCurrentPhotoPreview();
+                        return;
 
-            photoModal.classList.add(
-                "show"
+                    }
+
+
+                    fullName.hidden =
+                        true;
+
+                    fullNameInput.hidden =
+                        false;
+
+
+                    phoneNumber.hidden =
+                        true;
+
+                    phoneInput.hidden =
+                        false;
+
+
+                    document
+                        .getElementById(
+                            "personalActions"
+                        )
+                        .hidden =
+                        false;
+
+                }
             );
-
-            document.body.style.overflow =
-                "hidden";
 
         }
     );
 
 
 /* =========================================
-   LOAD CURRENT PHOTO
+   CANCEL PERSONAL EDIT
 ========================================= */
 
-function loadCurrentPhotoPreview() {
+document
+    .querySelectorAll(
+        "[data-cancel]"
+    )
+    .forEach(
+        button => {
 
-    const savedPhoto =
-        localStorage.getItem(
-            "deptconnect_profile_photo"
-        );
+            button.addEventListener(
+                "click",
+                () => {
+
+                    fullName.hidden =
+                        false;
+
+                    fullNameInput.hidden =
+                        true;
 
 
-    if (savedPhoto) {
+                    phoneNumber.hidden =
+                        false;
+
+                    phoneInput.hidden =
+                        true;
+
+
+                    document
+                        .getElementById(
+                            "personalActions"
+                        )
+                        .hidden =
+                        true;
+
+
+                    if (currentStudent) {
+
+                        fullNameInput.value =
+                            currentStudent.name ||
+                            "";
+
+                        phoneInput.value =
+                            currentStudent.phone ||
+                            "";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================
+   SAVE PERSONAL INFORMATION
+========================================= */
+
+document
+    .querySelectorAll(
+        "[data-save]"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                async () => {
+
+                    if (
+                        !currentStudentDocument
+                    ) {
+
+                        showToast(
+                            "Profile is still loading"
+                        );
+
+                        return;
+
+                    }
+
+
+                    const newName =
+                        fullNameInput.value.trim();
+
+
+                    const newPhone =
+                        phoneInput.value.trim();
+
+
+                    if (!newName) {
+
+                        showToast(
+                            "Name cannot be empty"
+                        );
+
+                        return;
+
+                    }
+
+
+                    try {
+
+                        button.disabled =
+                            true;
+
+
+                        await updateDoc(
+                            currentStudentDocument.ref,
+                            {
+                                name: newName,
+                                phone: newPhone
+                            }
+                        );
+
+
+                        currentStudent.name =
+                            newName;
+
+                        currentStudent.phone =
+                            newPhone;
+
+
+                        populateProfile(
+                            currentStudent
+                        );
+
+
+                        fullName.hidden =
+                            false;
+
+                        fullNameInput.hidden =
+                            true;
+
+
+                        phoneNumber.hidden =
+                            false;
+
+                        phoneInput.hidden =
+                            true;
+
+
+                        document
+                            .getElementById(
+                                "personalActions"
+                            )
+                            .hidden =
+                            true;
+
+
+                        showToast(
+                            "Profile updated successfully"
+                        );
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "Profile update error:",
+                            error
+                        );
+
+
+                        showToast(
+                            "Unable to update profile"
+                        );
+
+
+                    } finally {
+
+                        button.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================
+   PROFILE PHOTO MODAL
+========================================= */
+
+changePhotoButton.addEventListener(
+    "click",
+    () => {
+
+        openPhotoModal();
+
+    }
+);
+
+
+function openPhotoModal() {
+
+    selectedPhotoUrl = null;
+
+
+    if (
+        currentStudent &&
+        currentStudent.profileImg
+    ) {
 
         photoPreview.src =
-            savedPhoto;
+            currentStudent.profileImg;
 
         photoPreview.style.display =
             "block";
@@ -96,38 +1118,84 @@ function loadCurrentPhotoPreview() {
 
     } else {
 
+        photoPreview.removeAttribute(
+            "src"
+        );
+
         photoPreview.style.display =
             "none";
+
+        previewPlaceholder.textContent =
+            getFirstLetter();
 
         previewPlaceholder.style.display =
             "flex";
 
     }
 
+
+    photoModal.classList.add(
+        "show"
+    );
+
 }
 
 
-/* =========================================
-   UPLOAD BUTTON
-========================================= */
+function closePhotoModalFunction() {
 
-document
-    .getElementById(
-        "uploadPhotoButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            photoInput.click();
-
-        }
+    photoModal.classList.remove(
+        "show"
     );
 
+    photoInput.value = "";
+
+    selectedPhotoUrl = null;
+
+}
+
+
+closePhotoModal.addEventListener(
+    "click",
+    closePhotoModalFunction
+);
+
+
+cancelPhotoButton.addEventListener(
+    "click",
+    closePhotoModalFunction
+);
+
+
+photoModal.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            photoModal
+        ) {
+
+            closePhotoModalFunction();
+
+        }
+
+    }
+);
+
 
 /* =========================================
-   FILE SELECTED
+   UPLOAD NEW PHOTO
 ========================================= */
+
+uploadPhotoButton.addEventListener(
+    "click",
+    () => {
+
+        photoInput.click();
+
+    }
+);
+
 
 photoInput.addEventListener(
     "change",
@@ -138,13 +1206,11 @@ photoInput.addEventListener(
 
 
         if (!file) {
+
             return;
+
         }
 
-
-        /*
-            Basic validation
-        */
 
         const allowedTypes = [
             "image/jpeg",
@@ -159,8 +1225,24 @@ photoInput.addEventListener(
             )
         ) {
 
-            alert(
-                "Please select a JPG, PNG or WEBP image."
+            showToast(
+                "Only JPG, PNG or WEBP files are allowed"
+            );
+
+            photoInput.value = "";
+
+            return;
+
+        }
+
+
+        if (
+            file.size >
+            5 * 1024 * 1024
+        ) {
+
+            showToast(
+                "Image must be smaller than 5 MB"
             );
 
             photoInput.value = "";
@@ -171,24 +1253,11 @@ photoInput.addEventListener(
 
 
         /*
-            5 MB limit
+            Temporary local preview.
+
+            Actual Firebase Storage upload
+            will be connected separately.
         */
-
-        if (
-            file.size >
-            5 * 1024 * 1024
-        ) {
-
-            alert(
-                "Image size should be less than 5 MB."
-            );
-
-            photoInput.value = "";
-
-            return;
-
-        }
-
 
         const reader =
             new FileReader();
@@ -197,19 +1266,15 @@ photoInput.addEventListener(
         reader.onload =
             event => {
 
-                selectedPhoto =
+                selectedPhotoUrl =
                     event.target.result;
-
-                removePhoto = false;
 
 
                 photoPreview.src =
-                    selectedPhoto;
-
+                    selectedPhotoUrl;
 
                 photoPreview.style.display =
                     "block";
-
 
                 previewPlaceholder.style.display =
                     "none";
@@ -217,7 +1282,9 @@ photoInput.addEventListener(
             };
 
 
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(
+            file
+        );
 
     }
 );
@@ -227,562 +1294,159 @@ photoInput.addEventListener(
    REMOVE PHOTO
 ========================================= */
 
-document
-    .getElementById(
-        "removePhotoButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
+removePhotoButton.addEventListener(
+    "click",
+    () => {
 
-            selectedPhoto = null;
-
-            removePhoto = true;
+        selectedPhotoUrl = "";
 
 
-            photoPreview.style.display =
-                "none";
-
-
-            previewPlaceholder.style.display =
-                "flex";
-
-
-            photoInput.value = "";
-
-        }
-    );
-
-
-/* =========================================
-   SAVE PHOTO
-========================================= */
-
-document
-    .getElementById(
-        "savePhotoButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            if (removePhoto) {
-
-                localStorage.removeItem(
-                    "deptconnect_profile_photo"
-                );
-
-
-                showDefaultProfile();
-
-            }
-
-            else if (selectedPhoto) {
-
-                localStorage.setItem(
-                    "deptconnect_profile_photo",
-                    selectedPhoto
-                );
-
-
-                displayProfilePhoto(
-                    selectedPhoto
-                );
-
-            }
-
-
-            closePhotoModal();
-
-            showToast(
-                "Profile photo updated successfully"
-            );
-
-        }
-    );
-
-
-/* =========================================
-   DISPLAY PROFILE PHOTO
-========================================= */
-
-function displayProfilePhoto(
-    photo
-) {
-
-    profileImage.src =
-        photo;
-
-    profileImage.style.display =
-        "block";
-
-    profilePlaceholder.style.display =
-        "none";
-
-
-    /*
-        Navbar avatar
-    */
-
-    navAvatar.innerHTML = "";
-
-    const navImage =
-        document.createElement(
-            "img"
+        photoPreview.removeAttribute(
+            "src"
         );
 
-    navImage.src =
-        photo;
-
-    navImage.alt =
-        "Profile";
-
-    navAvatar.appendChild(
-        navImage
-    );
-
-}
+        photoPreview.style.display =
+            "none";
 
 
-/* =========================================
-   DEFAULT PROFILE
-========================================= */
-
-function showDefaultProfile() {
-
-    profileImage.style.display =
-        "none";
-
-    profilePlaceholder.style.display =
-        "flex";
+        previewPlaceholder.textContent =
+            getFirstLetter();
 
 
-    navAvatar.innerHTML =
-        "A";
-
-}
-
-
-/* =========================================
-   CLOSE PHOTO MODAL
-========================================= */
-
-function closePhotoModal() {
-
-    photoModal.classList.remove(
-        "show"
-    );
-
-    document.body.style.overflow =
-        "";
-
-    photoInput.value = "";
-
-}
-
-
-document
-    .getElementById(
-        "closePhotoModal"
-    )
-    .addEventListener(
-        "click",
-        closePhotoModal
-    );
-
-
-document
-    .getElementById(
-        "cancelPhotoButton"
-    )
-    .addEventListener(
-        "click",
-        closePhotoModal
-    );
-
-
-photoModal.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            photoModal
-        ) {
-
-            closePhotoModal();
-
-        }
+        previewPlaceholder.style.display =
+            "flex";
 
     }
 );
 
 
 /* =========================================
-   LOAD SAVED PHOTO
+   SAVE PHOTO
 ========================================= */
 
-function loadSavedPhoto() {
+savePhotoButton.addEventListener(
+    "click",
+    async () => {
 
-    const savedPhoto =
-        localStorage.getItem(
-            "deptconnect_profile_photo"
-        );
+        /*
+            If a new local image was selected,
+            Firebase Storage is required to
+            permanently save it.
 
+            We intentionally don't save a
+            base64 image into Firestore.
+        */
 
-    if (savedPhoto) {
+        if (
+            selectedPhotoUrl &&
+            selectedPhotoUrl.startsWith(
+                "data:"
+            )
+        ) {
 
-        displayProfilePhoto(
-            savedPhoto
-        );
+            showToast(
+                "Image upload will be connected to Firebase Storage next"
+            );
 
-    } else {
+            return;
 
-        showDefaultProfile();
-
-    }
-
-}
-
-loadSavedPhoto();
-
-
-/* =========================================
-   PERSONAL INFORMATION EDITING
-========================================= */
-
-const editButtons =
-    document.querySelectorAll(
-        ".edit-button"
-    );
+        }
 
 
-editButtons.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            const section =
-                button.dataset.section;
-
+        if (
+            selectedPhotoUrl === ""
+        ) {
 
             if (
-                section === "personal"
+                !currentStudentDocument
             ) {
-
-                enablePersonalEditing();
-
-            }
-
-        }
-    );
-
-});
-
-
-/* =========================================
-   ENABLE PERSONAL EDIT
-========================================= */
-
-function enablePersonalEditing() {
-
-    document
-        .getElementById(
-            "fullName"
-        )
-        .hidden = true;
-
-
-    document
-        .getElementById(
-            "fullNameInput"
-        )
-        .hidden = false;
-
-
-    document
-        .getElementById(
-            "phoneNumber"
-        )
-        .hidden = true;
-
-
-    document
-        .getElementById(
-            "phoneInput"
-        )
-        .hidden = false;
-
-
-    document
-        .getElementById(
-            "personalActions"
-        )
-        .hidden = false;
-
-}
-
-
-/* =========================================
-   CANCEL PERSONAL EDIT
-========================================= */
-
-document
-    .querySelector(
-        '[data-cancel="personal"]'
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            disablePersonalEditing();
-
-        }
-    );
-
-
-function disablePersonalEditing() {
-
-    document
-        .getElementById(
-            "fullName"
-        )
-        .hidden = false;
-
-
-    document
-        .getElementById(
-            "fullNameInput"
-        )
-        .hidden = true;
-
-
-    document
-        .getElementById(
-            "phoneNumber"
-        )
-        .hidden = false;
-
-
-    document
-        .getElementById(
-            "phoneInput"
-        )
-        .hidden = true;
-
-
-    document
-        .getElementById(
-            "personalActions"
-        )
-        .hidden = true;
-
-}
-
-
-/* =========================================
-   SAVE PERSONAL INFORMATION
-========================================= */
-
-document
-    .querySelector(
-        '[data-save="personal"]'
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            const nameInput =
-                document.getElementById(
-                    "fullNameInput"
-                );
-
-            const phoneInput =
-                document.getElementById(
-                    "phoneInput"
-                );
-
-
-            const newName =
-                nameInput.value.trim();
-
-            const newPhone =
-                phoneInput.value.trim();
-
-
-            if (!newName) {
-
-                alert(
-                    "Name cannot be empty."
-                );
 
                 return;
 
             }
 
 
-            document
-                .getElementById(
-                    "fullName"
-                )
-                .textContent =
-                newName;
+            try {
 
-
-            document
-                .getElementById(
-                    "phoneNumber"
-                )
-                .textContent =
-                newPhone;
-
-
-            /*
-                Store demo data locally.
-
-                Later these become API calls.
-            */
-
-            localStorage.setItem(
-                "deptconnect_student_name",
-                newName
-            );
-
-
-            localStorage.setItem(
-                "deptconnect_student_phone",
-                newPhone
-            );
-
-
-            disablePersonalEditing();
-
-
-            showToast(
-                "Profile updated successfully"
-            );
-
-        }
-    );
-
-
-/* =========================================
-   LOAD SAVED PERSONAL INFORMATION
-========================================= */
-
-function loadPersonalInformation() {
-
-    const savedName =
-        localStorage.getItem(
-            "deptconnect_student_name"
-        );
-
-    const savedPhone =
-        localStorage.getItem(
-            "deptconnect_student_phone"
-        );
-
-
-    if (savedName) {
-
-        document.getElementById(
-            "fullName"
-        ).textContent =
-            savedName;
-
-
-        document.getElementById(
-            "fullNameInput"
-        ).value =
-            savedName;
-
-
-        document.querySelector(
-            ".profile-identity h2"
-        ).textContent =
-            savedName;
-
-    }
-
-
-    if (savedPhone) {
-
-        document.getElementById(
-            "phoneNumber"
-        ).textContent =
-            savedPhone;
-
-
-        document.getElementById(
-            "phoneInput"
-        ).value =
-            savedPhone;
-
-    }
-
-}
-
-loadPersonalInformation();
-
-
-/* =========================================
-   TOAST
-========================================= */
-
-const toast =
-    document.getElementById(
-        "toast"
-    );
-
-let toastTimer;
-
-
-function showToast(message) {
-
-    toast.textContent =
-        "✓ " + message;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
-            () => {
-
-                toast.classList.remove(
-                    "show"
+                await updateDoc(
+                    currentStudentDocument.ref,
+                    {
+                        profileImg: ""
+                    }
                 );
 
-            },
-            3000
-        );
+
+                currentStudent.profileImg =
+                    "";
+
+
+                setProfileImage(
+                    "",
+                    currentStudent.name
+                );
+
+
+                closePhotoModalFunction();
+
+
+                showToast(
+                    "Profile photo removed"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Remove photo error:",
+                    error
+                );
+
+
+                showToast(
+                    "Unable to remove photo"
+                );
+
+            }
+
+
+            return;
+
+        }
+
+
+        closePhotoModalFunction();
+
+    }
+);
+
+
+/* =========================================
+   GET FIRST LETTER
+========================================= */
+
+function getFirstLetter() {
+
+    if (
+        !currentStudent ||
+        !currentStudent.name
+    ) {
+
+        return "A";
+
+    }
+
+
+    return currentStudent.name
+        .trim()
+        .charAt(0)
+        .toUpperCase();
 
 }
 
 
 /* =========================================
-   PROFILE DROPDOWN
+   PROFILE MENU
 ========================================= */
-
-const profileButton =
-    document.getElementById(
-        "profileButton"
-    );
-
-const profileMenu =
-    document.getElementById(
-        "profileMenu"
-    );
-
 
 profileButton.addEventListener(
     "click",
@@ -824,37 +1488,42 @@ profileMenu.addEventListener(
    NOTIFICATIONS
 ========================================= */
 
-document
-    .getElementById(
-        "notificationButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
+notificationButton.addEventListener(
+    "click",
+    () => {
 
-            window.location.href =
-                "notifications.html";
+        window.location.href =
+            "notifications.html";
 
-        }
-    );
+    }
+);
 
 
 /* =========================================
    LOGOUT
 ========================================= */
 
-function logout() {
+async function logout() {
 
-    if (
-        confirm(
-            "Are you sure you want to logout?"
-        )
-    ) {
+    try {
+
+        await signOut(auth);
 
         sessionStorage.clear();
 
         window.location.href =
             "login.html";
+
+    } catch (error) {
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+        showToast(
+            "Unable to logout"
+        );
 
     }
 
@@ -879,27 +1548,3 @@ document
         "click",
         logout
     );
-
-
-/* =========================================
-   ESC KEY
-========================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape"
-        ) {
-
-            closePhotoModal();
-
-            profileMenu.classList.remove(
-                "show"
-            );
-
-        }
-
-    }
-);

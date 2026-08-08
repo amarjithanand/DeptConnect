@@ -35,6 +35,7 @@
 
 </head>
 
+
 <body>
 
 
@@ -61,6 +62,7 @@
             Dashboard
         </a>
 
+
         <a
             href="ask-query.html"
             class="nav-link"
@@ -68,12 +70,14 @@
             Ask a Query
         </a>
 
+
         <a
             href="my-queries.html"
             class="nav-link active"
         >
             My Queries
         </a>
+
 
         <a
             href="knowledge-base.html"
@@ -87,25 +91,42 @@
 
     <div class="nav-actions">
 
+
+        <!-- NOTIFICATION -->
+
         <button
             class="icon-button"
             id="notificationButton"
             title="Notifications"
+            type="button"
         >
+
             ♧
+
             <span class="notification-dot"></span>
+
         </button>
 
+
+        <!-- PROFILE -->
 
         <button
             class="profile-button"
             id="profileButton"
+            type="button"
         >
-            <span class="profile-avatar">
+
+            <span
+                class="profile-avatar"
+                id="navAvatar"
+            >
                 A
             </span>
+
         </button>
 
+
+        <!-- PROFILE MENU -->
 
         <div
             class="profile-menu"
@@ -116,11 +137,16 @@
                 👤 My Profile
             </a>
 
+
             <a href="settings.html">
                 ⚙ Settings
             </a>
 
-            <button id="logoutButton">
+
+            <button
+                id="logoutButton"
+                type="button"
+            >
                 ↪ Logout
             </button>
 
@@ -131,6 +157,7 @@
 </header>
 
 
+
 <!-- =========================================
      MAIN
 ========================================= -->
@@ -138,11 +165,14 @@
 <main class="page-container">
 
 
-    <!-- PAGE HEADER -->
+    <!-- =====================================
+         PAGE HEADER
+    ====================================== -->
 
     <section class="page-header">
 
         <div>
+
 
             <div class="breadcrumb">
 
@@ -152,7 +182,9 @@
 
                 <span>›</span>
 
-                <span>My Queries</span>
+                <span>
+                    My Queries
+                </span>
 
             </div>
 
@@ -160,6 +192,7 @@
             <h1>
                 My Queries
             </h1>
+
 
             <p>
                 Track and manage all your academic inquiries.
@@ -178,11 +211,13 @@
     </section>
 
 
+
     <!-- =========================================
          QUERY STATISTICS
     ========================================== -->
 
     <section class="stats-row">
+
 
         <div class="mini-stat">
 
@@ -191,7 +226,7 @@
             </span>
 
             <strong id="totalCount">
-                12
+                0
             </strong>
 
         </div>
@@ -204,7 +239,7 @@
             </span>
 
             <strong id="pendingCount">
-                3
+                0
             </strong>
 
         </div>
@@ -217,7 +252,7 @@
             </span>
 
             <strong id="aiCount">
-                8
+                0
             </strong>
 
         </div>
@@ -230,12 +265,13 @@
             </span>
 
             <strong id="progressCount">
-                1
+                0
             </strong>
 
         </div>
 
     </section>
+
 
 
     <!-- =========================================
@@ -245,20 +281,27 @@
     <section class="filter-panel">
 
 
+        <!-- SEARCH -->
+
         <div class="search-box">
 
             <span>
                 ⌕
             </span>
 
+
             <input
                 type="text"
                 id="searchInput"
                 placeholder="Search your queries..."
+                autocomplete="off"
             >
 
         </div>
 
+
+
+        <!-- STATUS -->
 
         <select id="statusFilter">
 
@@ -285,30 +328,20 @@
         </select>
 
 
+
+        <!-- DEPARTMENT -->
+
         <select id="departmentFilter">
 
             <option value="all">
                 All Departments
             </option>
 
-            <option value="computer-science">
-                Computer Science
-            </option>
-
-            <option value="registrar">
-                Registrar
-            </option>
-
-            <option value="advising">
-                Advising
-            </option>
-
-            <option value="general">
-                General Administration
-            </option>
-
         </select>
 
+
+
+        <!-- DATE -->
 
         <select id="dateFilter">
 
@@ -331,14 +364,19 @@
         </select>
 
 
+
+        <!-- CLEAR -->
+
         <button
             class="clear-filter"
             id="clearFilters"
+            type="button"
         >
             Clear
         </button>
 
     </section>
+
 
 
     <!-- =========================================
@@ -347,9 +385,11 @@
 
     <div class="results-header">
 
+
         <span id="resultCount">
-            Showing 3 queries
+            Showing 0 queries
         </span>
+
 
         <select id="sortFilter">
 
@@ -366,8 +406,13 @@
     </div>
 
 
+
     <!-- =========================================
          QUERY LIST
+         
+         IMPORTANT:
+         JavaScript generates the cards
+         from Firestore here.
     ========================================== -->
 
     <section
@@ -375,280 +420,34 @@
         id="queryList"
     >
 
-
-        <!-- QUERY 1 -->
-
-        <article
-            class="query-card"
-            data-id="1"
-            data-status="pending"
-            data-department="computer-science"
-            data-title="Clarification on Project 2 Requirements"
-        >
-
-            <div class="query-card-top">
-
-                <div class="query-info">
-
-                    <div class="query-meta">
-
-                        <span class="status awaiting">
-                            AWAITING FACULTY
-                        </span>
-
-                        <span>
-                            CS101
-                        </span>
-
-                        <span>
-                            •
-                        </span>
-
-                        <span>
-                            2 hours ago
-                        </span>
-
-                    </div>
-
-
-                    <h2>
-                        Clarification on Project 2 Requirements
-                    </h2>
-
-
-                    <p>
-                        I need clarification regarding the
-                        requirements and submission format for
-                        Project 2.
-                    </p>
-
-                </div>
-
-
-                <div class="query-arrow">
-                    ›
-                </div>
-
-            </div>
-
-
-            <div class="query-card-bottom">
-
-                <span>
-                    Department:
-                    <strong>Computer Science</strong>
-                </span>
-
-                <span>
-                    Est. Response:
-                    <strong>24 hours</strong>
-                </span>
-
-                <div class="card-actions">
-
-                    <button
-                        class="details-button"
-                        data-action="details"
-                    >
-                        View Details
-                    </button>
-
-                </div>
-
-            </div>
-
-        </article>
-
-
-        <!-- QUERY 2 -->
-
-        <article
-            class="query-card ai-card"
-            data-id="2"
-            data-status="ai-resolved"
-            data-department="registrar"
-            data-title="Deadline for Add/Drop Period"
-        >
-
-            <div class="query-card-top">
-
-                <div class="query-info">
-
-                    <div class="query-meta">
-
-                        <span class="status ai-status">
-                            ✨ AI RESOLVED
-                        </span>
-
-                        <span>
-                            Registrar
-                        </span>
-
-                        <span>
-                            •
-                        </span>
-
-                        <span>
-                            1 day ago
-                        </span>
-
-                    </div>
-
-
-                    <h2>
-                        Deadline for Add/Drop Period
-                    </h2>
-
-
-                    <p>
-                        What is the final date for adding or
-                        dropping a course this semester?
-                    </p>
-
-                </div>
-
-
-                <div class="query-arrow">
-                    ›
-                </div>
-
-            </div>
-
-
-            <div class="query-card-bottom">
-
-                <span>
-                    Department:
-                    <strong>Registrar</strong>
-                </span>
-
-                <span class="instant">
-                    ✓ Answer available instantly
-                </span>
-
-                <div class="card-actions">
-
-                    <button
-                        class="solution-button"
-                        data-action="solution"
-                    >
-                        View Solution
-                    </button>
-
-                    <button
-                        class="details-button"
-                        data-action="details"
-                    >
-                        Details
-                    </button>
-
-                </div>
-
-            </div>
-
-        </article>
-
-
-        <!-- QUERY 3 -->
-
-        <article
-            class="query-card"
-            data-id="3"
-            data-status="in-progress"
-            data-department="advising"
-            data-title="Request for Course Override"
-        >
-
-            <div class="query-card-top">
-
-                <div class="query-info">
-
-                    <div class="query-meta">
-
-                        <span class="status assigned">
-                            IN PROGRESS
-                        </span>
-
-                        <span>
-                            Advising
-                        </span>
-
-                        <span>
-                            •
-                        </span>
-
-                        <span>
-                            2 days ago
-                        </span>
-
-                    </div>
-
-
-                    <h2>
-                        Request for Course Override
-                    </h2>
-
-
-                    <p>
-                        I would like to request an override for
-                        Advanced Machine Learning due to a timetable conflict.
-                    </p>
-
-                </div>
-
-
-                <div class="query-arrow">
-                    ›
-                </div>
-
-            </div>
-
-
-            <div class="query-card-bottom">
-
-                <span>
-                    Department:
-                    <strong>Advising</strong>
-                </span>
-
-                <span>
-                    Assigned to:
-                    <strong>Academic Advisor</strong>
-                </span>
-
-                <div class="card-actions">
-
-                    <button
-                        class="details-button"
-                        data-action="details"
-                    >
-                        View Details
-                    </button>
-
-                </div>
-
-            </div>
-
-        </article>
-
+        <!--
+            Firestore query cards will be
+            inserted here by my-queries.js.
+        -->
 
     </section>
 
 
-    <!-- NO RESULTS -->
+
+    <!-- =========================================
+         NO RESULTS
+    ========================================== -->
 
     <div
         class="no-results"
         id="noResults"
+        style="display: none;"
     >
 
         <div>
             ⌕
         </div>
 
+
         <h3>
             No queries found
         </h3>
+
 
         <p>
             Try changing your search or filters.
@@ -657,6 +456,7 @@
     </div>
 
 </main>
+
 
 
 <!-- =========================================
@@ -668,17 +468,24 @@
     id="detailsModal"
 >
 
+
     <div class="details-modal">
+
 
         <button
             class="close-button"
             data-close="detailsModal"
+            type="button"
         >
             ×
         </button>
 
 
+
+        <!-- MODAL HEADER -->
+
         <div class="modal-header">
+
 
             <span
                 class="status awaiting"
@@ -687,19 +494,27 @@
                 AWAITING FACULTY
             </span>
 
+
             <span id="detailsId">
-                Query #001
+                Query #000
             </span>
 
         </div>
 
 
+
+        <!-- TITLE -->
+
         <h2 id="detailsTitle">
-            Clarification on Project 2 Requirements
+            Query
         </h2>
 
 
+
+        <!-- BASIC DETAILS -->
+
         <div class="detail-grid">
+
 
             <div>
 
@@ -707,11 +522,13 @@
                     Department
                 </span>
 
+
                 <strong id="detailsDepartment">
-                    Computer Science
+                    Not specified
                 </strong>
 
             </div>
+
 
 
             <div>
@@ -720,11 +537,13 @@
                     Subject
                 </span>
 
+
                 <strong id="detailsSubject">
-                    CS101
+                    Not specified
                 </strong>
 
             </div>
+
 
 
             <div>
@@ -733,11 +552,13 @@
                     Submitted
                 </span>
 
+
                 <strong id="detailsDate">
-                    Today, 10:30 AM
+                    Not available
                 </strong>
 
             </div>
+
 
 
             <div>
@@ -746,8 +567,9 @@
                     Priority
                 </span>
 
+
                 <strong id="detailsPriority">
-                    Normal
+                    Medium
                 </strong>
 
             </div>
@@ -755,89 +577,57 @@
         </div>
 
 
+
+        <!-- DESCRIPTION -->
+
         <div class="detail-block">
+
 
             <label>
                 Your Query
             </label>
 
+
             <p id="detailsDescription">
-                I need clarification regarding the
-                requirements and submission format for
-                Project 2.
+                No description available.
             </p>
 
         </div>
 
 
+
+        <!-- TIMELINE -->
+
         <div class="detail-block">
+
 
             <label>
                 Current Status
             </label>
 
+
             <div class="timeline">
 
-                <div class="timeline-item completed">
-
-                    <span>✓</span>
-
-                    <div>
-                        <strong>
-                            Query Submitted
-                        </strong>
-
-                        <small>
-                            Today, 10:30 AM
-                        </small>
-                    </div>
-
-                </div>
-
-
-                <div class="timeline-item completed">
-
-                    <span>✓</span>
-
-                    <div>
-                        <strong>
-                            AI Analysis Completed
-                        </strong>
-
-                        <small>
-                            Today, 10:30 AM
-                        </small>
-                    </div>
-
-                </div>
-
-
-                <div class="timeline-item active">
-
-                    <span>●</span>
-
-                    <div>
-                        <strong>
-                            Awaiting Faculty
-                        </strong>
-
-                        <small>
-                            Expected response within 24 hours
-                        </small>
-                    </div>
-
-                </div>
+                <!--
+                    my-queries.js dynamically
+                    generates the timeline.
+                -->
 
             </div>
 
         </div>
 
 
+
+        <!-- MODAL ACTIONS -->
+
         <div class="modal-actions">
+
 
             <button
                 class="close-modal secondary-button"
                 data-close="detailsModal"
+                type="button"
             >
                 Close
             </button>
@@ -847,6 +637,7 @@
     </div>
 
 </div>
+
 
 
 <!-- =========================================
@@ -858,27 +649,36 @@
     id="solutionModal"
 >
 
+
     <div class="solution-modal">
+
 
         <button
             class="close-button"
             data-close="solutionModal"
+            type="button"
         >
             ×
         </button>
 
 
+
+        <!-- SOLUTION HEADER -->
+
         <div class="solution-heading">
+
 
             <div class="solution-icon">
                 ✨
             </div>
+
 
             <div>
 
                 <span>
                     AI RESOLVED
                 </span>
+
 
                 <h2>
                     Query Solution
@@ -889,39 +689,48 @@
         </div>
 
 
+
+        <!-- QUERY -->
+
         <div class="solution-query">
+
 
             <span>
                 Your Query
             </span>
 
+
             <strong id="solutionQuestion">
-                Deadline for Add/Drop Period
+                Your query
             </strong>
 
         </div>
 
 
+
+        <!-- ANSWER -->
+
         <div class="solution-content">
+
 
             <div class="answer-label">
                 AI Answer
             </div>
 
+
             <p id="solutionAnswer">
-
-                The Add/Drop period deadline is determined
-                by the academic calendar published by the
-                institution. Students should complete course
-                additions or withdrawals before the specified
-                deadline in the current academic calendar.
-
+                An AI-generated solution is not available
+                for this query yet.
             </p>
 
         </div>
 
 
+
+        <!-- CONFIDENCE -->
+
         <div class="confidence-box">
+
 
             <div>
 
@@ -929,11 +738,13 @@
                     AI Confidence
                 </span>
 
+
                 <strong>
-                    94%
+                    0%
                 </strong>
 
             </div>
+
 
             <div class="confidence-bar">
 
@@ -944,29 +755,40 @@
         </div>
 
 
+
+        <!-- SOURCE -->
+
         <div class="source-box">
+
 
             <span>
                 Source
             </span>
 
+
             <strong>
-                Academic Calendar · Registrar
+                DeptConnect Knowledge Base
             </strong>
 
         </div>
 
 
+
+        <!-- FOOTER -->
+
         <div class="solution-footer">
+
 
             <p>
                 ✨ This answer was generated from the
                 DeptConnect Knowledge Base.
             </p>
 
+
             <button
                 class="secondary-button"
                 data-close="solutionModal"
+                type="button"
             >
                 Close
             </button>
@@ -978,7 +800,21 @@
 </div>
 
 
-<script src="my-queries.js"></script>
+
+<!-- =========================================
+     JAVASCRIPT
+     
+     IMPORTANT:
+     type="module" is required because
+     my-queries.js imports Firebase.
+========================================= -->
+
+<script
+    type="module"
+    src="my-queries.js"
+></script>
+
 
 </body>
+
 </html>
