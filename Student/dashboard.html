@@ -12,7 +12,10 @@
 
     <title>DeptConnect - Dashboard</title>
 
-    <link rel="stylesheet" href="styles/dashboard.css">
+    <link
+        rel="stylesheet"
+        href="styles/dashboard.css"
+    >
 
     <link
         rel="preconnect"
@@ -41,14 +44,10 @@
 
 <header class="navbar">
 
-    <!-- LOGO -->
-
     <a href="dashboard.html" class="brand">
         DeptConnect
     </a>
 
-
-    <!-- MAIN NAVIGATION -->
 
     <nav class="nav-links">
 
@@ -83,8 +82,6 @@
     </nav>
 
 
-    <!-- NAVIGATION ACTIONS -->
-
     <div class="nav-actions">
 
         <!-- Notification -->
@@ -93,6 +90,7 @@
             class="icon-button notification-button"
             id="notificationButton"
             title="Notifications"
+            type="button"
         >
 
             <span class="notification-icon">
@@ -112,9 +110,13 @@
         <button
             class="profile-button"
             id="profileButton"
+            type="button"
         >
 
-            <span class="profile-avatar">
+            <span
+                class="profile-avatar"
+                id="profileAvatar"
+            >
                 A
             </span>
 
@@ -130,14 +132,17 @@
 
             <div class="profile-menu-header">
 
-                <div class="profile-menu-avatar">
+                <div
+                    class="profile-menu-avatar"
+                    id="profileMenuAvatar"
+                >
                     A
                 </div>
 
                 <div>
 
                     <strong id="menuStudentName">
-                        Amarjith
+                        Student
                     </strong>
 
                     <span>
@@ -153,16 +158,26 @@
 
 
             <a href="profile.html">
+
                 <span>👤</span>
+
                 My Profile
+
             </a>
+
 
             <div class="menu-divider"></div>
 
 
-            <button id="logoutButton">
+            <button
+                id="logoutButton"
+                type="button"
+            >
+
                 <span>↪</span>
+
                 Logout
+
             </button>
 
         </div>
@@ -172,11 +187,13 @@
 </header>
 
 
+
 <!-- =========================================
      MAIN CONTENT
 ========================================= -->
 
 <main class="dashboard">
+
 
     <!-- =====================================
          PAGE HEADER
@@ -187,11 +204,15 @@
         <div>
 
             <h1>
+
                 Welcome back,
+
                 <span id="studentName">
-                    Amarjith
+                    Student
                 </span>.
+
             </h1>
+
 
             <p>
                 Here is the status of your academic inquiries.
@@ -219,6 +240,7 @@
     </section>
 
 
+
     <!-- =====================================
          DASHBOARD TOP CARDS
     ====================================== -->
@@ -226,7 +248,7 @@
     <section class="dashboard-grid">
 
 
-        <!-- SUBMIT QUERY CARD -->
+        <!-- SUBMIT QUERY -->
 
         <article class="submit-card">
 
@@ -254,6 +276,7 @@
         </article>
 
 
+
         <!-- TOTAL QUERIES -->
 
         <article class="stat-card">
@@ -271,10 +294,11 @@
             </div>
 
             <strong id="totalQueries">
-                12
+                0
             </strong>
 
         </article>
+
 
 
         <!-- PENDING -->
@@ -294,10 +318,11 @@
             </div>
 
             <strong id="pendingQueries">
-                3
+                0
             </strong>
 
         </article>
+
 
 
         <!-- AI RESOLUTION -->
@@ -307,11 +332,15 @@
             <div class="ai-content">
 
                 <div class="ai-title">
+
                     ✨
+
                     <span>
                         INSTANT AI RESOLUTIONS
                     </span>
+
                 </div>
+
 
                 <p>
                     Queries resolved automatically
@@ -320,14 +349,15 @@
 
             </div>
 
+
             <strong id="aiResolvedQueries">
-                8
+                0
             </strong>
 
         </article>
 
-
     </section>
+
 
 
     <!-- =====================================
@@ -343,6 +373,7 @@
                 Recent Queries
             </h2>
 
+
             <a href="my-queries.html">
                 VIEW ALL
             </a>
@@ -350,143 +381,41 @@
         </div>
 
 
-        <div class="query-list">
+        <!-- Dynamic query list -->
 
+        <div
+            class="query-list"
+            id="recentQueryList"
+        >
 
-            <!-- QUERY 1 -->
-
-            <article
-                class="query-item"
-                data-query-id="1"
-            >
-
-                <div class="query-main">
-
-                    <div class="query-meta">
-
-                        <span class="status awaiting">
-                            AWAITING FACULTY
-                        </span>
-
-                        <span>
-                            CS101 · 2 hours ago
-                        </span>
-
-                    </div>
-
-                    <h3>
-                        Clarification on Project 2 Requirements
-                    </h3>
-
-                </div>
-
-
-                <div class="query-right">
-
-                    <span>
-                        Est. Response: 24h
-                    </span>
-
-                    <span class="arrow">
-                        ›
-                    </span>
-
-                </div>
-
-            </article>
-
-
-            <!-- QUERY 2 -->
-
-            <article
-                class="query-item resolved"
-                data-query-id="2"
-            >
-
-                <div class="query-main">
-
-                    <div class="query-meta">
-
-                        <span class="status resolved-status">
-                            ✨ AI RESOLVED
-                        </span>
-
-                        <span>
-                            Registrar · 1 day ago
-                        </span>
-
-                    </div>
-
-                    <h3>
-                        Deadline for Add/Drop Period Spring 2024
-                    </h3>
-
-                </div>
-
-
-                <div class="query-right">
-
-                    <span>
-                        Instant
-                    </span>
-
-                    <span class="arrow">
-                        ›
-                    </span>
-
-                </div>
-
-            </article>
-
-
-            <!-- QUERY 3 -->
-
-            <article
-                class="query-item"
-                data-query-id="3"
-            >
-
-                <div class="query-main">
-
-                    <div class="query-meta">
-
-                        <span class="status assigned">
-                            ASSIGNED TO ADVISOR
-                        </span>
-
-                        <span>
-                            Advising · 2 days ago
-                        </span>
-
-                    </div>
-
-                    <h3>
-                        Request for Override: Advanced Machine Learning
-                    </h3>
-
-                </div>
-
-
-                <div class="query-right">
-
-                    <span>
-                        In Progress
-                    </span>
-
-                    <span class="arrow">
-                        ›
-                    </span>
-
-                </div>
-
-            </article>
-
+            <!-- JS will populate this -->
 
         </div>
+
+
+        <!-- Empty state -->
+
+        <div
+            id="recentQueriesEmpty"
+            class="recent-empty"
+            style="display:none;"
+        >
+
+            <h3>
+                No queries yet
+            </h3>
+
+            <p>
+                Your recently submitted queries will appear here.
+            </p>
+
+        </div>
+
 
     </section>
 
 </main>
+
 
 
 <!-- =========================================
@@ -499,10 +428,12 @@
         DeptConnect
     </div>
 
+
     <p>
         © 2026 Institutional Query Management.
         Powered by DeptConnect.
     </p>
+
 
     <div class="footer-links">
 
@@ -523,7 +454,16 @@
 </footer>
 
 
-<script src="scripts/dashboard.js"></script>
+
+<!-- =========================================
+     FIREBASE DASHBOARD SCRIPT
+========================================= -->
+
+<script
+    type="module"
+    src="scripts/dashboard.js"
+></script>
 
 </body>
+
 </html>

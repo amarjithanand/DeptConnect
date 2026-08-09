@@ -55,11 +55,14 @@ const firebaseConfig = {
    INITIALIZE FIREBASE
 ========================================= */
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth =
+    getAuth(app);
 
-const db = getFirestore(app);
+const db =
+    getFirestore(app);
 
 
 /* =========================================
@@ -113,6 +116,22 @@ const progressCount =
 let allQueries = [];
 
 
+/*
+ * Map:
+ *
+ * queryId
+ *    ↓
+ * faculty response object
+ *
+ * Example:
+ *
+ * facultyResponses.get("abc123")
+ */
+
+let facultyResponses =
+    new Map();
+
+
 /* =========================================
    AUTHENTICATION
 ========================================= */
@@ -153,7 +172,9 @@ onAuthStateChanged(
    LOAD CURRENT STUDENT QUERIES
 ========================================= */
 
-async function loadStudentQueries(uid) {
+async function loadStudentQueries(
+    uid
+) {
 
     try {
 
@@ -169,18 +190,12 @@ async function loadStudentQueries(uid) {
 
 
         /*
-         * IMPORTANT
+         * Current queries structure:
          *
-         * Your current queries collection contains:
+         * queries/{documentId}
          *
          * uid:
-         * "kD6junBAg7dityG9Hdyz3YlYexW2"
-         *
-         * Therefore we directly query:
-         *
-         * where("uid", "==", uid)
-         *
-         * No students collection lookup is required.
+         * "student Firebase Auth UID"
          */
 
         const queryRef =
@@ -210,14 +225,14 @@ async function loadStudentQueries(uid) {
 
 
         /* =============================
-           RESET DATA
+           RESET QUERY DATA
         ============================= */
 
         allQueries = [];
 
 
         /* =============================
-           READ FIRESTORE DOCUMENTS
+           READ QUERY DOCUMENTS
         ============================= */
 
         snapshot.forEach(
@@ -233,6 +248,44 @@ async function loadStudentQueries(uid) {
                 });
 
             }
+        );
+
+
+        /* =============================
+           LOAD FACULTY RESPONSES
+        ============================= */
+
+        await loadFacultyResponses(
+            uid
+        );
+
+
+        /* =============================
+           ATTACH RESPONSE TO QUERY
+        ============================= */
+
+        allQueries =
+            allQueries.map(
+                queryData => {
+
+                    return {
+
+                        ...queryData,
+
+                        facultyResponse:
+                            facultyResponses.get(
+                                queryData.id
+                            ) || null
+
+                    };
+
+                }
+            );
+
+
+        console.log(
+            "Queries with responses:",
+            allQueries
         );
 
 
@@ -320,6 +373,146 @@ async function loadStudentQueries(uid) {
                 "Please check your connection and try again.";
 
         }
+
+    }
+
+}
+
+
+/* =========================================
+   LOAD FACULTY RESPONSES
+========================================= */
+
+async function loadFacultyResponses(
+    uid
+) {
+
+    try {
+
+        console.log(
+            "Loading faculty responses..."
+        );
+
+
+        facultyResponses =
+            new Map();
+
+
+        /*
+         * Expected responses structure:
+         *
+         * responses/{responseId}
+         *
+         * uid
+         * facultyId
+         * facultyName
+         * queryId
+         * studentId
+         * studentUid
+         * queryTitle
+         * queryDescription
+         * course
+         * department
+         * priority
+         * response
+         * respondedAt
+         * status
+         *
+         *
+         * IMPORTANT:
+         *
+         * studentUid must contain the
+         * student's Firebase Auth UID.
+         */
+
+        const responseQuery =
+            query(
+                collection(
+                    db,
+                    "responses"
+                ),
+                where(
+                    "studentUid",
+                    "==",
+                    uid
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                responseQuery
+            );
+
+
+        console.log(
+            "Faculty responses found:",
+            snapshot.size
+        );
+
+
+        snapshot.forEach(
+            document => {
+
+                const responseData =
+                    document.data();
+
+
+                console.log(
+                    "Response document:",
+                    document.id,
+                    responseData
+                );
+
+
+                /*
+                 * queryId connects the response
+                 * to the original query.
+                 */
+
+                if (
+                    responseData.queryId
+                ) {
+
+                    facultyResponses.set(
+                        responseData.queryId,
+                        {
+
+                            id:
+                                document.id,
+
+                            ...responseData
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        console.log(
+            "Faculty response map:",
+            facultyResponses
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error loading faculty responses:",
+            error
+        );
+
+
+        /*
+         * Do not prevent the query list
+         * from loading if responses fail.
+         */
+
+        facultyResponses =
+            new Map();
 
     }
 
@@ -819,6 +1012,27 @@ function createQueryCard(
         true;
 
 
+    /*
+     * Faculty-resolved means:
+     *
+     * status = resolved
+     * AND
+     * aiAnswered is not true
+     */
+
+    const facultyResolved =
+        queryData.status ===
+        "resolved"
+        &&
+        queryData.aiAnswered !==
+        true;
+
+
+    const facultyResponse =
+        queryData.facultyResponse ||
+        null;
+
+
     const statusInfo =
         getStatusInfo(
             queryData
@@ -849,7 +1063,9 @@ function createQueryCard(
     article.className =
         aiResolved
             ? "query-card ai-card"
-            : "query-card";
+            : facultyResolved
+                ? "query-card resolved-card"
+                : "query-card";
 
 
     article.dataset.id =
@@ -944,18 +1160,24 @@ function createQueryCard(
                             ✓ Answer available instantly
                         </span>
                       `
-                    : `
-                        <span>
-                            Priority:
-                            <strong>
-                                ${escapeHTML(
-                                    capitalize(
-                                        priority
-                                    )
-                                )}
-                            </strong>
-                        </span>
-                      `
+                    : facultyResolved
+                        ? `
+                            <span class="instant faculty-available">
+                                ✓ Faculty response available
+                            </span>
+                          `
+                        : `
+                            <span>
+                                Priority:
+                                <strong>
+                                    ${escapeHTML(
+                                        capitalize(
+                                            priority
+                                        )
+                                    )}
+                                </strong>
+                            </span>
+                          `
             }
 
 
@@ -969,10 +1191,21 @@ function createQueryCard(
                                 data-action="solution"
                                 type="button"
                             >
-                                View Solution
+                                View AI Solution
                             </button>
                           `
-                        : ""
+                        : facultyResolved &&
+                          facultyResponse
+                            ? `
+                                <button
+                                    class="solution-button faculty-response-button"
+                                    data-action="faculty-response"
+                                    type="button"
+                                >
+                                    View Faculty Response
+                                </button>
+                              `
+                            : ""
                 }
 
 
@@ -982,7 +1215,8 @@ function createQueryCard(
                     type="button"
                 >
                     ${
-                        aiResolved
+                        aiResolved ||
+                        facultyResolved
                             ? "Details"
                             : "View Details"
                     }
@@ -1013,6 +1247,7 @@ function createQueryCard(
 
                 event.stopPropagation();
 
+
                 openDetailsModal(
                     queryData
                 );
@@ -1024,7 +1259,7 @@ function createQueryCard(
 
 
     /* =============================
-       SOLUTION BUTTON
+       AI SOLUTION BUTTON
     ============================= */
 
     const solutionButton =
@@ -1041,7 +1276,37 @@ function createQueryCard(
 
                 event.stopPropagation();
 
+
                 openSolutionModal(
+                    queryData
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =============================
+       FACULTY RESPONSE BUTTON
+    ============================= */
+
+    const facultyResponseButton =
+        article.querySelector(
+            '[data-action="faculty-response"]'
+        );
+
+
+    if (facultyResponseButton) {
+
+        facultyResponseButton.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+
+                openFacultyResponseModal(
                     queryData
                 );
 
@@ -1090,6 +1355,10 @@ function createQueryCard(
 function getStatusInfo(
     queryData
 ) {
+
+    /*
+     * AI takes priority.
+     */
 
     if (
         queryData.aiAnswered ===
@@ -1147,7 +1416,7 @@ function getStatusInfo(
                     "RESOLVED",
 
                 className:
-                    "assigned"
+                    "resolved"
 
             };
 
@@ -1212,6 +1481,17 @@ function openDetailsModal(
         );
 
 
+    if (!modal) {
+
+        console.warn(
+            "detailsModal not found."
+        );
+
+        return;
+
+    }
+
+
     const status =
         document.getElementById(
             "detailsStatus"
@@ -1224,65 +1504,125 @@ function openDetailsModal(
         );
 
 
-    status.textContent =
-        statusInfo.label;
+    if (status) {
+
+        status.textContent =
+            statusInfo.label;
 
 
-    status.className =
-        `status ${statusInfo.className}`;
+        status.className =
+            `status ${statusInfo.className}`;
+
+    }
 
 
-    document.getElementById(
-        "detailsId"
-    ).textContent =
-        `Query #${shortQueryId(
-            queryData.id
-        )}`;
-
-
-    document.getElementById(
-        "detailsTitle"
-    ).textContent =
-        queryData.title ||
-        "Untitled Query";
-
-
-    document.getElementById(
-        "detailsDepartment"
-    ).textContent =
-        queryData.department ||
-        "Not specified";
-
-
-    document.getElementById(
-        "detailsSubject"
-    ).textContent =
-        queryData.course ||
-        "Not specified";
-
-
-    document.getElementById(
-        "detailsDate"
-    ).textContent =
-        formatFullDate(
-            queryData.createdAt
+    const detailsId =
+        document.getElementById(
+            "detailsId"
         );
 
 
-    document.getElementById(
-        "detailsPriority"
-    ).textContent =
-        capitalize(
-            queryData.priority ||
-            "medium"
+    if (detailsId) {
+
+        detailsId.textContent =
+            `Query #${shortQueryId(
+                queryData.id
+            )}`;
+
+    }
+
+
+    const detailsTitle =
+        document.getElementById(
+            "detailsTitle"
         );
 
 
-    document.getElementById(
-        "detailsDescription"
-    ).textContent =
-        queryData.description ||
-        "No description provided.";
+    if (detailsTitle) {
+
+        detailsTitle.textContent =
+            queryData.title ||
+            "Untitled Query";
+
+    }
+
+
+    const detailsDepartment =
+        document.getElementById(
+            "detailsDepartment"
+        );
+
+
+    if (detailsDepartment) {
+
+        detailsDepartment.textContent =
+            queryData.department ||
+            "Not specified";
+
+    }
+
+
+    const detailsSubject =
+        document.getElementById(
+            "detailsSubject"
+        );
+
+
+    if (detailsSubject) {
+
+        detailsSubject.textContent =
+            queryData.course ||
+            "Not specified";
+
+    }
+
+
+    const detailsDate =
+        document.getElementById(
+            "detailsDate"
+        );
+
+
+    if (detailsDate) {
+
+        detailsDate.textContent =
+            formatFullDate(
+                queryData.createdAt
+            );
+
+    }
+
+
+    const detailsPriority =
+        document.getElementById(
+            "detailsPriority"
+        );
+
+
+    if (detailsPriority) {
+
+        detailsPriority.textContent =
+            capitalize(
+                queryData.priority ||
+                "medium"
+            );
+
+    }
+
+
+    const detailsDescription =
+        document.getElementById(
+            "detailsDescription"
+        );
+
+
+    if (detailsDescription) {
+
+        detailsDescription.textContent =
+            queryData.description ||
+            "No description provided.";
+
+    }
 
 
     updateTimeline(
@@ -1323,12 +1663,23 @@ function updateTimeline(
         true;
 
 
+    const aiResolved =
+        queryData.aiAnswered ===
+        true;
+
+
+    const facultyResolved =
+        queryData.status ===
+        "resolved"
+        &&
+        !aiResolved;
+
+
     const resolved =
         queryData.status ===
             "resolved"
         ||
-        queryData.aiAnswered ===
-            true;
+        aiResolved;
 
 
     timeline.innerHTML = `
@@ -1402,7 +1753,7 @@ function updateTimeline(
 
 
         ${
-            resolved
+            facultyResolved
                 ? `
                     <div class="timeline-item completed">
 
@@ -1411,11 +1762,43 @@ function updateTimeline(
                         <div>
 
                             <strong>
+                                Faculty Response
+                            </strong>
+
+                            <small>
                                 ${
-                                    queryData.aiAnswered
-                                        ? "AI Resolved"
-                                        : "Resolved"
+                                    queryData.facultyResponse &&
+                                    queryData.facultyResponse.respondedAt
+                                        ? formatFullDate(
+                                            queryData.facultyResponse.respondedAt
+                                        )
+                                        : queryData.resolvedAt
+                                            ? formatFullDate(
+                                                queryData.resolvedAt
+                                            )
+                                            : "Response submitted"
                                 }
+                            </small>
+
+                        </div>
+
+                    </div>
+                  `
+                : ""
+        }
+
+
+        ${
+            aiResolved
+                ? `
+                    <div class="timeline-item completed">
+
+                        <span>✓</span>
+
+                        <div>
+
+                            <strong>
+                                AI Resolved
                             </strong>
 
                             <small>
@@ -1424,7 +1807,7 @@ function updateTimeline(
                                         ? formatFullDate(
                                             queryData.resolvedAt
                                         )
-                                        : "Completed"
+                                        : "AI solution generated"
                                 }
                             </small>
 
@@ -1432,7 +1815,13 @@ function updateTimeline(
 
                     </div>
                   `
-                : `
+                : ""
+        }
+
+
+        ${
+            !resolved
+                ? `
                     <div class="timeline-item active">
 
                         <span>●</span>
@@ -1461,6 +1850,7 @@ function updateTimeline(
 
                     </div>
                   `
+                : ""
         }
 
     `;
@@ -1469,7 +1859,7 @@ function updateTimeline(
 
 
 /* =========================================
-   SOLUTION MODAL
+   AI SOLUTION MODAL
 ========================================= */
 
 function openSolutionModal(
@@ -1480,6 +1870,17 @@ function openSolutionModal(
         document.getElementById(
             "solutionModal"
         );
+
+
+    if (!modal) {
+
+        console.warn(
+            "solutionModal not found."
+        );
+
+        return;
+
+    }
 
 
     const question =
@@ -1505,19 +1906,17 @@ function openSolutionModal(
 
 
     /*
-     * Your current query structure does
-     * not yet show an aiAnswer field.
+     * AI answer fields supported:
      *
-     * If your AI later stores:
-     *
-     * aiAnswer: "..."
-     *
-     * this code will automatically display it.
+     * aiAnswer
+     * solution
      */
 
     if (answer) {
 
-        if (queryData.aiAnswer) {
+        if (
+            queryData.aiAnswer
+        ) {
 
             answer.textContent =
                 queryData.aiAnswer;
@@ -1608,6 +2007,180 @@ function openSolutionModal(
 
 
 /* =========================================
+   FACULTY RESPONSE MODAL
+========================================= */
+
+function openFacultyResponseModal(
+    queryData
+) {
+
+    const modal =
+        document.getElementById(
+            "facultyResponseModal"
+        );
+
+
+    if (!modal) {
+
+        console.error(
+            "facultyResponseModal not found."
+        );
+
+        return;
+
+    }
+
+
+    const facultyResponse =
+        queryData.facultyResponse;
+
+
+    if (!facultyResponse) {
+
+        console.error(
+            "No faculty response found for query:",
+            queryData.id
+        );
+
+        return;
+
+    }
+
+
+    /* =============================
+       QUESTION
+    ============================= */
+
+    const question =
+        document.getElementById(
+            "facultyResponseQuestion"
+        );
+
+
+    if (question) {
+
+        question.textContent =
+            queryData.title ||
+            queryData.description ||
+            "Your Query";
+
+    }
+
+
+    /* =============================
+       FACULTY NAME
+    ============================= */
+
+    const facultyName =
+        document.getElementById(
+            "facultyResponseName"
+        );
+
+
+    if (facultyName) {
+
+        facultyName.textContent =
+            facultyResponse.facultyName ||
+            "Assigned Faculty";
+
+    }
+
+
+    /* =============================
+       RESPONSE DATE
+    ============================= */
+
+    const responseDate =
+        document.getElementById(
+            "facultyResponseDate"
+        );
+
+
+    if (responseDate) {
+
+        responseDate.textContent =
+            facultyResponse.respondedAt
+                ? formatFullDate(
+                    facultyResponse.respondedAt
+                )
+                : "Date unavailable";
+
+    }
+
+
+    /* =============================
+       RESPONSE TEXT
+    ============================= */
+
+    const responseText =
+        document.getElementById(
+            "facultyResponseText"
+        );
+
+
+    if (responseText) {
+
+        responseText.textContent =
+            facultyResponse.response ||
+            "No response content available.";
+
+    }
+
+
+    /* =============================
+       COURSE
+    ============================= */
+
+    const responseCourse =
+        document.getElementById(
+            "facultyResponseCourse"
+        );
+
+
+    if (responseCourse) {
+
+        responseCourse.textContent =
+            facultyResponse.course ||
+            queryData.course ||
+            "Not specified";
+
+    }
+
+
+    /* =============================
+       STATUS
+    ============================= */
+
+    const responseStatus =
+        document.getElementById(
+            "facultyResponseStatus"
+        );
+
+
+    if (responseStatus) {
+
+        responseStatus.textContent =
+            facultyResponse.status
+                ? capitalize(
+                    facultyResponse.status
+                )
+                : "Resolved";
+
+    }
+
+
+    /* =============================
+       OPEN MODAL
+    ============================= */
+
+    modal.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================
    CLOSE MODALS
 ========================================= */
 
@@ -1674,6 +2247,42 @@ document
 
         }
     );
+
+
+/* =========================================
+   ESCAPE KEY
+========================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key !==
+            "Escape"
+        ) {
+
+            return;
+
+        }
+
+
+        document
+            .querySelectorAll(
+                ".modal-overlay.show"
+            )
+            .forEach(
+                modal => {
+
+                    modal.classList.remove(
+                        "show"
+                    );
+
+                }
+            );
+
+    }
+);
 
 
 /* =========================================
@@ -2211,6 +2820,7 @@ if (
         event => {
 
             event.stopPropagation();
+
 
             profileMenu.classList.toggle(
                 "show"

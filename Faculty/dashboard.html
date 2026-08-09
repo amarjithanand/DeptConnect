@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        DeptConnect - Faculty Dashboard
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles/dashboard.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-brand">
+
+        <div class="brand-icon">
+            🎓
+        </div>
+
+        <div>
+
+            <h2>
+                DeptConnect
+            </h2>
+
+            <span>
+                Faculty Portal
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <a
+            href="dashboard.html"
+            class="nav-item active"
+        >
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+
+        <a
+            href="register-student.html"
+            class="nav-item"
+        >
+            <span class="nav-icon">▤</span>
+            <span>Register Student</span>
+        </a>
+
+        <a
+            href="knowledge-base.html"
+            class="nav-item"
+        >
+            <span class="nav-icon">▣</span>
+            <span>Knowledge Base</span>
+        </a>
+        <a
+            href="post-notification.html"
+            class="nav-item"
+        >
+            <span class="nav-icon">♧</span>
+            <span>Post Notification</span>
+        </a>
+
+
+        <a
+            href="notifications.html"
+            class="nav-item"
+        >
+            <span class="nav-icon">♢</span>
+            <span>Notifications</span>
+            <span
+                class="notification-count"
+                id="notificationCount"
+            >
+                0
+            </span>
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <a
+            href="profile.html"
+            class="nav-item"
+        >
+            <span class="nav-icon">◉</span>
+            <span>Profile</span>
+        </a>
+
+
+        <a
+            href="settings.html"
+            class="nav-item"
+        >
+            <span class="nav-icon">⚙</span>
+            <span>Settings</span>
+        </a>
+
+
+        <button
+            class="logout-button"
+            id="logoutButton"
+        >
+            <span class="nav-icon">↪</span>
+            <span>Sign Out</span>
+        </button>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main-content">
+
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <button
+            class="mobile-menu"
+            id="mobileMenu"
+        >
+            ☰
+        </button>
+
+
+        <div class="topbar-title">
+
+            <h1>
+                Faculty Dashboard
+            </h1>
+
+            <p>
+                Manage and respond to your assigned student queries.
+            </p>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+            <button
+                class="icon-button"
+                id="notificationButton"
+                title="Notifications"
+            >
+                ♢
+            </button>
+
+
+            <div class="faculty-mini-profile">
+
+                <img
+                    id="facultyAvatar"
+                    src="https://via.placeholder.com/40"
+                    alt="Faculty"
+                >
+
+                <div>
+
+                    <strong id="facultyName">
+                        Faculty
+                    </strong>
+
+                    <span id="facultyDepartment">
+                        Department
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         WELCOME
+    ================================================= -->
+
+    <section class="welcome-section">
+
+        <div>
+
+            <p class="welcome-label">
+                Welcome back
+            </p>
+
+            <h2 id="welcomeName">
+                Faculty
+            </h2>
+
+            <p>
+                Here's an overview of the queries assigned to you.
+            </p>
+
+        </div>
+
+
+        <div class="faculty-subjects">
+
+            <span class="subjects-label">
+                Your Subjects
+            </span>
+
+            <div
+                id="subjectsList"
+                class="subject-list"
+            >
+                <span class="subject-loading">
+                    Loading...
+                </span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         STATISTICS
+    ================================================= -->
+
+    <section class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon blue">
+                ▤
+            </div>
+
+            <div>
+
+                <span>
+                    Total Assigned
+                </span>
+
+                <strong id="totalQueries">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon orange">
+                ◷
+            </div>
+
+            <div>
+
+                <span>
+                    Pending
+                </span>
+
+                <strong id="pendingQueries">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon purple">
+                ↻
+            </div>
+
+            <div>
+
+                <span>
+                    In Progress
+                </span>
+
+                <strong id="progressQueries">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon green">
+                ✓
+            </div>
+
+            <div>
+
+                <span>
+                    Resolved
+                </span>
+
+                <strong id="resolvedQueries">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon red">
+                !
+            </div>
+
+            <div>
+
+                <span>
+                    High Priority
+                </span>
+
+                <strong id="highPriorityQueries">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         CONTENT GRID
+    ================================================= -->
+
+    <section class="dashboard-grid">
+
+
+        <!-- RECENT QUERIES -->
+
+        <div class="dashboard-card queries-card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <h3>
+                        Recent Assigned Queries
+                    </h3>
+
+                    <p>
+                        Queries currently assigned to you
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="queries.html"
+                    class="view-all"
+                >
+                    View All
+                </a>
+
+            </div>
+
+
+
+            <!-- SEARCH -->
+
+            <div class="query-controls">
+
+                <div class="search-box">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search queries..."
+                    >
+
+                </div>
+
+
+                <select id="statusFilter">
+
+                    <option value="all">
+                        All Status
+                    </option>
+
+                    <option value="pending">
+                        Pending
+                    </option>
+
+                    <option value="in-progress">
+                        In Progress
+                    </option>
+
+                    <option value="resolved">
+                        Resolved
+                    </option>
+
+                </select>
+
+
+                <select id="priorityFilter">
+
+                    <option value="all">
+                        All Priority
+                    </option>
+
+                    <option value="high">
+                        High
+                    </option>
+
+                    <option value="medium">
+                        Medium
+                    </option>
+
+                    <option value="low">
+                        Low
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- QUERY LIST -->
+
+            <div
+                id="queriesContainer"
+                class="queries-container"
+            >
+
+                <div class="loading-state">
+
+                    <div class="spinner"></div>
+
+                    <p>
+                        Loading assigned queries...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="right-column">
+
+
+            <!-- STATUS DISTRIBUTION -->
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Query Overview
+                        </h3>
+
+                        <p>
+                            Assignment status
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="status-overview">
+
+
+                    <div class="status-row">
+
+                        <div class="status-info">
+
+                            <span class="status-dot pending-dot"></span>
+
+                            <span>
+                                Pending
+                            </span>
+
+                        </div>
+
+                        <strong id="overviewPending">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress-bar">
+
+                        <div
+                            id="pendingBar"
+                            class="progress-fill pending-fill"
+                        ></div>
+
+                    </div>
+
+
+
+                    <div class="status-row">
+
+                        <div class="status-info">
+
+                            <span class="status-dot progress-dot"></span>
+
+                            <span>
+                                In Progress
+                            </span>
+
+                        </div>
+
+                        <strong id="overviewProgress">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress-bar">
+
+                        <div
+                            id="progressBar"
+                            class="progress-fill progress-fill-color"
+                        ></div>
+
+                    </div>
+
+
+
+                    <div class="status-row">
+
+                        <div class="status-info">
+
+                            <span class="status-dot resolved-dot"></span>
+
+                            <span>
+                                Resolved
+                            </span>
+
+                        </div>
+
+                        <strong id="overviewResolved">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="progress-bar">
+
+                        <div
+                            id="resolvedBar"
+                            class="progress-fill resolved-fill"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SUBJECT BREAKDOWN -->
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Queries by Subject
+                        </h3>
+
+                        <p>
+                            Assigned workload
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="subjectBreakdown"
+                    class="subject-breakdown"
+                >
+
+                    <div class="loading-small">
+                        Loading...
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Quick Actions
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-actions">
+
+                    <a
+                        href="queries.html"
+                        class="quick-action"
+                    >
+                        <span>▤</span>
+                        <div>
+                            <strong>View Queries</strong>
+                            <small>Review assigned queries</small>
+                        </div>
+                    </a>
+
+
+                    <a
+                        href="knowledge-base.html"
+                        class="quick-action"
+                    >
+                        <span>▣</span>
+                        <div>
+                            <strong>Knowledge Base</strong>
+                            <small>Manage academic solutions</small>
+                        </div>
+                    </a>
+
+
+                    <a
+                        href="notifications.html"
+                        class="quick-action"
+                    >
+                        <span>♢</span>
+                        <div>
+                            <strong>Notifications</strong>
+                            <small>View recent updates</small>
+                        </div>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     QUERY DETAILS MODAL
+===================================================== -->
+
+<div
+    class="modal-overlay"
+    id="queryModal"
+>
+
+    <div class="query-modal">
+
+
+        <button
+            class="modal-close"
+            id="modalClose"
+        >
+            ×
+        </button>
+
+
+        <div class="modal-header">
+
+            <span
+                class="modal-status"
+                id="modalStatus"
+            >
+                Pending
+            </span>
+
+            <span
+                class="modal-priority"
+                id="modalPriority"
+            >
+                Medium
+            </span>
+
+        </div>
+
+
+        <h2 id="modalTitle">
+            Query title
+        </h2>
+
+
+        <div class="modal-meta">
+
+            <span id="modalCourse">
+                Course
+            </span>
+
+            <span id="modalDate">
+                Date
+            </span>
+
+        </div>
+
+
+        <div class="modal-description">
+
+            <h4>
+                Student Query
+            </h4>
+
+            <p id="modalDescription">
+                Description
+            </p>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <span>
+                Query ID:
+                <strong id="modalQueryId">
+                    -
+                </strong>
+            </span>
+
+
+            <button
+                class="primary-button"
+                id="openQueryButton"
+            >
+                Open Query
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script
+    type="module"
+    src="scripts/dashboard.js"
+></script>
+
+</body>
+
+</html>
