@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        DeptConnect - Query Details
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles/open-query.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-brand">
+
+        <div class="brand-icon">
+            🎓
+        </div>
+
+        <div>
+
+            <h2>
+                DeptConnect
+            </h2>
+
+            <span>
+                Faculty Portal
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <a
+            href="dashboard.html"
+            class="nav-item"
+        >
+            <span>⌂</span>
+            Dashboard
+        </a>
+
+
+        <a
+            href="queries.html"
+            class="nav-item active"
+        >
+            <span>▤</span>
+            My Queries
+        </a>
+
+
+        <a
+            href="knowledge-base.html"
+            class="nav-item"
+        >
+            <span>▣</span>
+            Knowledge Base
+        </a>
+
+
+        <a
+            href="notifications.html"
+            class="nav-item"
+        >
+            <span>♢</span>
+            Notifications
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <a
+            href="profile.html"
+            class="nav-item"
+        >
+            <span>◉</span>
+            Profile
+        </a>
+
+
+        <a
+            href="settings.html"
+            class="nav-item"
+        >
+            <span>⚙</span>
+            Settings
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="main-content">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <a
+                href="dashboard.html"
+                class="back-link"
+            >
+                ← Back to Dashboard
+            </a>
+
+            <h1>
+                Query Details
+            </h1>
+
+        </div>
+
+
+        <div class="faculty-profile">
+
+            <img
+                id="facultyAvatar"
+                src="https://via.placeholder.com/40"
+                alt="Faculty"
+            >
+
+            <div>
+
+                <strong id="facultyName">
+                    Faculty
+                </strong>
+
+                <span id="facultyDepartment">
+                    Department
+                </span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         LOADING
+    ================================================= -->
+
+    <section
+        id="loadingState"
+        class="loading-state"
+    >
+
+        <div class="spinner"></div>
+
+        <p>
+            Loading query...
+        </p>
+
+    </section>
+
+
+
+    <!-- =================================================
+         ERROR
+    ================================================= -->
+
+    <section
+        id="errorState"
+        class="error-state"
+        style="display:none;"
+    >
+
+        <div class="error-icon">
+            ⚠
+        </div>
+
+        <h2>
+            Unable to load query
+        </h2>
+
+        <p id="errorMessage">
+            Something went wrong.
+        </p>
+
+        <a
+            href="dashboard.html"
+            class="primary-button"
+        >
+            Return to Dashboard
+        </a>
+
+    </section>
+
+
+
+    <!-- =================================================
+         QUERY CONTENT
+    ================================================= -->
+
+    <section
+        id="queryContent"
+        class="query-layout"
+        style="display:none;"
+    >
+
+
+        <!-- LEFT -->
+        <div class="main-column">
+
+
+            <!-- QUERY CARD -->
+
+            <div class="card">
+
+                <div class="query-header">
+
+                    <div>
+
+                        <div class="badges">
+
+                            <span
+                                id="queryStatus"
+                                class="badge status"
+                            >
+                                Pending
+                            </span>
+
+                            <span
+                                id="queryPriority"
+                                class="badge priority"
+                            >
+                                Medium
+                            </span>
+
+                        </div>
+
+
+                        <h2 id="queryTitle">
+                            Query title
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="query-meta">
+
+                    <div>
+
+                        <span>
+                            Course
+                        </span>
+
+                        <strong id="queryCourse">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Department
+                        </span>
+
+                        <strong id="queryDepartment">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Submitted
+                        </span>
+
+                        <strong id="queryDate">
+                            -
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="query-description">
+
+                    <h3>
+                        Student's Query
+                    </h3>
+
+                    <p id="queryDescription">
+                        -
+                    </p>
+
+                </div>
+
+
+                <div class="query-id">
+
+                    Query ID:
+
+                    <strong id="queryId">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RESPONSE CARD -->
+
+            <div class="card response-card">
+
+                <div class="section-heading">
+
+                    <div class="section-icon">
+                        ✎
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Faculty Response
+                        </h3>
+
+                        <p>
+                            Provide a clear and helpful solution to the student.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form id="responseForm">
+
+
+                    <div class="form-group">
+
+                        <label for="response">
+                            Your Response
+                        </label>
+
+
+                        <textarea
+                            id="response"
+                            placeholder="Type your response to the student..."
+                            rows="9"
+                            required
+                        ></textarea>
+
+
+                        <div class="character-count">
+
+                            <span id="characterCount">
+                                0
+                            </span>
+
+                            characters
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="responseError"
+                        class="form-error"
+                    ></div>
+
+
+                    <div
+                        id="responseSuccess"
+                        class="form-success"
+                    ></div>
+
+
+                    <div class="response-actions">
+
+                        <a
+                            href="dashboard.html"
+                            class="secondary-button"
+                        >
+                            Cancel
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                            id="submitResponse"
+                        >
+
+                            <span id="submitText">
+                                Submit Response
+                            </span>
+
+                            <span
+                                id="submitLoader"
+                                class="button-loader"
+                            ></span>
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- RIGHT -->
+        <aside class="side-column">
+
+
+            <!-- STUDENT INFO -->
+
+            <div class="card">
+
+                <h3>
+                    Student Information
+                </h3>
+
+
+                <div class="info-list">
+
+                    <div>
+
+                        <span>
+                            Student ID
+                        </span>
+
+                        <strong id="studentId">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Student UID
+                        </span>
+
+                        <strong
+                            id="studentUid"
+                            class="small-value"
+                        >
+                            -
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- QUERY INFORMATION -->
+
+            <div class="card">
+
+                <h3>
+                    Query Information
+                </h3>
+
+
+                <div class="info-list">
+
+                    <div>
+
+                        <span>
+                            Course
+                        </span>
+
+                        <strong id="sideCourse">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Priority
+                        </span>
+
+                        <strong id="sidePriority">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            AI Processed
+                        </span>
+
+                        <strong id="aiProcessed">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            AI Answered
+                        </span>
+
+                        <strong id="aiAnswered">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            AI Confidence
+                        </span>
+
+                        <strong id="aiConfidence">
+                            -
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- WARNING -->
+
+            <div class="notice">
+
+                <strong>
+                    Before submitting
+                </strong>
+
+                <p>
+                    Make sure your response directly addresses the student's question.
+                    Once submitted, this query will be marked as resolved.
+                </p>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+
+</main>
+
+
+<script
+    type="module"
+    src="scripts/open-query.js"
+></script>
+
+</body>
+
+</html>

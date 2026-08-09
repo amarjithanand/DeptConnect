@@ -10,7 +10,9 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>DeptConnect - Notifications</title>
+    <title>
+        DeptConnect - Notifications
+    </title>
 
     <link
         rel="stylesheet"
@@ -34,6 +36,7 @@
     >
 
 </head>
+
 
 <body>
 
@@ -91,6 +94,7 @@
             class="icon-button notification-active"
             id="notificationButton"
             title="Notifications"
+            type="button"
         >
 
             ♧
@@ -106,9 +110,13 @@
         <button
             class="profile-button"
             id="profileButton"
+            type="button"
         >
 
-            <span class="profile-avatar">
+            <span
+                class="profile-avatar"
+                id="profileAvatar"
+            >
                 A
             </span>
 
@@ -128,7 +136,10 @@
                 ⚙ Settings
             </a>
 
-            <button id="logoutButton">
+            <button
+                id="logoutButton"
+                type="button"
+            >
                 ↪ Logout
             </button>
 
@@ -137,6 +148,7 @@
     </div>
 
 </header>
+
 
 
 <!-- =========================================
@@ -175,8 +187,8 @@
 
 
             <p>
-                Stay updated with your queries,
-                responses and important announcements.
+                Stay updated with important announcements
+                from your faculty and department.
             </p>
 
         </div>
@@ -185,11 +197,13 @@
         <button
             class="mark-all-button"
             id="markAllButton"
+            type="button"
         >
             ✓ Mark all as read
         </button>
 
     </section>
+
 
 
     <!-- =====================================
@@ -205,7 +219,7 @@
             </span>
 
             <strong id="unreadCount">
-                4
+                0
             </strong>
 
         </div>
@@ -214,11 +228,11 @@
         <div class="summary-item">
 
             <span>
-                QUERY UPDATES
+                ALL NOTIFICATIONS
             </span>
 
-            <strong>
-                3
+            <strong id="totalCount">
+                0
             </strong>
 
         </div>
@@ -227,16 +241,17 @@
         <div class="summary-item">
 
             <span>
-                SYSTEM
+                MY DEPARTMENT
             </span>
 
-            <strong>
-                2
+            <strong id="departmentCount">
+                0
             </strong>
 
         </div>
 
     </section>
+
 
 
     <!-- =====================================
@@ -248,53 +263,54 @@
         <button
             class="filter-button active"
             data-filter="all"
+            type="button"
         >
             All
+
             <span id="allCount">
-                7
+                0
             </span>
+
         </button>
 
 
         <button
             class="filter-button"
             data-filter="unread"
+            type="button"
         >
             Unread
+
             <span id="filterUnreadCount">
-                4
+                0
             </span>
+
         </button>
 
 
         <button
             class="filter-button"
-            data-filter="query"
+            data-filter="all-students"
+            type="button"
         >
-            Query Updates
+            All Students
         </button>
 
 
         <button
             class="filter-button"
-            data-filter="system"
+            data-filter="department"
+            type="button"
         >
-            System
-        </button>
-
-
-        <button
-            class="filter-button"
-            data-filter="knowledge"
-        >
-            Knowledge Base
+            My Department
         </button>
 
     </section>
 
 
+
     <!-- =====================================
-         TODAY
+         NOTIFICATION SECTION
     ====================================== -->
 
     <section class="notification-section">
@@ -302,452 +318,27 @@
         <div class="section-title">
 
             <span>
-                TODAY
+                ANNOUNCEMENTS
             </span>
 
             <div></div>
 
         </div>
 
+
+        <!-- Dynamic notifications -->
 
         <div
             class="notification-list"
             id="notificationList"
         >
 
-
-            <!-- NOTIFICATION 1 -->
-
-            <article
-                class="notification-card unread"
-                data-id="1"
-                data-type="query"
-                data-read="false"
-            >
-
-                <div class="notification-icon query-icon">
-                    ✓
-                </div>
-
-
-                <div class="notification-content">
-
-                    <div class="notification-top">
-
-                        <h3>
-                            AI has resolved your query
-                        </h3>
-
-                        <span class="notification-time">
-                            15 min ago
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        Your query
-                        <strong>
-                            "Deadline for Add/Drop Period"
-                        </strong>
-                        has been answered by the AI using
-                        information from the Knowledge Base.
-                    </p>
-
-
-                    <div class="notification-actions">
-
-                        <button
-                            class="view-button"
-                            data-action="solution"
-                        >
-                            View Solution
-                        </button>
-
-                        <button
-                            class="read-button"
-                            data-action="read"
-                        >
-                            Mark as read
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <span class="unread-dot"></span>
-
-            </article>
-
-
-            <!-- NOTIFICATION 2 -->
-
-            <article
-                class="notification-card unread"
-                data-id="2"
-                data-type="query"
-                data-read="false"
-            >
-
-                <div class="notification-icon faculty-icon">
-                    ✦
-                </div>
-
-
-                <div class="notification-content">
-
-                    <div class="notification-top">
-
-                        <h3>
-                            Faculty responded to your query
-                        </h3>
-
-                        <span class="notification-time">
-                            2 hrs ago
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        A faculty member has responded to
-                        your query
-                        <strong>
-                            "Clarification on Project 2 Requirements"
-                        </strong>.
-                    </p>
-
-
-                    <div class="notification-actions">
-
-                        <button
-                            class="view-button"
-                            data-action="query"
-                        >
-                            View Query
-                        </button>
-
-                        <button
-                            class="read-button"
-                            data-action="read"
-                        >
-                            Mark as read
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <span class="unread-dot"></span>
-
-            </article>
-
-
-            <!-- NOTIFICATION 3 -->
-
-            <article
-                class="notification-card unread"
-                data-id="3"
-                data-type="system"
-                data-read="false"
-            >
-
-                <div class="notification-icon system-icon">
-                    !
-                </div>
-
-
-                <div class="notification-content">
-
-                    <div class="notification-top">
-
-                        <h3>
-                            Important academic announcement
-                        </h3>
-
-                        <span class="notification-time">
-                            4 hrs ago
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        A new academic announcement has been
-                        published. Check the latest updates
-                        from your department.
-                    </p>
-
-
-                    <div class="notification-actions">
-
-                        <button
-                            class="view-button"
-                            data-action="announcement"
-                        >
-                            View Announcement
-                        </button>
-
-                        <button
-                            class="read-button"
-                            data-action="read"
-                        >
-                            Mark as read
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <span class="unread-dot"></span>
-
-            </article>
+            <!-- Firebase notifications inserted here -->
 
         </div>
 
     </section>
 
-
-    <!-- =====================================
-         YESTERDAY
-    ====================================== -->
-
-    <section class="notification-section">
-
-        <div class="section-title">
-
-            <span>
-                YESTERDAY
-            </span>
-
-            <div></div>
-
-        </div>
-
-
-        <div class="notification-list">
-
-
-            <!-- NOTIFICATION 4 -->
-
-            <article
-                class="notification-card unread"
-                data-id="4"
-                data-type="knowledge"
-                data-read="false"
-            >
-
-                <div class="notification-icon knowledge-icon">
-                    ?
-                </div>
-
-
-                <div class="notification-content">
-
-                    <div class="notification-top">
-
-                        <h3>
-                            Knowledge Base updated
-                        </h3>
-
-                        <span class="notification-time">
-                            Yesterday
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        New information about project
-                        submission guidelines has been added
-                        to the Knowledge Base.
-                    </p>
-
-
-                    <div class="notification-actions">
-
-                        <button
-                            class="view-button"
-                            data-action="knowledge"
-                        >
-                            Explore Article
-                        </button>
-
-                        <button
-                            class="read-button"
-                            data-action="read"
-                        >
-                            Mark as read
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <span class="unread-dot"></span>
-
-            </article>
-
-
-            <!-- NOTIFICATION 5 -->
-
-            <article
-                class="notification-card"
-                data-id="5"
-                data-type="query"
-                data-read="true"
-            >
-
-                <div class="notification-icon query-icon">
-                    ↗
-                </div>
-
-
-                <div class="notification-content">
-
-                    <div class="notification-top">
-
-                        <h3>
-                            Query assigned to Academic Advisor
-                        </h3>
-
-                        <span class="notification-time">
-                            Yesterday
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        Your course override request has been
-                        assigned to the Academic Advisor.
-                    </p>
-
-
-                    <div class="notification-actions">
-
-                        <button
-                            class="view-button"
-                            data-action="query"
-                        >
-                            View Query
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================
-         EARLIER
-    ====================================== -->
-
-    <section class="notification-section">
-
-        <div class="section-title">
-
-            <span>
-                EARLIER
-            </span>
-
-            <div></div>
-
-        </div>
-
-
-        <div class="notification-list">
-
-
-            <!-- NOTIFICATION 6 -->
-
-            <article
-                class="notification-card"
-                data-id="6"
-                data-type="system"
-                data-read="true"
-            >
-
-                <div class="notification-icon system-icon">
-                    i
-                </div>
-
-
-                <div class="notification-content">
-
-                    <div class="notification-top">
-
-                        <h3>
-                            Welcome to DeptConnect
-                        </h3>
-
-                        <span class="notification-time">
-                            3 days ago
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        Your student account has been
-                        successfully created.
-                    </p>
-
-                </div>
-
-            </article>
-
-
-            <!-- NOTIFICATION 7 -->
-
-            <article
-                class="notification-card"
-                data-id="7"
-                data-type="knowledge"
-                data-read="true"
-            >
-
-                <div class="notification-icon knowledge-icon">
-                    ?
-                </div>
-
-
-                <div class="notification-content">
-
-                    <div class="notification-top">
-
-                        <h3>
-                            New Knowledge Base article
-                        </h3>
-
-                        <span class="notification-time">
-                            5 days ago
-                        </span>
-
-                    </div>
-
-
-                    <p>
-                        A new article has been added to help
-                        students with common academic queries.
-                    </p>
-
-                </div>
-
-            </article>
-
-        </div>
-
-    </section>
 
 
     <!-- =====================================
@@ -757,19 +348,22 @@
     <div
         class="empty-state"
         id="emptyState"
+        style="display:none;"
     >
 
         <div class="empty-icon">
             ♧
         </div>
 
+
         <h3>
             No notifications found
         </h3>
 
+
         <p>
-            There are no notifications matching
-            your selected filter.
+            There are currently no announcements
+            available for you.
         </p>
 
     </div>
@@ -777,7 +371,12 @@
 </main>
 
 
-<script src="scripts/notifications.js"></script>
+<script
+    type="module"
+    src="scripts/notifications.js"
+></script>
+
 
 </body>
+
 </html>

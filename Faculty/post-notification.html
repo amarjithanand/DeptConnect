@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        DeptConnect - Post Notification
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles/post-notification.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     NAVBAR
+========================================= -->
+
+<header class="navbar">
+
+    <a
+        href="faculty-dashboard.html"
+        class="brand"
+    >
+        DeptConnect
+    </a>
+
+
+    <nav class="nav-links">
+
+        <a href="faculty-dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="faculty-queries.html">
+            Queries
+        </a>
+
+        <a
+            href="post-notification.html"
+            class="active"
+        >
+            Notifications
+        </a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+        <button
+            class="profile-button"
+            id="profileButton"
+            type="button"
+        >
+
+            <span
+                class="profile-avatar"
+                id="profileAvatar"
+            >
+                F
+            </span>
+
+        </button>
+
+
+        <div
+            class="profile-menu"
+            id="profileMenu"
+        >
+
+            <div class="profile-menu-header">
+
+                <div
+                    class="profile-menu-avatar"
+                    id="profileMenuAvatar"
+                >
+                    F
+                </div>
+
+                <div>
+
+                    <strong id="facultyName">
+                        Faculty
+                    </strong>
+
+                    <span id="facultyDepartment">
+                        Department
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="menu-divider"></div>
+
+
+            <a href="faculty-profile.html">
+                My Profile
+            </a>
+
+
+            <div class="menu-divider"></div>
+
+
+            <button
+                id="logoutButton"
+                type="button"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="notification-page">
+
+
+    <!-- PAGE HEADER -->
+
+    <section class="page-header">
+
+        <div>
+
+            <span class="page-label">
+                FACULTY PORTAL
+            </span>
+
+            <h1>
+                Post Notification
+            </h1>
+
+            <p>
+                Share important announcements with students.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         NOTIFICATION FORM
+    ====================================== -->
+
+    <section class="notification-layout">
+
+
+        <div class="notification-card">
+
+
+            <div class="card-header">
+
+                <div class="header-icon">
+                    🔔
+                </div>
+
+                <div>
+
+                    <h2>
+                        Create Notification
+                    </h2>
+
+                    <p>
+                        Compose an announcement for students.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <form
+                id="notificationForm"
+                novalidate
+            >
+
+
+                <!-- TITLE -->
+
+                <div class="form-group">
+
+                    <label for="notificationTitle">
+                        Notification Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="notificationTitle"
+                        placeholder="Enter notification title"
+                        maxlength="150"
+                        required
+                    >
+
+                    <div class="field-footer">
+
+                        <small id="titleError"></small>
+
+                        <span id="titleCount">
+                            0 / 150
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group">
+
+                    <label for="notificationDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="notificationDescription"
+                        rows="7"
+                        maxlength="1000"
+                        placeholder="Write the notification details..."
+                        required
+                    ></textarea>
+
+                    <div class="field-footer">
+
+                        <small id="descriptionError"></small>
+
+                        <span id="descriptionCount">
+                            0 / 1000
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TARGET -->
+
+                <div class="form-group">
+
+                    <label>
+                        Notify Students
+                    </label>
+
+
+                    <div class="target-options">
+
+
+                        <!-- ALL -->
+
+                        <label class="target-option">
+
+                            <input
+                                type="radio"
+                                name="targetType"
+                                value="all"
+                                checked
+                            >
+
+                            <span class="target-box">
+
+                                <span class="target-icon">
+                                    🌐
+                                </span>
+
+                                <span class="target-content">
+
+                                    <strong>
+                                        All Students
+                                    </strong>
+
+                                    <small>
+                                        Send to every student
+                                        in the institution.
+                                    </small>
+
+                                </span>
+
+                            </span>
+
+                        </label>
+
+
+
+                        <!-- DEPARTMENT -->
+
+                        <label class="target-option">
+
+                            <input
+                                type="radio"
+                                name="targetType"
+                                value="department"
+                            >
+
+                            <span class="target-box">
+
+                                <span class="target-icon">
+                                    🏫
+                                </span>
+
+                                <span class="target-content">
+
+                                    <strong>
+                                        My Department
+                                    </strong>
+
+                                    <small>
+                                        Send only to students
+                                        in your department.
+                                    </small>
+
+                                </span>
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div
+                        class="department-preview"
+                        id="departmentPreview"
+                    >
+
+                        <span>
+                            Department
+                        </span>
+
+                        <strong id="departmentName">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <small
+                        class="target-error"
+                        id="targetError"
+                    ></small>
+
+                </div>
+
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="publish-button"
+                    id="publishButton"
+                >
+
+                    <span id="buttonText">
+                        Publish Notification
+                    </span>
+
+                    <span
+                        class="loader"
+                        id="loader"
+                    ></span>
+
+                </button>
+
+
+                <!-- GENERAL ERROR -->
+
+                <div
+                    class="form-message"
+                    id="formMessage"
+                ></div>
+
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =================================
+             PREVIEW
+        ================================== -->
+
+        <aside class="preview-card">
+
+            <div class="preview-header">
+
+                <span>
+                    LIVE PREVIEW
+                </span>
+
+            </div>
+
+
+            <div class="notification-preview">
+
+
+                <div class="preview-icon">
+                    🔔
+                </div>
+
+
+                <div class="preview-content">
+
+                    <span
+                        class="preview-target"
+                        id="previewTarget"
+                    >
+                        ALL STUDENTS
+                    </span>
+
+
+                    <h3 id="previewTitle">
+                        Notification title
+                    </h3>
+
+
+                    <p id="previewDescription">
+                        Your notification description
+                        will appear here.
+                    </p>
+
+
+                    <div class="preview-footer">
+
+                        <span>
+                            Just now
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="preview-note">
+
+                <strong>
+                    Before publishing
+                </strong>
+
+                <p>
+                    Make sure the notification contains
+                    clear and accurate information for
+                    the selected students.
+                </p>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================================
+     SCRIPT
+========================================= -->
+
+<script
+    type="module"
+    src="scripts/post-notification.js"
+></script>
+
+
+</body>
+
+</html>

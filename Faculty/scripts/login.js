@@ -451,7 +451,7 @@ form.addEventListener(
             ================================= */
 
             window.location.href =
-                "faculty/dashboard.html";
+                "dashboard.html";
 
 
         } catch (error) {
