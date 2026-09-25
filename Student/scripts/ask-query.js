@@ -16,17 +16,8 @@ import {
     getFirestore,
     collection,
     addDoc,
-    serverTimestamp,
-    doc,
-    getDoc
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
-
-import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-storage.js";
 
 
 /* =========================================
@@ -55,7 +46,6 @@ const firebaseConfig = {
 
     measurementId:
         "G-2B4VN12YW5"
-
 };
 
 
@@ -71,9 +61,6 @@ const auth =
 
 const db =
     getFirestore(app);
-
-const storage =
-    getStorage(app);
 
 
 /* =========================================
@@ -94,12 +81,6 @@ const queryTitle =
 
 const description =
     document.getElementById("description");
-
-const attachment =
-    document.getElementById("attachment");
-
-const fileName =
-    document.getElementById("fileName");
 
 const characterCount =
     document.getElementById("characterCount");
@@ -162,23 +143,18 @@ onAuthStateChanged(
                 "login.html";
 
             return;
-
         }
 
-
         currentUser = user;
-
 
         console.log(
             "Authenticated UID:",
             user.uid
         );
 
-
         await loadStudentProfile(
             user.uid
         );
-
     }
 );
 
@@ -192,10 +168,10 @@ async function loadStudentProfile(uid) {
     try {
 
         /*
-         * Your students document ID is currently
-         * different from the Auth UID.
+         * Student document ID is different
+         * from Firebase Auth UID.
          *
-         * Therefore we query by the uid field.
+         * Therefore query using uid field.
          */
 
         const studentRef =
@@ -206,8 +182,7 @@ async function loadStudentProfile(uid) {
 
 
         /*
-         * Instead of requiring the student
-         * document ID, use a query.
+         * Import Firestore query functions.
          */
 
         const {
@@ -249,7 +224,6 @@ async function loadStudentProfile(uid) {
             );
 
             return;
-
         }
 
 
@@ -264,8 +238,8 @@ async function loadStudentProfile(uid) {
 
 
         /*
-         * Automatically use the student's
-         * department if it exists.
+         * Automatically set student's
+         * department.
          */
 
         setStudentDepartment(
@@ -274,13 +248,12 @@ async function loadStudentProfile(uid) {
 
 
         /*
-         * Update navbar avatar.
+         * Update profile avatar.
          */
 
         updateProfileAvatar(
             studentData.name
         );
-
 
     } catch (error) {
 
@@ -290,7 +263,6 @@ async function loadStudentProfile(uid) {
         );
 
     }
-
 }
 
 
@@ -302,10 +274,12 @@ function setStudentDepartment(
     studentDepartment
 ) {
 
-    if (!studentDepartment) {
+    if (
+        !studentDepartment ||
+        !department
+    ) {
 
         return;
-
     }
 
 
@@ -327,7 +301,7 @@ function setStudentDepartment(
             option.textContent
                 .trim()
                 .toLowerCase()
-                ===
+            ===
             normalized
         ) {
 
@@ -335,15 +309,13 @@ function setStudentDepartment(
                 option;
 
             break;
-
         }
-
     }
 
 
     /*
-     * If MCA is not already present,
-     * add it dynamically.
+     * If department is not already
+     * available, add it dynamically.
      */
 
     if (!matchingOption) {
@@ -362,7 +334,6 @@ function setStudentDepartment(
         department.appendChild(
             matchingOption
         );
-
     }
 
 
@@ -383,7 +354,6 @@ function updateProfileAvatar(
     if (!profileButton) {
 
         return;
-
     }
 
 
@@ -396,7 +366,6 @@ function updateProfileAvatar(
     if (!avatar) {
 
         return;
-
     }
 
 
@@ -406,7 +375,6 @@ function updateProfileAvatar(
             "A";
 
         return;
-
     }
 
 
@@ -433,102 +401,20 @@ function updateProfileAvatar(
    CHARACTER COUNTER
 ========================================= */
 
-description.addEventListener(
-    "input",
-    () => {
-
-        characterCount.textContent =
-            `${description.value.length} / 1500`;
-
-    }
-);
-
-
-/* =========================================
-   FILE SELECTION
-========================================= */
-
-attachment.addEventListener(
-    "change",
-    () => {
-
-        const file =
-            attachment.files[0];
-
-
-        if (!file) {
-
-            fileName.textContent =
-                "";
-
-            return;
-
-        }
-
-
-        const maxSize =
-            5 * 1024 * 1024;
-
-
-        if (
-            file.size >
-            maxSize
-        ) {
-
-            fileName.textContent =
-                "File is larger than 5 MB.";
-
-            attachment.value =
-                "";
-
-            return;
-
-        }
-
-
-        fileName.textContent =
-            `${file.name} (${formatFileSize(
-                file.size
-            )})`;
-
-    }
-);
-
-
-/* =========================================
-   FILE SIZE
-========================================= */
-
-function formatFileSize(
-    bytes
+if (
+    description &&
+    characterCount
 ) {
 
-    if (
-        bytes <
-        1024
-    ) {
+    description.addEventListener(
+        "input",
+        () => {
 
-        return `${bytes} B`;
+            characterCount.textContent =
+                `${description.value.length} / 1500`;
 
-    }
-
-
-    if (
-        bytes <
-        1024 * 1024
-    ) {
-
-        return `${(
-            bytes / 1024
-        ).toFixed(1)} KB`;
-
-    }
-
-
-    return `${(
-        bytes /
-        (1024 * 1024)
-    ).toFixed(1)} MB`;
+        }
+    );
 
 }
 
@@ -537,497 +423,558 @@ function formatFileSize(
    FORM SUBMISSION
 ========================================= */
 
-queryForm.addEventListener(
-    "submit",
-    async (event) => {
+if (queryForm) {
 
-        event.preventDefault();
+    queryForm.addEventListener(
+        "submit",
+        async (event) => {
 
-
-        if (!currentUser) {
-
-            showFormError(
-                "Please sign in again."
-            );
-
-            return;
-
-        }
+            event.preventDefault();
 
 
-        /* =============================
-           GET VALUES
-        ============================= */
+            /* =============================
+               AUTHENTICATION CHECK
+            ============================= */
 
-        const departmentValue =
-            department.value.trim();
-
-
-        const courseValue =
-            subject.value.trim();
-
-
-        const titleValue =
-            queryTitle.value.trim();
-
-
-        const descriptionValue =
-            description.value.trim();
-
-
-        const priorityInput =
-            document.querySelector(
-                'input[name="priority"]:checked'
-            );
-
-
-        const selectedPriority =
-            priorityInput
-                ? priorityInput.value
-                : "normal";
-
-
-        /*
-         * Your Firestore structure uses:
-         *
-         * low
-         * medium
-         * high
-         *
-         * The HTML uses:
-         *
-         * low
-         * normal
-         * high
-         *
-         * So convert normal → medium.
-         */
-
-        const priority =
-            selectedPriority ===
-            "normal"
-                ? "medium"
-                : selectedPriority;
-
-
-        /* =============================
-           VALIDATION
-        ============================= */
-
-        if (!departmentValue) {
-
-            showFormError(
-                "Please select a department."
-            );
-
-            return;
-
-        }
-
-
-        if (!courseValue) {
-
-            showFormError(
-                "Please enter the subject or course."
-            );
-
-            return;
-
-        }
-
-
-        if (!titleValue) {
-
-            showFormError(
-                "Please enter a query title."
-            );
-
-            return;
-
-        }
-
-
-        if (!descriptionValue) {
-
-            showFormError(
-                "Please describe your query."
-            );
-
-            return;
-
-        }
-
-
-        if (
-            descriptionValue.length >
-            1500
-        ) {
-
-            showFormError(
-                "Query description cannot exceed 1500 characters."
-            );
-
-            return;
-
-        }
-
-
-        /* =============================
-           FILE VALIDATION
-        ============================= */
-
-        const file =
-            attachment.files[0];
-
-
-        if (file) {
-
-            const allowedTypes = [
-                "application/pdf",
-                "image/jpeg",
-                "image/png",
-                "application/msword",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            ];
-
-
-            if (
-                !allowedTypes.includes(
-                    file.type
-                )
-            ) {
+            if (!currentUser) {
 
                 showFormError(
-                    "Please upload a PDF, JPG, PNG or DOCX file."
+                    "Please sign in again."
                 );
 
                 return;
+            }
 
+
+            /* =============================
+               GET VALUES
+            ============================= */
+
+            const departmentValue =
+                department.value.trim();
+
+
+            const courseValue =
+                subject.value.trim();
+
+
+            const titleValue =
+                queryTitle.value.trim();
+
+
+            const descriptionValue =
+                description.value.trim();
+
+
+            const priorityInput =
+                document.querySelector(
+                    'input[name="priority"]:checked'
+                );
+
+
+            const selectedPriority =
+                priorityInput
+                    ? priorityInput.value
+                    : "normal";
+
+
+            /*
+             * Firestore uses:
+             * low
+             * medium
+             * high
+             *
+             * HTML uses:
+             * low
+             * normal
+             * high
+             *
+             * Convert normal → medium.
+             */
+
+            const priority =
+                selectedPriority === "normal"
+                    ? "medium"
+                    : selectedPriority;
+
+
+            /* =============================
+               VALIDATION
+            ============================= */
+
+            if (!departmentValue) {
+
+                showFormError(
+                    "Please select a department."
+                );
+
+                return;
+            }
+
+
+            if (!courseValue) {
+
+                showFormError(
+                    "Please enter the subject or course."
+                );
+
+                return;
+            }
+
+
+            if (!titleValue) {
+
+                showFormError(
+                    "Please enter a query title."
+                );
+
+                return;
+            }
+
+
+            if (!descriptionValue) {
+
+                showFormError(
+                    "Please describe your query."
+                );
+
+                return;
             }
 
 
             if (
-                file.size >
-                5 * 1024 * 1024
+                descriptionValue.length >
+                1500
             ) {
 
                 showFormError(
-                    "File size must not exceed 5 MB."
+                    "Query description cannot exceed 1500 characters."
                 );
 
                 return;
-
             }
 
-        }
+
+            /* =============================
+               DISABLE BUTTON
+            ============================= */
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    true;
+
+                submitButton.innerHTML = `
+                    <span>
+                        Submitting...
+                    </span>
+
+                    <span>
+                        ⏳
+                    </span>
+                `;
+            }
 
 
-        /* =============================
-           DISABLE BUTTON
-        ============================= */
+            try {
 
-        submitButton.disabled =
-            true;
+                /* =============================
+                   START AI MODAL
+                ============================= */
 
-
-        submitButton.innerHTML = `
-            <span>
-                Submitting...
-            </span>
-
-            <span>
-                ⏳
-            </span>
-        `;
+                showProcessingModal();
 
 
-        try {
-
-            /*
-             * Start AI modal.
-             */
-
-            showProcessingModal();
-
-
-            /*
-             * Upload attachment first,
-             * if one exists.
-             */
-
-            let attachmentUrl =
-                null;
-
-            let attachmentName =
-                null;
-
-
-            if (file) {
+                /* =============================
+                   CREATE QUERY
+                ============================= */
 
                 updateProcessingStep(
                     "step1",
+                    "completed"
+                );
+
+
+                updateProcessingStep(
+                    "step2",
                     "active"
                 );
 
 
-                const filePath =
-                    `queryAttachments/${
-                        currentUser.uid
-                    }/${
-                        Date.now()
-                    }_${sanitizeFileName(
-                        file.name
-                    )}`;
+                /*
+                 * Query document structure
+                 */
+
+                const queryData = {
+
+                    /*
+                     * Firebase Auth UID
+                     */
+
+                    uid:
+                        currentUser.uid,
 
 
-                const storageRef =
-                    ref(
-                        storage,
-                        filePath
+                    /*
+                     * Current database uses
+                     * Auth UID as studentId.
+                     */
+
+                    studentId:
+                        currentUser.uid,
+
+
+                    /*
+                     * Form data
+                     */
+
+                    title:
+                        titleValue,
+
+                    description:
+                        descriptionValue,
+
+                    course:
+                        courseValue,
+
+                    department:
+                        departmentValue,
+
+                    priority:
+                        priority,
+
+
+                    /*
+                     * Initial processing state
+                     */
+
+                    status:
+                        "pending",
+
+                    aiProcessed:
+                        false,
+
+                    aiAnswered:
+                        false,
+
+                    aiConfidence:
+                        0,
+
+
+                    /*
+                     * Faculty assignment
+                     */
+
+                    assignedFacultyId:
+                        "nil",
+
+
+                    /*
+                     * Similar query
+                     */
+
+                    similiarQueryId:
+                        "nil",
+
+
+                    /*
+                     * Timestamps
+                     */
+
+                    createdAt:
+                        serverTimestamp(),
+
+                    resolvedAt:
+                        "nil"
+                };
+
+
+                /*
+                 * Save query to Firestore.
+                 */
+
+                const queryDocument =
+                    await addDoc(
+                        collection(
+                            db,
+                            "queries"
+                        ),
+                        queryData
                     );
 
 
-                await uploadBytes(
-                    storageRef,
-                    file
+                /* =========================================
+                   IMPORTANT:
+                   SAVE QUERY ID IMMEDIATELY
+                ========================================= */
+
+                submittedQueryId =
+                    queryDocument.id;
+
+
+                console.log(
+                    "Query created:",
+                    submittedQueryId
                 );
 
 
-                attachmentUrl =
-                    await getDownloadURL(
-                        storageRef
+                /* =========================================
+                   AUTOMATIC FACULTY ASSIGNMENT
+                ========================================= */
+
+                try {
+
+                    console.log(
+                        "Starting automatic faculty assignment..."
                     );
 
 
-                attachmentName =
-                    file.name;
+                    /* -------------------------------------
+                       Get Firebase Authentication ID Token
+                    ------------------------------------- */
 
-            }
-
-
-            /* =============================
-               CREATE QUERY
-            ============================= */
-
-            updateProcessingStep(
-                "step1",
-                "completed"
-            );
+                    const idToken =
+                        await currentUser.getIdToken();
 
 
-            updateProcessingStep(
-                "step2",
-                "active"
-            );
+                    /* -------------------------------------
+                       Prepare request body
+                    ------------------------------------- */
+
+                    const requestBody = {
+
+                        queryId:
+                            submittedQueryId
+
+                    };
 
 
-            const queryData = {
-
-                /*
-                 * Current Firebase Auth UID
-                 */
-                uid:
-                    currentUser.uid,
+                    console.log(
+                        "Assignment request:",
+                        requestBody
+                    );
 
 
-                /*
-                 * Your current database uses
-                 * Auth UID as studentId.
-                 */
-                studentId:
-                    currentUser.uid,
+                    /* -------------------------------------
+                       Call FastAPI
+                    ------------------------------------- */
+
+                    const assignmentResponse =
+                        await fetch(
+                            "http://127.0.0.1:8000/assign-faculty",
+                            {
+
+                                method:
+                                    "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "Authorization":
+                                        `Bearer ${idToken}`
+
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        requestBody
+                                    )
+                            }
+                        );
 
 
-                /*
-                 * Form data
-                 */
-                title:
-                    titleValue,
+                    /* -------------------------------------
+                       Read API response
+                    ------------------------------------- */
 
-                description:
-                    descriptionValue,
-
-                course:
-                    courseValue,
-
-                department:
-                    departmentValue,
-
-                priority:
-                    priority,
+                    const assignmentResult =
+                        await assignmentResponse.json();
 
 
-                /*
-                 * Initial processing state
-                 */
-                status:
-                    "pending",
-
-                aiProcessed:
-                    false,
-
-                aiAnswered:
-                    false,
-
-                aiConfidence:
-                    0,
+                    console.log(
+                        "Faculty assignment API response:",
+                        assignmentResult
+                    );
 
 
-                /*
-                 * Faculty assignment
-                 */
-                assignedFacultyId:
-                    "nil",
+                    /* -------------------------------------
+                       Check API response
+                    ------------------------------------- */
+
+                    if (
+                        !assignmentResponse.ok
+                    ) {
+
+                        throw new Error(
+                            assignmentResult.detail ||
+                            "Faculty assignment failed."
+                        );
+
+                    }
 
 
-                /*
-                 * Similar query
-                 */
-                similiarQueryId:
-                    "nil",
+                    /* -------------------------------------
+                       Assignment successful
+                    ------------------------------------- */
+
+                    console.log(
+                        "Faculty assigned successfully!"
+                    );
 
 
-                /*
-                 * Timestamps
-                 */
-                createdAt:
-                    serverTimestamp(),
+                    if (
+                        assignmentResult.assignedFaculty
+                    ) {
+
+                        console.log(
+                            "Assigned Faculty:",
+                            assignmentResult
+                                .assignedFaculty
+                                .name
+                        );
+
+                    }
 
 
-                resolvedAt:
-                    "nil"
-
-            };
-
-
-            /*
-             * Add attachment information
-             * only when an attachment exists.
-             */
-
-            if (attachmentUrl) {
-
-                queryData.attachmentUrl =
-                    attachmentUrl;
-
-                queryData.attachmentName =
-                    attachmentName;
-
-            }
+                    console.log(
+                        "Assignment Confidence:",
+                        assignmentResult.confidence
+                    );
 
 
-            const queryDocument =
-                await addDoc(
-                    collection(
-                        db,
-                        "queries"
-                    ),
-                    queryData
+                    console.log(
+                        "Faculty Workload:",
+                        assignmentResult.workload
+                    );
+
+
+                } catch (assignmentError) {
+
+                    console.error(
+                        "Faculty assignment error:",
+                        assignmentError
+                    );
+
+                    /*
+                     * The query is already stored
+                     * in Firestore.
+                     *
+                     * Therefore don't delete
+                     * the query if assignment fails.
+                     */
+
+                }
+
+
+                /* =============================
+                   PROCESSING UI
+                ============================= */
+
+                updateProcessingStep(
+                    "step2",
+                    "completed"
                 );
 
 
-            submittedQueryId =
-                queryDocument.id;
+                updateProcessingStep(
+                    "step3",
+                    "active"
+                );
 
 
-            console.log(
-                "Query created:",
-                submittedQueryId
-            );
+                /*
+                 * Temporary AI processing
+                 * animation.
+                 */
+
+                await delay(
+                    700
+                );
 
 
-            /* =============================
-               PROCESSING UI
-            ============================= */
-
-            updateProcessingStep(
-                "step2",
-                "completed"
-            );
+                updateProcessingStep(
+                    "step3",
+                    "completed"
+                );
 
 
-            updateProcessingStep(
-                "step3",
-                "active"
-            );
+                updateProcessingStep(
+                    "step4",
+                    "active"
+                );
 
 
-            await delay(
-                700
-            );
+                await delay(
+                    700
+                );
 
 
-            updateProcessingStep(
-                "step3",
-                "completed"
-            );
+                updateProcessingStep(
+                    "step4",
+                    "completed"
+                );
 
 
-            updateProcessingStep(
-                "step4",
-                "active"
-            );
+                await delay(
+                    400
+                );
 
 
-            await delay(
-                700
-            );
+                /*
+                 * Show successful submission.
+                 */
+
+                showResultState(
+                    departmentValue
+                );
 
 
-            updateProcessingStep(
-                "step4",
-                "completed"
-            );
+            } catch (error) {
 
-
-            await delay(
-                400
-            );
-
-
-            showResultState(
-                departmentValue
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Error submitting query:",
-                error
-            );
-
-
-            closeAiModal();
-
-
-            showFormError(
-                getFirebaseErrorMessage(
+                console.error(
+                    "Error submitting query:",
                     error
-                )
-            );
+                );
 
 
-        } finally {
-
-            submitButton.disabled =
-                false;
+                closeAiModal();
 
 
-            submitButton.innerHTML = `
-                <span>
-                    Submit Query
-                </span>
+                showFormError(
+                    getFirebaseErrorMessage(
+                        error
+                    )
+                );
 
-                <span>
-                    →
-                </span>
-            `;
+
+            } finally {
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+
+                    submitButton.innerHTML = `
+                        <span>
+                            Submit Query
+                        </span>
+
+                        <span>
+                            →
+                        </span>
+                    `;
+
+                }
+
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
 /* =========================================
@@ -1035,6 +982,16 @@ queryForm.addEventListener(
 ========================================= */
 
 function showProcessingModal() {
+
+    if (
+        !processingState ||
+        !resultState ||
+        !aiModal
+    ) {
+
+        return;
+    }
+
 
     processingState.style.display =
         "block";
@@ -1052,6 +1009,10 @@ function showProcessingModal() {
 
 }
 
+
+/* =========================================
+   RESET PROCESSING STEPS
+========================================= */
 
 function resetProcessingSteps() {
 
@@ -1072,7 +1033,6 @@ function resetProcessingSteps() {
             if (!step) {
 
                 return;
-
             }
 
 
@@ -1092,7 +1052,6 @@ function resetProcessingSteps() {
 
                 icon.textContent =
                     "○";
-
             }
 
         }
@@ -1100,6 +1059,10 @@ function resetProcessingSteps() {
 
 }
 
+
+/* =========================================
+   UPDATE PROCESSING STEP
+========================================= */
 
 function updateProcessingStep(
     stepId,
@@ -1115,7 +1078,6 @@ function updateProcessingStep(
     if (!step) {
 
         return;
-
     }
 
 
@@ -1139,7 +1101,6 @@ function updateProcessingStep(
     if (!icon) {
 
         return;
-
     }
 
 
@@ -1177,6 +1138,15 @@ function showResultState(
     departmentValue
 ) {
 
+    if (
+        !processingState ||
+        !resultState
+    ) {
+
+        return;
+    }
+
+
     processingState.style.display =
         "none";
 
@@ -1206,7 +1176,6 @@ function showResultState(
 
         category.textContent =
             "Academic Query";
-
     }
 
 
@@ -1214,7 +1183,6 @@ function showResultState(
 
         similarity.textContent =
             "Pending AI analysis";
-
     }
 
 
@@ -1222,7 +1190,6 @@ function showResultState(
 
         nextStep.textContent =
             `Submitted to ${departmentValue}`;
-
     }
 
 }
@@ -1232,50 +1199,52 @@ function showResultState(
    CONTINUE BUTTON
 ========================================= */
 
-continueButton.addEventListener(
-    "click",
-    () => {
+if (continueButton) {
 
-        window.location.href =
-            "my-queries.html";
+    continueButton.addEventListener(
+        "click",
+        () => {
 
-    }
-);
+            window.location.href =
+                "my-queries.html";
+
+        }
+    );
+
+}
 
 
 /* =========================================
    MODAL CLOSE
 ========================================= */
 
-aiModal.addEventListener(
-    "click",
-    event => {
+if (aiModal) {
 
-        /*
-         * Don't allow the student to
-         * accidentally close the processing
-         * modal while submission is happening.
-         */
+    aiModal.addEventListener(
+        "click",
+        event => {
 
-        if (
-            event.target ===
-            aiModal &&
-            processingState.style.display ===
-            "none"
-        ) {
+            /*
+             * Don't allow the student to
+             * accidentally close the processing
+             * modal while submission is happening.
+             */
 
-            closeAiModal();
+            if (
+                event.target ===
+                aiModal &&
+
+                processingState &&
+
+                processingState.style.display ===
+                "none"
+            ) {
+
+                closeAiModal();
+
+            }
 
         }
-
-    }
-);
-
-
-function closeAiModal() {
-
-    aiModal.classList.remove(
-        "show"
     );
 
 }
