@@ -4,15 +4,13 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>DeptConnect - Register Student</title>
 
     <link rel="stylesheet" href="styles/register-student.css">
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
     <link rel="preconnect"
           href="https://fonts.gstatic.com"
@@ -40,7 +38,8 @@
             Queries
         </a>
 
-        <a href="register-student.html" class="nav-link active">
+        <a href="register-student.html"
+           class="nav-link active">
             Register Student
         </a>
 
@@ -77,31 +76,27 @@
 
     <section class="page-header">
 
-        <div>
+        <div class="breadcrumb">
 
-            <div class="breadcrumb">
+            <a href="dashboard.html">
+                Dashboard
+            </a>
 
-                <a href="dashboard.html">
-                    Dashboard
-                </a>
+            <span>›</span>
 
-                <span>›</span>
-
-                <span>
-                    Register Student
-                </span>
-
-            </div>
-
-            <h1>
+            <span>
                 Register Student
-            </h1>
-
-            <p>
-                Create a new student account and academic profile.
-            </p>
+            </span>
 
         </div>
+
+        <h1>
+            Register Student
+        </h1>
+
+        <p>
+            Create a new student account and academic profile.
+        </p>
 
     </section>
 
@@ -351,7 +346,7 @@
             </div>
 
 
-            <!-- ACCOUNT INFORMATION -->
+            <!-- ACCOUNT SETTINGS -->
 
             <div class="form-section">
 
@@ -415,7 +410,7 @@
             </div>
 
 
-            <!-- ACTIONS -->
+            <!-- BUTTONS -->
 
             <div class="form-actions">
 
@@ -426,6 +421,7 @@
                 >
                     Cancel
                 </button>
+
 
                 <button
                     type="submit"
@@ -454,16 +450,16 @@
 </main>
 
 
-<div
-    class="toast"
-    id="toast"
->
+<div class="toast" id="toast">
+
     <span id="toastMessage"></span>
+
 </div>
 
 
-<script type="module"
-        src="scripts/register-student.js">
+<script
+    type="module"
+    src="scripts/register-student.js">
 </script>
 
 </body>

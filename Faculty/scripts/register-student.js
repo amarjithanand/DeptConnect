@@ -19,7 +19,7 @@ import {
 
 
 /* =========================================
-   FIREBASE CONFIGURATION
+   FIREBASE CONFIG
 ========================================= */
 
 const firebaseConfig = {
@@ -44,6 +44,7 @@ const firebaseConfig = {
 
     measurementId:
         "G-2B4VN12YW5"
+
 };
 
 
@@ -51,11 +52,24 @@ const firebaseConfig = {
    INITIALIZE FIREBASE
 ========================================= */
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth =
+    getAuth(app);
 
-const functions = getFunctions(app);
+
+/*
+ * IMPORTANT:
+ * Explicitly use the same region as
+ * the deployed Cloud Function.
+ */
+
+const functions =
+    getFunctions(
+        app,
+        "us-central1"
+    );
 
 
 /* =========================================
@@ -63,347 +77,508 @@ const functions = getFunctions(app);
 ========================================= */
 
 const form =
-    document.getElementById("registerStudentForm");
+    document.getElementById(
+        "registerStudentForm"
+    );
 
 const registerButton =
-    document.getElementById("registerButton");
+    document.getElementById(
+        "registerButton"
+    );
 
 const buttonText =
-    document.getElementById("buttonText");
+    document.getElementById(
+        "buttonText"
+    );
 
 const buttonLoader =
-    document.getElementById("buttonLoader");
+    document.getElementById(
+        "buttonLoader"
+    );
 
 const cancelButton =
-    document.getElementById("cancelButton");
+    document.getElementById(
+        "cancelButton"
+    );
 
 const profileButton =
-    document.getElementById("profileButton");
+    document.getElementById(
+        "profileButton"
+    );
 
 const profileMenu =
-    document.getElementById("profileMenu");
+    document.getElementById(
+        "profileMenu"
+    );
 
 const logoutButton =
-    document.getElementById("logoutButton");
+    document.getElementById(
+        "logoutButton"
+    );
 
 const toast =
-    document.getElementById("toast");
+    document.getElementById(
+        "toast"
+    );
 
 const toastMessage =
-    document.getElementById("toastMessage");
+    document.getElementById(
+        "toastMessage"
+    );
+
+
+/* =========================================
+   CURRENT FACULTY
+========================================= */
+
+let currentFaculty = null;
 
 
 /* =========================================
    TOAST
 ========================================= */
 
-function showToast(message, success = true) {
+function showToast(
+    message,
+    success = true
+) {
 
-    toastMessage.textContent = message;
+    toastMessage.textContent =
+        message;
 
     toast.style.background =
-        success ? "#166534" : "#b91c1c";
+        success
+            ? "#166534"
+            : "#b91c1c";
 
-    toast.classList.add("show");
+    toast.classList.add(
+        "show"
+    );
+
 
     setTimeout(() => {
 
-        toast.classList.remove("show");
+        toast.classList.remove(
+            "show"
+        );
 
-    }, 3500);
+    }, 4000);
+
 }
 
 
 /* =========================================
-   AUTHENTICATION
+   AUTH STATE
 ========================================= */
 
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(
+    auth,
+    (user) => {
 
-    if (!user) {
+        if (!user) {
 
-        window.location.href =
-            "login.html";
+            window.location.href =
+                "login.html";
 
-        return;
+            return;
+        }
+
+
+        currentFaculty =
+            user;
+
+
+        console.log(
+            "Faculty authenticated:",
+            user.uid
+        );
+
     }
-
-    console.log(
-        "Authenticated faculty UID:",
-        user.uid
-    );
-
-});
+);
 
 
 /* =========================================
    REGISTER STUDENT
 ========================================= */
 
-form.addEventListener("submit", async (event) => {
+form.addEventListener(
+    "submit",
+    async (event) => {
 
-    event.preventDefault();
-
-
-    /* -----------------------------------------
-       GET FORM VALUES
-    ----------------------------------------- */
-
-    const name =
-        document.getElementById("name")
-            .value.trim();
-
-    const email =
-        document.getElementById("email")
-            .value.trim();
-
-    const password =
-        document.getElementById("password")
-            .value;
-
-    const batch =
-        document.getElementById("batch")
-            .value.trim();
-
-    const department =
-        document.getElementById("department")
-            .value.trim();
-
-    const dob =
-        document.getElementById("dob")
-            .value;
-
-    const gender =
-        document.getElementById("gender")
-            .value;
-
-    const profileImg =
-        document.getElementById("profileImg")
-            .value.trim();
-
-    const programme =
-        document.getElementById("programme")
-            .value.trim();
-
-    const semester =
-        Number(
-            document.getElementById("semester")
-                .value
-        );
-
-    const studentId =
-        document.getElementById("studentId")
-            .value.trim();
-
-    const accountStatus =
-        document.getElementById("accountStatus")
-            .checked;
-
-    const studentStatus =
-        document.getElementById("studentStatus")
-            .checked;
+        event.preventDefault();
 
 
-    /* -----------------------------------------
-       BASIC VALIDATION
-    ----------------------------------------- */
+        /* -------------------------------------
+           MAKE SURE FACULTY IS LOGGED IN
+        ------------------------------------- */
 
-    if (!name ||
-        !email ||
-        !password ||
-        !batch ||
-        !department ||
-        !dob ||
-        !gender ||
-        !programme ||
-        !semester ||
-        !studentId) {
+        if (!auth.currentUser) {
 
-        showToast(
-            "Please fill all required fields.",
-            false
-        );
-
-        return;
-    }
-
-
-    if (password.length < 6) {
-
-        showToast(
-            "Password must contain at least 6 characters.",
-            false
-        );
-
-        return;
-    }
-
-
-    /* -----------------------------------------
-       DISABLE BUTTON
-    ----------------------------------------- */
-
-    registerButton.disabled = true;
-
-    buttonText.textContent =
-        "Registering...";
-
-    buttonLoader.hidden = false;
-
-
-    try {
-
-        /* -----------------------------------------
-           CALL CLOUD FUNCTION
-        ----------------------------------------- */
-
-        const registerStudent =
-            httpsCallable(
-                functions,
-                "registerStudent"
+            showToast(
+                "Your session has expired. Please login again.",
+                false
             );
 
-
-        const result =
-            await registerStudent({
-
-                name,
-
-                email,
-
-                password,
-
-                batch,
-
-                account_status:
-                    accountStatus,
-
-                department,
-
-                dob,
-
-                gender,
-
-                profileImg,
-
-                programme,
-
-                semester,
-
-                studentId,
-
-                student_status:
-                    studentStatus
-
-            });
-
-
-        console.log(
-            "Registration result:",
-            result.data
-        );
-
-
-        /* -----------------------------------------
-           SUCCESS
-        ----------------------------------------- */
-
-        showToast(
-            "Student registered successfully.",
-            true
-        );
-
-
-        /* Reset form */
-
-        form.reset();
-
-
-        /* Restore defaults */
-
-        document.getElementById(
-            "accountStatus"
-        ).checked = true;
-
-        document.getElementById(
-            "studentStatus"
-        ).checked = true;
-
-
-    } catch (error) {
-
-        console.error(
-            "Student registration error:",
-            error
-        );
-
-
-        let message =
-            "Unable to register student.";
-
-
-        if (error.code ===
-            "functions/already-exists") {
-
-            message =
-                "A student with this email or Student ID already exists.";
-
-        } else if (
-            error.code ===
-            "functions/permission-denied"
-        ) {
-
-            message =
-                "You are not authorized to register students.";
-
-        } else if (
-            error.code ===
-            "functions/invalid-argument"
-        ) {
-
-            message =
-                error.message ||
-                "Invalid student information.";
-
-        } else if (
-            error.code ===
-            "functions/unauthenticated"
-        ) {
-
-            message =
-                "Your session has expired. Please login again.";
-
-        } else if (
-            error.message
-        ) {
-
-            message =
-                error.message;
+            return;
         }
 
 
-        showToast(
-            message,
-            false
-        );
+        /* -------------------------------------
+           GET FORM VALUES
+        ------------------------------------- */
+
+        const name =
+            document
+                .getElementById("name")
+                .value
+                .trim();
 
 
-    } finally {
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim()
+                .toLowerCase();
 
-        registerButton.disabled = false;
+
+        const password =
+            document
+                .getElementById("password")
+                .value;
+
+
+        const batch =
+            document
+                .getElementById("batch")
+                .value
+                .trim();
+
+
+        const department =
+            document
+                .getElementById("department")
+                .value
+                .trim();
+
+
+        const dob =
+            document
+                .getElementById("dob")
+                .value;
+
+
+        const gender =
+            document
+                .getElementById("gender")
+                .value;
+
+
+        const profileImg =
+            document
+                .getElementById("profileImg")
+                .value
+                .trim();
+
+
+        const programme =
+            document
+                .getElementById("programme")
+                .value
+                .trim();
+
+
+        const semester =
+            Number(
+                document
+                    .getElementById("semester")
+                    .value
+            );
+
+
+        const studentId =
+            document
+                .getElementById("studentId")
+                .value
+                .trim();
+
+
+        const accountStatus =
+            document
+                .getElementById("accountStatus")
+                .checked;
+
+
+        const studentStatus =
+            document
+                .getElementById("studentStatus")
+                .checked;
+
+
+        /* -------------------------------------
+           VALIDATION
+        ------------------------------------- */
+
+        if (
+            !name ||
+            !email ||
+            !password ||
+            !batch ||
+            !department ||
+            !dob ||
+            !gender ||
+            !programme ||
+            !studentId
+        ) {
+
+            showToast(
+                "Please fill all required fields.",
+                false
+            );
+
+            return;
+        }
+
+
+        if (password.length < 6) {
+
+            showToast(
+                "Password must contain at least 6 characters.",
+                false
+            );
+
+            return;
+        }
+
+
+        if (
+            !Number.isInteger(semester) ||
+            semester < 1 ||
+            semester > 6
+        ) {
+
+            showToast(
+                "Please select a valid semester.",
+                false
+            );
+
+            return;
+        }
+
+
+        /* -------------------------------------
+           DISABLE BUTTON
+        ------------------------------------- */
+
+        registerButton.disabled =
+            true;
 
         buttonText.textContent =
-            "Register Student";
+            "Registering...";
 
-        buttonLoader.hidden = true;
+        buttonLoader.hidden =
+            false;
+
+
+        try {
+
+            /* ---------------------------------
+               GET CALLABLE FUNCTION
+            --------------------------------- */
+
+            const registerStudent =
+                httpsCallable(
+                    functions,
+                    "registerStudent"
+                );
+
+
+            /* ---------------------------------
+               CALL BACKEND
+            --------------------------------- */
+
+            const result =
+                await registerStudent({
+
+                    name: name,
+
+                    email: email,
+
+                    password: password,
+
+                    batch: batch,
+
+                    account_status:
+                        accountStatus,
+
+                    department:
+                        department,
+
+                    dob: dob,
+
+                    gender: gender,
+
+                    profileImg:
+                        profileImg,
+
+                    programme:
+                        programme,
+
+                    semester:
+                        semester,
+
+                    studentId:
+                        studentId,
+
+                    student_status:
+                        studentStatus
+
+                });
+
+
+            console.log(
+                "Registration successful:",
+                result.data
+            );
+
+
+            /* ---------------------------------
+               SUCCESS
+            --------------------------------- */
+
+            showToast(
+                "Student registered successfully.",
+                true
+            );
+
+
+            /* Reset form */
+
+            form.reset();
+
+
+            /* Restore default switches */
+
+            document
+                .getElementById(
+                    "accountStatus"
+                )
+                .checked = true;
+
+
+            document
+                .getElementById(
+                    "studentStatus"
+                )
+                .checked = true;
+
+
+        } catch (error) {
+
+            console.error(
+                "Student registration error:",
+                error
+            );
+
+
+            /* -------------------------------
+               ERROR MESSAGE
+            -------------------------------- */
+
+            let message =
+                "Unable to register student.";
+
+
+            if (
+                error.code ===
+                "functions/already-exists"
+            ) {
+
+                message =
+                    error.message ||
+                    "Email or Student ID already exists.";
+
+            }
+
+            else if (
+                error.code ===
+                "functions/permission-denied"
+            ) {
+
+                message =
+                    "You are not authorized to register students.";
+
+            }
+
+            else if (
+                error.code ===
+                "functions/unauthenticated"
+            ) {
+
+                message =
+                    "Your login session has expired.";
+
+            }
+
+            else if (
+                error.code ===
+                "functions/invalid-argument"
+            ) {
+
+                message =
+                    error.message ||
+                    "Invalid student information.";
+
+            }
+
+            else if (
+                error.code ===
+                "functions/internal"
+            ) {
+
+                message =
+                    error.message ||
+                    "A server error occurred while registering the student.";
+
+            }
+
+            else if (
+                error.message
+            ) {
+
+                message =
+                    error.message;
+
+            }
+
+
+            showToast(
+                message,
+                false
+            );
+
+        }
+
+
+        finally {
+
+            registerButton.disabled =
+                false;
+
+            buttonText.textContent =
+                "Register Student";
+
+            buttonLoader.hidden =
+                true;
+
+        }
 
     }
-
-});
+);
 
 
 /* =========================================
-   CANCEL
+   CANCEL BUTTON
 ========================================= */
 
 cancelButton.addEventListener(
@@ -412,13 +587,19 @@ cancelButton.addEventListener(
 
         form.reset();
 
-        document.getElementById(
-            "accountStatus"
-        ).checked = true;
 
-        document.getElementById(
-            "studentStatus"
-        ).checked = true;
+        document
+            .getElementById(
+                "accountStatus"
+            )
+            .checked = true;
+
+
+        document
+            .getElementById(
+                "studentStatus"
+            )
+            .checked = true;
 
     }
 );

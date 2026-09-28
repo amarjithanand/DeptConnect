@@ -12,11 +12,15 @@ body {
 }
 
 
-/* NAVBAR */
+/* ================================
+   NAVBAR
+================================ */
 
 .navbar {
     height: 72px;
+
     background: #ffffff;
+
     border-bottom: 1px solid #e5e7eb;
 
     display: flex;
@@ -32,6 +36,7 @@ body {
 
 .brand {
     text-decoration: none;
+
     color: #172554;
 
     font-size: 21px;
@@ -40,6 +45,7 @@ body {
 
 .nav-links {
     display: flex;
+
     gap: 28px;
 
     margin-left: 55px;
@@ -47,6 +53,7 @@ body {
 
 .nav-link {
     text-decoration: none;
+
     color: #64748b;
 
     font-size: 14px;
@@ -62,6 +69,7 @@ body {
 
 .nav-actions {
     margin-left: auto;
+
     position: relative;
 }
 
@@ -70,9 +78,11 @@ body {
     height: 42px;
 
     border: none;
+
     border-radius: 50%;
 
     background: #1d4ed8;
+
     color: white;
 
     font-weight: 600;
@@ -91,9 +101,10 @@ body {
     background: white;
 
     border: 1px solid #e5e7eb;
+
     border-radius: 10px;
 
-    box-shadow: 0 12px 30px rgba(0,0,0,.10);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .10);
 
     padding: 8px;
 
@@ -113,6 +124,7 @@ body {
     padding: 10px 12px;
 
     border: none;
+
     background: transparent;
 
     text-align: left;
@@ -134,7 +146,9 @@ body {
 }
 
 
-/* PAGE */
+/* ================================
+   PAGE
+================================ */
 
 .page-container {
     max-width: 1100px;
@@ -150,6 +164,7 @@ body {
 
 .breadcrumb {
     display: flex;
+
     gap: 8px;
 
     font-size: 13px;
@@ -161,11 +176,13 @@ body {
 
 .breadcrumb a {
     color: #1d4ed8;
+
     text-decoration: none;
 }
 
 .page-header h1 {
     font-size: 31px;
+
     color: #172554;
 
     margin-bottom: 8px;
@@ -173,11 +190,14 @@ body {
 
 .page-header p {
     color: #64748b;
+
     font-size: 14px;
 }
 
 
-/* FORM CARD */
+/* ================================
+   FORM CARD
+================================ */
 
 .form-card {
     background: #ffffff;
@@ -186,7 +206,8 @@ body {
 
     border-radius: 14px;
 
-    box-shadow: 0 5px 20px rgba(15, 23, 42, .04);
+    box-shadow:
+        0 5px 20px rgba(15, 23, 42, .04);
 
     overflow: hidden;
 }
@@ -199,6 +220,7 @@ body {
 
 .section-label {
     font-size: 11px;
+
     font-weight: 700;
 
     letter-spacing: 1.2px;
@@ -221,7 +243,9 @@ body {
 }
 
 
-/* FORM SECTIONS */
+/* ================================
+   FORM SECTION
+================================ */
 
 .form-section {
     padding: 28px 32px;
@@ -240,7 +264,8 @@ body {
 .form-grid {
     display: grid;
 
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+        repeat(2, 1fr);
 
     gap: 20px;
 }
@@ -298,16 +323,20 @@ body {
 .form-group select:focus {
     border-color: #2563eb;
 
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, .08);
 }
 
 
-/* STATUS */
+/* ================================
+   STATUS SWITCH
+================================ */
 
 .status-grid {
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+        1fr 1fr;
 
     gap: 18px;
 }
@@ -318,6 +347,8 @@ body {
     align-items: center;
 
     justify-content: space-between;
+
+    gap: 20px;
 
     padding: 18px;
 
@@ -382,7 +413,8 @@ body {
 
     transition: .2s;
 
-    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, .2);
 }
 
 .switch-row input:checked + .switch {
@@ -394,7 +426,9 @@ body {
 }
 
 
-/* ACTIONS */
+/* ================================
+   ACTIONS
+================================ */
 
 .form-actions {
     padding: 22px 32px;
@@ -457,17 +491,21 @@ body {
 
 .register-button:disabled {
     opacity: .7;
+
     cursor: not-allowed;
 }
 
 
-/* LOADER */
+/* ================================
+   LOADER
+================================ */
 
 .loader {
     width: 16px;
     height: 16px;
 
-    border: 2px solid rgba(255,255,255,.4);
+    border: 2px solid rgba(255, 255, 255, .4);
+
     border-top-color: white;
 
     border-radius: 50%;
@@ -476,13 +514,17 @@ body {
 }
 
 @keyframes spin {
+
     to {
         transform: rotate(360deg);
     }
+
 }
 
 
-/* TOAST */
+/* ================================
+   TOAST
+================================ */
 
 .toast {
     position: fixed;
@@ -518,7 +560,9 @@ body {
 }
 
 
-/* RESPONSIVE */
+/* ================================
+   RESPONSIVE
+================================ */
 
 @media (max-width: 750px) {
 
@@ -547,6 +591,7 @@ body {
     .form-section,
     .form-actions {
         padding-left: 20px;
+
         padding-right: 20px;
     }
 
