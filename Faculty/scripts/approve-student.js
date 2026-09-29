@@ -1,10 +1,4 @@
-/* =========================================
-   FIREBASE IMPORTS
-========================================= */
-
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
     getAuth,
@@ -23,786 +17,510 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 
-/* =========================================
-   FIREBASE CONFIG
-========================================= */
+// =====================================================
+// FIREBASE CONFIG
+// =====================================================
 
 const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
-
-    authDomain:
-        "deptconnect-8b81c.firebaseapp.com",
-
-    projectId:
-        "deptconnect-8b81c",
-
-    storageBucket:
-        "deptconnect-8b81c.firebasestorage.app",
-
-    messagingSenderId:
-        "916956737819",
-
-    appId:
-        "1:916956737819:web:8fc9920e834ac99e66e3be",
-
-    measurementId:
-        "G-2B4VN12YW5"
-
+    apiKey: "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+    authDomain: "deptconnect-8b81c.firebaseapp.com",
+    projectId: "deptconnect-8b81c",
+    storageBucket: "deptconnect-8b81c.firebasestorage.app",
+    messagingSenderId: "916956737819",
+    appId: "1:916956737819:web:8fc9920e834ac99e66e3be",
+    measurementId: "G-2B4VN12YW5"
 };
 
 
-/* =========================================
-   INITIALIZE FIREBASE
-========================================= */
+// =====================================================
+// INITIALIZE FIREBASE
+// =====================================================
 
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
-
 const db = getFirestore(app);
 
 
-/* =========================================
-   DOM ELEMENTS
-========================================= */
+// =====================================================
+// DOM ELEMENTS
+// =====================================================
 
-const loading =
-    document.getElementById("loading");
+const loading = document.getElementById("loading");
+const emptyState = document.getElementById("emptyState");
+const studentList = document.getElementById("studentList");
 
-const emptyState =
-    document.getElementById("emptyState");
+const pendingCount = document.getElementById("pendingCount");
+const departmentCount = document.getElementById("departmentCount");
 
-const studentList =
-    document.getElementById("studentList");
+const departmentText = document.getElementById("departmentText");
+const facultyName = document.getElementById("facultyName");
+const facultyId = document.getElementById("facultyId");
 
-const pendingCount =
-    document.getElementById("pendingCount");
-
-const departmentCount =
-    document.getElementById("departmentCount");
-
-const departmentText =
-    document.getElementById("departmentText");
-
-const facultyName =
-    document.getElementById("facultyName");
-
-const facultyId =
-    document.getElementById("facultyId");
-
-const refreshButton =
-    document.getElementById("refreshButton");
+const refreshButton = document.getElementById("refreshButton");
 
 
-/* =========================================
-   MODAL ELEMENTS
-========================================= */
+// =====================================================
+// MODAL ELEMENTS
+// =====================================================
 
-const studentModal =
-    document.getElementById("studentModal");
+const studentModal = document.getElementById("studentModal");
+const closeModal = document.getElementById("closeModal");
 
-const closeModal =
-    document.getElementById("closeModal");
+const modalName = document.getElementById("modalName");
+const modalStudentId = document.getElementById("modalStudentId");
+const modalEmail = document.getElementById("modalEmail");
+const modalDepartment = document.getElementById("modalDepartment");
+const modalProgramme = document.getElementById("modalProgramme");
+const modalSemester = document.getElementById("modalSemester");
+const modalBatch = document.getElementById("modalBatch");
+const modalGender = document.getElementById("modalGender");
+const modalAvatar = document.getElementById("modalAvatar");
 
-const modalName =
-    document.getElementById("modalName");
-
-const modalStudentId =
-    document.getElementById("modalStudentId");
-
-const modalEmail =
-    document.getElementById("modalEmail");
-
-const modalDepartment =
-    document.getElementById("modalDepartment");
-
-const modalProgramme =
-    document.getElementById("modalProgramme");
-
-const modalSemester =
-    document.getElementById("modalSemester");
-
-const modalBatch =
-    document.getElementById("modalBatch");
-
-const modalGender =
-    document.getElementById("modalGender");
-
-const modalAvatar =
-    document.getElementById("modalAvatar");
-
-const modalApprove =
-    document.getElementById("modalApprove");
-
-const modalReject =
-    document.getElementById("modalReject");
+const modalApprove = document.getElementById("modalApprove");
+const modalReject = document.getElementById("modalReject");
 
 
-/* =========================================
-   GLOBAL VARIABLES
-========================================= */
+// =====================================================
+// GLOBAL VARIABLES
+// =====================================================
 
 let currentFaculty = null;
-
 let selectedStudent = null;
 
 
-/* =========================================
-   TOAST
-========================================= */
+// =====================================================
+// TOAST
+// =====================================================
 
-function showToast(
-    message,
-    success = false
-) {
+function showToast(message, type = "success") {
 
-    const toast =
-        document.getElementById("toast");
+    const oldToast = document.querySelector(".toast");
 
-    const toastMessage =
-        document.getElementById("toastMessage");
-
-
-    if (!toast || !toastMessage) {
-
-        alert(message);
-
-        return;
+    if (oldToast) {
+        oldToast.remove();
     }
 
+    const toast = document.createElement("div");
 
-    toastMessage.textContent =
-        message;
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
 
-
-    toast.style.background =
-        success
-            ? "#166534"
-            : "#b91c1c";
-
-
-    toast.classList.add("show");
-
+    document.body.appendChild(toast);
 
     setTimeout(() => {
+        toast.classList.add("show");
+    }, 10);
 
+    setTimeout(() => {
         toast.classList.remove("show");
 
-    }, 3500);
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
 
+    }, 3000);
 }
 
 
-/* =========================================
-   AUTH STATE
-========================================= */
+// =====================================================
+// AUTH STATE
+// =====================================================
 
-onAuthStateChanged(
-    auth,
-    async (user) => {
+onAuthStateChanged(auth, async (user) => {
 
-        if (!user) {
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
 
-            window.location.href =
-                "login.html";
+    try {
+
+        showLoading(true);
+
+        await loadFaculty(user.uid);
+
+        await loadPendingStudents();
+
+        showLoading(false);
+
+    } catch (error) {
+
+        console.error("Authentication / loading error:", error);
+
+        showLoading(false);
+
+        showToast(
+            "Unable to load approval data.",
+            "error"
+        );
+    }
+});
+
+
+// =====================================================
+// LOAD FACULTY
+// =====================================================
+
+async function loadFaculty(uid) {
+
+    try {
+
+        const facultyQuery = query(
+            collection(db, "faculty"),
+            where("uid", "==", uid)
+        );
+
+        const facultySnapshot = await getDocs(facultyQuery);
+
+        if (facultySnapshot.empty) {
+
+            console.error("Faculty document not found.");
+
+            showToast(
+                "Faculty profile not found.",
+                "error"
+            );
+
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 2000);
+
+            return;
+        }
+
+        const facultyDoc = facultySnapshot.docs[0];
+
+        currentFaculty = {
+            id: facultyDoc.id,
+            ...facultyDoc.data()
+        };
+
+
+        // Verify UID
+        if (currentFaculty.uid !== uid) {
+
+            throw new Error(
+                "Faculty UID verification failed."
+            );
+        }
+
+
+        // Check faculty status
+        if (currentFaculty.faculty_status === false) {
+
+            showToast(
+                "Your faculty account is inactive.",
+                "error"
+            );
 
             return;
         }
 
 
-        console.log(
-            "Logged in faculty UID:",
-            user.uid
-        );
-
-
-        try {
-
-            /*
-             * Load faculty profile
-             * using uid FIELD.
-             */
-
-            await loadFaculty(
-                user.uid
-            );
-
-
-            /*
-             * Load pending students
-             * from the same department.
-             */
-
-            await loadPendingStudents();
-
-
-        } catch (error) {
-
-            console.error(
-                "Page initialization error:",
-                error
-            );
-
-
-            if (loading) {
-                loading.hidden = true;
-            }
-
+        // Department required
+        if (!currentFaculty.department) {
 
             showToast(
-                "Unable to load faculty/student details."
+                "Faculty department is not configured.",
+                "error"
             );
 
+            return;
         }
 
-    }
-);
 
+        // Update UI
 
-/* =========================================
-   LOAD FACULTY
-========================================= */
+        if (facultyName) {
+            facultyName.textContent =
+                currentFaculty.name || "Faculty";
+        }
 
-async function loadFaculty(uid) {
+        if (facultyId) {
+            facultyId.textContent =
+                currentFaculty.facultyId || "";
+        }
 
-    console.log(
-        "Searching faculty with UID:",
-        uid
-    );
+        if (departmentText) {
+            departmentText.textContent =
+                currentFaculty.department;
+        }
 
-
-    /* =====================================
-       FIND FACULTY USING UID FIELD
-    ===================================== */
-
-    const facultyQuery =
-        query(
-            collection(
-                db,
-                "faculty"
-            ),
-
-            where(
-                "uid",
-                "==",
-                uid
-            )
-        );
-
-
-    const facultySnapshot =
-        await getDocs(
-            facultyQuery
-        );
-
-
-    console.log(
-        "Faculty documents found:",
-        facultySnapshot.size
-    );
-
-
-    /* =====================================
-       FACULTY NOT FOUND
-    ===================================== */
-
-    if (
-        facultySnapshot.empty
-    ) {
+    } catch (error) {
 
         console.error(
-            "Faculty document not found for UID:",
-            uid
+            "Error loading faculty:",
+            error
         );
 
-
-        throw new Error(
-            "Faculty profile not found."
-        );
-
+        throw error;
     }
-
-
-    /* =====================================
-       GET FACULTY DATA
-    ===================================== */
-
-    const facultyDocument =
-        facultySnapshot.docs[0];
-
-
-    currentFaculty =
-        facultyDocument.data();
-
-
-    console.log(
-        "Faculty data:",
-        currentFaculty
-    );
-
-
-    /* =====================================
-       VERIFY UID
-    ===================================== */
-
-    if (
-        currentFaculty.uid !== uid
-    ) {
-
-        throw new Error(
-            "Faculty UID does not match."
-        );
-
-    }
-
-
-    /* =====================================
-       CHECK FACULTY STATUS
-    ===================================== */
-
-    if (
-        currentFaculty.faculty_status === false
-    ) {
-
-        throw new Error(
-            "Faculty account is inactive."
-        );
-
-    }
-
-
-    /* =====================================
-       CHECK DEPARTMENT
-    ===================================== */
-
-    if (
-        !currentFaculty.department
-    ) {
-
-        throw new Error(
-            "Faculty department is missing."
-        );
-
-    }
-
-
-    /* =====================================
-       DISPLAY FACULTY INFORMATION
-    ===================================== */
-
-    facultyName.textContent =
-        currentFaculty.name ||
-        "Faculty";
-
-
-    facultyId.textContent =
-        currentFaculty.facultyId ||
-        uid;
-
-
-    departmentText.textContent =
-        `Department: ${currentFaculty.department}`;
-
-
-    departmentCount.textContent =
-        currentFaculty.department;
-
-
-    console.log(
-        "Faculty department:",
-        currentFaculty.department
-    );
-
 }
 
 
-/* =========================================
-   LOAD PENDING STUDENTS
-========================================= */
+// =====================================================
+// LOAD PENDING STUDENTS
+// =====================================================
 
 async function loadPendingStudents() {
 
     if (!currentFaculty) {
-
-        console.error(
-            "Faculty data is not loaded."
-        );
-
         return;
     }
 
-
-    /* =====================================
-       RESET UI
-    ===================================== */
-
-    loading.hidden = false;
-
-    emptyState.hidden = true;
-
-    studentList.hidden = true;
-
-    studentList.innerHTML = "";
-
-
-    /* =====================================
-       FACULTY DEPARTMENT
-    ===================================== */
-
-    const facultyDepartment =
-        currentFaculty.department;
-
-
-    console.log(
-        "Loading students from department:",
-        facultyDepartment
-    );
-
-
     try {
 
-        /* =================================
-           GET STUDENTS FROM SAME DEPARTMENT
-           
-           IMPORTANT:
-           isApproved is the ONLY approval
-           field used for pending requests.
-        ================================= */
+        showLoading(true);
 
-        const studentsQuery =
-            query(
-                collection(
-                    db,
-                    "students"
-                ),
+        const facultyDepartment =
+            currentFaculty.department;
 
-                where(
-                    "department",
-                    "==",
-                    facultyDepartment
-                ),
 
-                where(
-                    "isApproved",
-                    "==",
-                    false
-                )
-            );
+        // IMPORTANT:
+        // Only isApproved is used to identify pending students.
+
+        const studentsQuery = query(
+            collection(db, "students"),
+            where(
+                "department",
+                "==",
+                facultyDepartment
+            ),
+            where(
+                "isApproved",
+                "==",
+                false
+            )
+        );
 
 
         const snapshot =
-            await getDocs(
-                studentsQuery
-            );
-
-
-        console.log(
-            "Student documents found:",
-            snapshot.size
-        );
+            await getDocs(studentsQuery);
 
 
         const students = [];
 
 
-        /* =================================
-           READ STUDENT DOCUMENTS
-        ================================= */
+        snapshot.forEach((studentDoc) => {
 
-        snapshot.forEach(
-            (studentDoc) => {
-
-                const data =
-                    studentDoc.data();
+            const data = studentDoc.data();
 
 
-                console.log(
-                    "Student:",
-                    studentDoc.id,
-                    data
-                );
+            // Additional client-side safety check
+            if (data.isApproved === false) {
 
-
-                /*
-                 * IMPORTANT:
-                 *
-                 * If isApproved === false,
-                 * the student needs approval.
-                 *
-                 * We DO NOT check:
-                 *
-                 * account_status
-                 * student_status
-                 *
-                 * because your existing data may
-                 * have those fields as true.
-                 */
-
-                if (
-                    data.isApproved === false
-                ) {
-
-                    students.push({
-
-                        id:
-                            studentDoc.id,
-
-                        ...data
-
-                    });
-
-                }
-
+                students.push({
+                    id: studentDoc.id,
+                    ...data
+                });
             }
-        );
+
+        });
 
 
-        /* =================================
-           SORT BY CREATED TIME
-        ================================= */
+        // Sort by createdAt
+        students.sort((a, b) => {
 
-        students.sort(
-            (a, b) => {
+            const dateA =
+                getTimestampValue(a.createdAt);
 
-                const timeA =
-                    getTimestampValue(
-                        a.createdAt
-                    );
+            const dateB =
+                getTimestampValue(b.createdAt);
 
-
-                const timeB =
-                    getTimestampValue(
-                        b.createdAt
-                    );
+            return dateA - dateB;
+        });
 
 
-                return timeB - timeA;
+        // Update counters
 
-            }
-        );
+        if (pendingCount) {
+            pendingCount.textContent =
+                students.length;
+        }
 
-
-        /* =================================
-           UPDATE PENDING COUNT
-        ================================= */
-
-        pendingCount.textContent =
-            students.length;
-
-
-        loading.hidden = true;
-
-
-        /* =================================
-           NO PENDING STUDENTS
-        ================================= */
-
-        if (
-            students.length === 0
-        ) {
-
-            emptyState.hidden = false;
-
-            studentList.hidden = true;
-
-            return;
-
+        if (departmentCount) {
+            departmentCount.textContent =
+                students.length;
         }
 
 
-        /* =================================
-           DISPLAY STUDENTS
-        ================================= */
+        // Clear existing cards
 
-        students.forEach(
-            (student) => {
-
-                createStudentCard(
-                    student
-                );
-
-            }
-        );
+        studentList.innerHTML = "";
 
 
-        studentList.hidden = false;
+        if (students.length === 0) {
+
+            emptyState.style.display = "flex";
+            studentList.style.display = "none";
+
+        } else {
+
+            emptyState.style.display = "none";
+            studentList.style.display = "grid";
+
+
+            students.forEach((student) => {
+
+                const card =
+                    createStudentCard(student);
+
+                studentList.appendChild(card);
+            });
+        }
 
 
     } catch (error) {
 
         console.error(
-            "Error loading pending students:",
+            "Error loading students:",
             error
         );
 
-
-        loading.hidden = true;
-
-        emptyState.hidden = false;
-
-        pendingCount.textContent =
-            "0";
-
-
         showToast(
-            "Unable to load student registrations."
+            "Failed to load pending students.",
+            "error"
         );
 
-    }
+    } finally {
 
+        showLoading(false);
+    }
 }
 
 
-/* =========================================
-   CREATE STUDENT CARD
-========================================= */
+// =====================================================
+// CREATE STUDENT CARD
+// =====================================================
 
 function createStudentCard(student) {
 
     const card =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
+
+    card.className = "student-card";
 
 
-    card.className =
-        "student-card";
+    const initials =
+        getInitials(student.name);
 
 
-    /* =====================================
-       AVATAR
-    ===================================== */
+    const profileImage =
+        student.profileImg ||
+        "";
 
-    let avatarHTML;
-
-
-    if (
-        student.profileImg
-    ) {
-
-        avatarHTML = `
-
-            <img
-                src="${escapeHTML(
-                    student.profileImg
-                )}"
-                alt="Student"
-                onerror="this.style.display='none'"
-            >
-
-        `;
-
-    } else {
-
-        avatarHTML =
-            getInitials(
-                student.name
-            );
-
-    }
-
-
-    /* =====================================
-       CARD HTML
-    ===================================== */
 
     card.innerHTML = `
 
-        <div class="student-main">
+        <div class="student-card-header">
 
             <div class="student-avatar">
 
-                ${avatarHTML}
+                ${
+                    profileImage
+                    ?
+                    `<img
+                        src="${escapeHTML(profileImage)}"
+                        alt="${escapeHTML(student.name || "Student")}"
+                        onerror="this.style.display='none'; this.parentElement.querySelector('.avatar-fallback').style.display='flex';"
+                    >`
+                    :
+                    ""
+                }
+
+                <span
+                    class="avatar-fallback"
+                    style="${profileImage ? "display:none;" : "display:flex;"}"
+                >
+                    ${initials}
+                </span>
 
             </div>
 
 
-            <div class="student-info">
+            <div class="student-basic-info">
 
                 <h3>
-                    ${escapeHTML(
-                        student.name ||
-                        "Unknown Student"
-                    )}
+                    ${escapeHTML(student.name || "Unknown Student")}
                 </h3>
 
-
                 <p>
-                    ${escapeHTML(
-                        student.email ||
-                        ""
-                    )}
+                    ${escapeHTML(student.studentId || "No Student ID")}
                 </p>
-
-
-                <div class="student-meta">
-
-                    <span class="badge">
-
-                        ${escapeHTML(
-                            student.studentId ||
-                            "No ID"
-                        )}
-
-                    </span>
-
-
-                    <span class="badge">
-
-                        ${escapeHTML(
-                            student.programme ||
-                            ""
-                        )}
-
-                    </span>
-
-
-                    <span class="badge">
-
-                        Semester
-                        ${student.semester || "-"}
-
-                    </span>
-
-
-                    <span class="badge pending-badge">
-
-                        Pending
-
-                    </span>
-
-                </div>
 
             </div>
 
         </div>
 
 
-        <div class="student-actions">
+        <div class="student-card-body">
+
+            <div class="student-info-row">
+
+                <span class="label">
+                    Email
+                </span>
+
+                <span class="value">
+                    ${escapeHTML(student.email || "N/A")}
+                </span>
+
+            </div>
+
+
+            <div class="student-info-row">
+
+                <span class="label">
+                    Programme
+                </span>
+
+                <span class="value">
+                    ${escapeHTML(student.programme || "N/A")}
+                </span>
+
+            </div>
+
+
+            <div class="student-info-row">
+
+                <span class="label">
+                    Semester
+                </span>
+
+                <span class="value">
+                    ${escapeHTML(student.semester || "N/A")}
+                </span>
+
+            </div>
+
+
+            <div class="student-info-row">
+
+                <span class="label">
+                    Batch
+                </span>
+
+                <span class="value">
+                    ${escapeHTML(student.batch || "N/A")}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="student-card-footer">
+
+            <span class="pending-badge">
+                Pending Approval
+            </span>
 
             <button
-                class="view-button"
-                data-action="view"
+                type="button"
+                class="view-student-btn"
             >
                 View
-            </button>
-
-
-            <button
-                class="reject-button"
-                data-action="reject"
-            >
-                Reject
-            </button>
-
-
-            <button
-                class="approve-button"
-                data-action="approve"
-            >
-                Approve
             </button>
 
         </div>
@@ -810,624 +528,474 @@ function createStudentCard(student) {
     `;
 
 
-    /* =====================================
-       VIEW BUTTON
-    ===================================== */
-
-    card
-        .querySelector(
-            '[data-action="view"]'
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                openStudentModal(
-                    student
-                );
-
-            }
-        );
+    const viewButton =
+        card.querySelector(".view-student-btn");
 
 
-    /* =====================================
-       APPROVE BUTTON
-    ===================================== */
-
-    card
-        .querySelector(
-            '[data-action="approve"]'
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                approveStudent(
-                    student
-                );
-
-            }
-        );
-
-
-    /* =====================================
-       REJECT BUTTON
-    ===================================== */
-
-    card
-        .querySelector(
-            '[data-action="reject"]'
-        )
-        .addEventListener(
-            "click",
-            () => {
-
-                rejectStudent(
-                    student
-                );
-
-            }
-        );
-
-
-    studentList.appendChild(
-        card
+    viewButton.addEventListener(
+        "click",
+        () => {
+            openStudentModal(student);
+        }
     );
 
+
+    return card;
 }
 
 
-/* =========================================
-   OPEN STUDENT MODAL
-========================================= */
+// =====================================================
+// OPEN STUDENT MODAL
+// =====================================================
 
 function openStudentModal(student) {
 
-    selectedStudent =
-        student;
+    selectedStudent = student;
 
 
-    modalName.textContent =
-        student.name ||
-        "Student";
+    if (modalName) {
+        modalName.textContent =
+            student.name || "N/A";
+    }
 
+    if (modalStudentId) {
+        modalStudentId.textContent =
+            student.studentId || "N/A";
+    }
 
-    modalStudentId.textContent =
-        student.studentId ||
-        "No Student ID";
+    if (modalEmail) {
+        modalEmail.textContent =
+            student.email || "N/A";
+    }
 
+    if (modalDepartment) {
+        modalDepartment.textContent =
+            student.department || "N/A";
+    }
 
-    modalEmail.textContent =
-        student.email ||
-        "—";
+    if (modalProgramme) {
+        modalProgramme.textContent =
+            student.programme || "N/A";
+    }
 
+    if (modalSemester) {
+        modalSemester.textContent =
+            student.semester ?? "N/A";
+    }
 
-    modalDepartment.textContent =
-        student.department ||
-        "—";
+    if (modalBatch) {
+        modalBatch.textContent =
+            student.batch || "N/A";
+    }
 
-
-    modalProgramme.textContent =
-        student.programme ||
-        "—";
-
-
-    modalSemester.textContent =
-        student.semester ||
-        "—";
-
-
-    modalBatch.textContent =
-        student.batch ||
-        "—";
-
-
-    modalGender.textContent =
-        student.gender ||
-        "—";
-
-
-    /* =====================================
-       MODAL PROFILE IMAGE
-    ===================================== */
-
-    if (
-        student.profileImg
-    ) {
-
-        modalAvatar.innerHTML = `
-
-            <img
-                src="${escapeHTML(
-                    student.profileImg
-                )}"
-                alt="Student"
-            >
-
-        `;
-
-    } else {
-
-        modalAvatar.textContent =
-            getInitials(
-                student.name
-            );
-
+    if (modalGender) {
+        modalGender.textContent =
+            student.gender || "N/A";
     }
 
 
-    studentModal.hidden =
-        false;
+    // Profile image
 
+    if (modalAvatar) {
+
+        if (student.profileImg) {
+
+            modalAvatar.src =
+                student.profileImg;
+
+            modalAvatar.style.display =
+                "block";
+
+        } else {
+
+            modalAvatar.src = "";
+
+            modalAvatar.style.display =
+                "none";
+        }
+    }
+
+
+    // IMPORTANT:
+    // Only this adds the active class.
+
+    studentModal.classList.add("active");
+
+    // Prevent page behind modal from scrolling
+    document.body.classList.add("modal-open");
 }
 
 
-/* =========================================
-   CLOSE MODAL
-========================================= */
+// =====================================================
+// CLOSE STUDENT MODAL
+// =====================================================
 
 function closeStudentModal() {
 
-    studentModal.hidden =
-        true;
+    if (!studentModal) {
+        return;
+    }
 
-    selectedStudent =
-        null;
 
+    // IMPORTANT:
+    // Remove active class.
+
+    studentModal.classList.remove("active");
+
+
+    selectedStudent = null;
+
+
+    // Restore page scrolling
+
+    document.body.classList.remove(
+        "modal-open"
+    );
 }
 
 
-closeModal.addEventListener(
-    "click",
-    closeStudentModal
-);
+// =====================================================
+// CLOSE BUTTON
+// =====================================================
 
+if (closeModal) {
 
-studentModal
-    .querySelector(".modal-overlay")
-    .addEventListener(
+    closeModal.addEventListener(
         "click",
         closeStudentModal
-);
-
-
-/* =========================================
-   MODAL APPROVE
-========================================= */
-
-modalApprove.addEventListener(
-    "click",
-    async () => {
-
-        if (
-            !selectedStudent
-        ) {
-
-            return;
-
-        }
-
-
-        await approveStudent(
-            selectedStudent
-        );
-
-    }
-);
-
-
-/* =========================================
-   MODAL REJECT
-========================================= */
-
-modalReject.addEventListener(
-    "click",
-    async () => {
-
-        if (
-            !selectedStudent
-        ) {
-
-            return;
-
-        }
-
-
-        await rejectStudent(
-            selectedStudent
-        );
-
-    }
-);
-
-
-/* =========================================
-   APPROVE STUDENT
-========================================= */
-
-async function approveStudent(student) {
-
-    /* =====================================
-       VERIFY FACULTY
-    ===================================== */
-
-    if (
-        !currentFaculty
-    ) {
-
-        showToast(
-            "Faculty information is unavailable."
-        );
-
-        return;
-    }
-
-
-    /* =====================================
-       VERIFY DEPARTMENT
-    ===================================== */
-
-    if (
-        student.department !==
-        currentFaculty.department
-    ) {
-
-        showToast(
-            "You can only approve students from your department."
-        );
-
-        return;
-    }
-
-
-    /* =====================================
-       CHECK CURRENT APPROVAL STATUS
-    ===================================== */
-
-    if (
-        student.isApproved === true
-    ) {
-
-        showToast(
-            "This student is already approved."
-        );
-
-        return;
-    }
-
-
-    /* =====================================
-       CONFIRM
-    ===================================== */
-
-    const confirmed =
-        confirm(
-            `Approve ${student.name} as a student?`
-        );
-
-
-    if (!confirmed) {
-
-        return;
-    }
-
-
-    try {
-
-        const studentRef =
-            doc(
-                db,
-                "students",
-                student.id
-            );
-
-
-        /* =================================
-           APPROVE STUDENT
-        ================================= */
-
-        await updateDoc(
-            studentRef,
-            {
-
-                isApproved:
-                    true,
-
-                account_status:
-                    true,
-
-                student_status:
-                    true,
-
-                approvedBy:
-                    currentFaculty.uid,
-
-                approvedByName:
-                    currentFaculty.name ||
-                    "",
-
-                approvedAt:
-                    serverTimestamp()
-
-            }
-        );
-
-
-        /* =================================
-           CLOSE MODAL
-        ================================= */
-
-        closeStudentModal();
-
-
-        /* =================================
-           SUCCESS
-        ================================= */
-
-        showToast(
-            `${student.name} has been approved successfully.`,
-            true
-        );
-
-
-        /* =================================
-           REFRESH LIST
-        ================================= */
-
-        await loadPendingStudents();
-
-
-    } catch (error) {
-
-        console.error(
-            "Student approval error:",
-            error
-        );
-
-
-        if (
-            error.code ===
-            "permission-denied"
-        ) {
-
-            showToast(
-                "Permission denied. Please check your Firestore rules."
-            );
-
-        } else {
-
-            showToast(
-                "Unable to approve the student."
-            );
-
-        }
-
-    }
-
+    );
 }
 
 
-/* =========================================
-   REJECT STUDENT
-========================================= */
+// =====================================================
+// CLOSE WHEN CLICKING BACKDROP
+// =====================================================
 
-async function rejectStudent(student) {
+if (studentModal) {
 
-    /* =====================================
-       VERIFY FACULTY
-    ===================================== */
+    studentModal.addEventListener(
+        "click",
+        (event) => {
 
-    if (
-        !currentFaculty
-    ) {
+            if (
+                event.target === studentModal
+            ) {
 
-        showToast(
-            "Faculty information is unavailable."
-        );
-
-        return;
-    }
-
-
-    /* =====================================
-       VERIFY DEPARTMENT
-    ===================================== */
-
-    if (
-        student.department !==
-        currentFaculty.department
-    ) {
-
-        showToast(
-            "You can only reject students from your department."
-        );
-
-        return;
-    }
-
-
-    /* =====================================
-       CHECK IF ALREADY APPROVED
-    ===================================== */
-
-    if (
-        student.isApproved === true
-    ) {
-
-        showToast(
-            "This student is already approved."
-        );
-
-        return;
-    }
-
-
-    /* =====================================
-       CONFIRM
-    ===================================== */
-
-    const confirmed =
-        confirm(
-            `Reject the registration of ${student.name}?`
-        );
-
-
-    if (!confirmed) {
-
-        return;
-    }
-
-
-    try {
-
-        const studentRef =
-            doc(
-                db,
-                "students",
-                student.id
-            );
-
-
-        /* =================================
-           REJECT STUDENT
-        ================================= */
-
-        await updateDoc(
-            studentRef,
-            {
-
-                isApproved:
-                    false,
-
-                account_status:
-                    false,
-
-                student_status:
-                    false,
-
-                registration_status:
-                    "rejected",
-
-                rejectedBy:
-                    currentFaculty.uid,
-
-                rejectedByName:
-                    currentFaculty.name ||
-                    "",
-
-                rejectedAt:
-                    serverTimestamp()
-
+                closeStudentModal();
             }
-        );
-
-
-        /* =================================
-           CLOSE MODAL
-        ================================= */
-
-        closeStudentModal();
-
-
-        /* =================================
-           SUCCESS
-        ================================= */
-
-        showToast(
-            `${student.name}'s registration has been rejected.`,
-            true
-        );
-
-
-        /* =================================
-           REFRESH LIST
-        ================================= */
-
-        await loadPendingStudents();
-
-
-    } catch (error) {
-
-        console.error(
-            "Student rejection error:",
-            error
-        );
-
-
-        if (
-            error.code ===
-            "permission-denied"
-        ) {
-
-            showToast(
-                "Permission denied. Please check your Firestore rules."
-            );
-
-        } else {
-
-            showToast(
-                "Unable to reject this registration."
-            );
-
         }
-
-    }
-
+    );
 }
 
 
-/* =========================================
-   REFRESH BUTTON
-========================================= */
+// =====================================================
+// ESC KEY
+// =====================================================
 
-refreshButton.addEventListener(
-    "click",
-    async () => {
+document.addEventListener(
+    "keydown",
+    (event) => {
 
-        await loadPendingStudents();
+        if (
+            event.key === "Escape" &&
+            studentModal &&
+            studentModal.classList.contains("active")
+        ) {
 
+            closeStudentModal();
+        }
     }
 );
 
 
-/* =========================================
-   GET INITIALS
-========================================= */
+// =====================================================
+// APPROVE STUDENT
+// =====================================================
+
+if (modalApprove) {
+
+    modalApprove.addEventListener(
+        "click",
+        async () => {
+
+            if (!selectedStudent) {
+
+                showToast(
+                    "No student selected.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const student =
+                selectedStudent;
+
+
+            try {
+
+                modalApprove.disabled = true;
+
+                modalReject.disabled = true;
+
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "students",
+                        student.id
+                    ),
+                    {
+
+                        isApproved: true,
+
+                        account_status: true,
+
+                        student_status: true,
+
+                        approvedBy:
+                            currentFaculty.uid,
+
+                        approvedByName:
+                            currentFaculty.name || "",
+
+                        approvedAt:
+                            serverTimestamp()
+                    }
+                );
+
+
+                closeStudentModal();
+
+
+                showToast(
+                    `${student.name} has been approved successfully.`,
+                    "success"
+                );
+
+
+                await loadPendingStudents();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Approval error:",
+                    error
+                );
+
+
+                showToast(
+                    "Failed to approve student.",
+                    "error"
+                );
+
+            } finally {
+
+                modalApprove.disabled =
+                    false;
+
+                modalReject.disabled =
+                    false;
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// REJECT STUDENT
+// =====================================================
+
+if (modalReject) {
+
+    modalReject.addEventListener(
+        "click",
+        async () => {
+
+            if (!selectedStudent) {
+
+                showToast(
+                    "No student selected.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            const student =
+                selectedStudent;
+
+
+            const confirmation =
+                confirm(
+                    `Are you sure you want to reject ${student.name}?`
+                );
+
+
+            if (!confirmation) {
+                return;
+            }
+
+
+            try {
+
+                modalReject.disabled =
+                    true;
+
+                modalApprove.disabled =
+                    true;
+
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "students",
+                        student.id
+                    ),
+                    {
+
+                        isApproved: false,
+
+                        account_status: false,
+
+                        student_status: false,
+
+                        registration_status:
+                            "rejected",
+
+                        rejectedBy:
+                            currentFaculty.uid,
+
+                        rejectedByName:
+                            currentFaculty.name || "",
+
+                        rejectedAt:
+                            serverTimestamp()
+                    }
+                );
+
+
+                closeStudentModal();
+
+
+                showToast(
+                    `${student.name} has been rejected.`,
+                    "success"
+                );
+
+
+                await loadPendingStudents();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Rejection error:",
+                    error
+                );
+
+
+                showToast(
+                    "Failed to reject student.",
+                    "error"
+                );
+
+            } finally {
+
+                modalReject.disabled =
+                    false;
+
+                modalApprove.disabled =
+                    false;
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// REFRESH
+// =====================================================
+
+if (refreshButton) {
+
+    refreshButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                refreshButton.disabled =
+                    true;
+
+                await loadPendingStudents();
+
+            } finally {
+
+                refreshButton.disabled =
+                    false;
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// LOADING
+// =====================================================
+
+function showLoading(show) {
+
+    if (!loading) {
+        return;
+    }
+
+    loading.style.display =
+        show ? "flex" : "none";
+}
+
+
+// =====================================================
+// GET INITIALS
+// =====================================================
 
 function getInitials(name) {
 
     if (!name) {
-
         return "S";
-
     }
 
 
-    return name
-        .split(" ")
-        .filter(Boolean)
-        .slice(0, 2)
-        .map(
-            word =>
-                word
-                    .charAt(0)
-                    .toUpperCase()
-        )
-        .join("");
+    const parts =
+        name.trim().split(/\s+/);
 
+
+    if (parts.length === 1) {
+
+        return parts[0]
+            .substring(0, 2)
+            .toUpperCase();
+    }
+
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
 }
 
 
-/* =========================================
-   TIMESTAMP VALUE
-========================================= */
+// =====================================================
+// TIMESTAMP HELPER
+// =====================================================
 
 function getTimestampValue(timestamp) {
 
     if (!timestamp) {
-
         return 0;
-
     }
 
 
@@ -1437,7 +1005,6 @@ function getTimestampValue(timestamp) {
     ) {
 
         return timestamp.toMillis();
-
     }
 
 
@@ -1446,56 +1013,38 @@ function getTimestampValue(timestamp) {
     ) {
 
         return timestamp.seconds * 1000;
+    }
 
+
+    if (
+        timestamp instanceof Date
+    ) {
+
+        return timestamp.getTime();
     }
 
 
     return 0;
-
 }
 
 
-/* =========================================
-   HTML ESCAPE
-========================================= */
+// =====================================================
+// HTML ESCAPE
+// =====================================================
 
 function escapeHTML(value) {
 
-    if (
-        value === null ||
-        value === undefined
-    ) {
+    if (value === null ||
+        value === undefined) {
 
         return "";
-
     }
 
 
     return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
