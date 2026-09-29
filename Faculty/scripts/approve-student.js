@@ -170,7 +170,6 @@ function showToast(
         alert(message);
 
         return;
-
     }
 
 
@@ -184,16 +183,12 @@ function showToast(
             : "#b91c1c";
 
 
-    toast.classList.add(
-        "show"
-    );
+    toast.classList.add("show");
 
 
     setTimeout(() => {
 
-        toast.classList.remove(
-            "show"
-        );
+        toast.classList.remove("show");
 
     }, 3500);
 
@@ -214,7 +209,6 @@ onAuthStateChanged(
                 "login.html";
 
             return;
-
         }
 
 
@@ -238,7 +232,7 @@ onAuthStateChanged(
 
             /*
              * Load pending students
-             * from same department.
+             * from the same department.
              */
 
             await loadPendingStudents();
@@ -251,7 +245,11 @@ onAuthStateChanged(
                 error
             );
 
-            loading.hidden = true;
+
+            if (loading) {
+                loading.hidden = true;
+            }
+
 
             showToast(
                 "Unable to load faculty/student details."
@@ -276,8 +274,7 @@ async function loadFaculty(uid) {
 
 
     /* =====================================
-       FIND FACULTY DOCUMENT
-       USING uid FIELD
+       FIND FACULTY USING UID FIELD
     ===================================== */
 
     const facultyQuery =
@@ -329,7 +326,7 @@ async function loadFaculty(uid) {
 
 
     /* =====================================
-       GET FACULTY DOCUMENT
+       GET FACULTY DATA
     ===================================== */
 
     const facultyDocument =
@@ -434,7 +431,6 @@ async function loadPendingStudents() {
         );
 
         return;
-
     }
 
 
@@ -465,11 +461,15 @@ async function loadPendingStudents() {
     );
 
 
-    /* =====================================
-       QUERY STUDENTS
-    ===================================== */
-
     try {
+
+        /* =================================
+           GET STUDENTS FROM SAME DEPARTMENT
+           
+           IMPORTANT:
+           isApproved is the ONLY approval
+           field used for pending requests.
+        ================================= */
 
         const studentsQuery =
             query(
@@ -507,9 +507,9 @@ async function loadPendingStudents() {
         const students = [];
 
 
-        /* =====================================
-           FILTER ONLY PENDING STUDENTS
-        ===================================== */
+        /* =================================
+           READ STUDENT DOCUMENTS
+        ================================= */
 
         snapshot.forEach(
             (studentDoc) => {
@@ -526,15 +526,22 @@ async function loadPendingStudents() {
 
 
                 /*
-                 * A student is considered
-                 * pending when all three
-                 * approval fields are false.
+                 * IMPORTANT:
+                 *
+                 * If isApproved === false,
+                 * the student needs approval.
+                 *
+                 * We DO NOT check:
+                 *
+                 * account_status
+                 * student_status
+                 *
+                 * because your existing data may
+                 * have those fields as true.
                  */
 
                 if (
-                    data.isApproved === false &&
-                    data.account_status === false &&
-                    data.student_status === false
+                    data.isApproved === false
                 ) {
 
                     students.push({
@@ -552,9 +559,9 @@ async function loadPendingStudents() {
         );
 
 
-        /* =====================================
+        /* =================================
            SORT BY CREATED TIME
-        ===================================== */
+        ================================= */
 
         students.sort(
             (a, b) => {
@@ -577,9 +584,9 @@ async function loadPendingStudents() {
         );
 
 
-        /* =====================================
-           UPDATE COUNT
-        ===================================== */
+        /* =================================
+           UPDATE PENDING COUNT
+        ================================= */
 
         pendingCount.textContent =
             students.length;
@@ -588,9 +595,9 @@ async function loadPendingStudents() {
         loading.hidden = true;
 
 
-        /* =====================================
-           NO STUDENTS
-        ===================================== */
+        /* =================================
+           NO PENDING STUDENTS
+        ================================= */
 
         if (
             students.length === 0
@@ -605,9 +612,9 @@ async function loadPendingStudents() {
         }
 
 
-        /* =====================================
+        /* =================================
            DISPLAY STUDENTS
-        ===================================== */
+        ================================= */
 
         students.forEach(
             (student) => {
@@ -678,7 +685,9 @@ function createStudentCard(student) {
         avatarHTML = `
 
             <img
-                src="${escapeHTML(student.profileImg)}"
+                src="${escapeHTML(
+                    student.profileImg
+                )}"
                 alt="Student"
                 onerror="this.style.display='none'"
             >
@@ -919,7 +928,7 @@ function openStudentModal(student) {
 
 
     /* =====================================
-       MODAL IMAGE
+       MODAL PROFILE IMAGE
     ===================================== */
 
     if (
@@ -1051,7 +1060,6 @@ async function approveStudent(student) {
         );
 
         return;
-
     }
 
 
@@ -1069,7 +1077,22 @@ async function approveStudent(student) {
         );
 
         return;
+    }
 
+
+    /* =====================================
+       CHECK CURRENT APPROVAL STATUS
+    ===================================== */
+
+    if (
+        student.isApproved === true
+    ) {
+
+        showToast(
+            "This student is already approved."
+        );
+
+        return;
     }
 
 
@@ -1086,7 +1109,6 @@ async function approveStudent(student) {
     if (!confirmed) {
 
         return;
-
     }
 
 
@@ -1101,7 +1123,7 @@ async function approveStudent(student) {
 
 
         /* =================================
-           UPDATE STUDENT
+           APPROVE STUDENT
         ================================= */
 
         await updateDoc(
@@ -1149,7 +1171,7 @@ async function approveStudent(student) {
 
 
         /* =================================
-           REFRESH
+           REFRESH LIST
         ================================= */
 
         await loadPendingStudents();
@@ -1204,7 +1226,6 @@ async function rejectStudent(student) {
         );
 
         return;
-
     }
 
 
@@ -1222,7 +1243,22 @@ async function rejectStudent(student) {
         );
 
         return;
+    }
 
+
+    /* =====================================
+       CHECK IF ALREADY APPROVED
+    ===================================== */
+
+    if (
+        student.isApproved === true
+    ) {
+
+        showToast(
+            "This student is already approved."
+        );
+
+        return;
     }
 
 
@@ -1239,7 +1275,6 @@ async function rejectStudent(student) {
     if (!confirmed) {
 
         return;
-
     }
 
 
@@ -1254,7 +1289,7 @@ async function rejectStudent(student) {
 
 
         /* =================================
-           UPDATE STATUS
+           REJECT STUDENT
         ================================= */
 
         await updateDoc(
@@ -1305,7 +1340,7 @@ async function rejectStudent(student) {
 
 
         /* =================================
-           REFRESH
+           REFRESH LIST
         ================================= */
 
         await loadPendingStudents();
@@ -1387,9 +1422,7 @@ function getInitials(name) {
    TIMESTAMP VALUE
 ========================================= */
 
-function getTimestampValue(
-    timestamp
-) {
+function getTimestampValue(timestamp) {
 
     if (!timestamp) {
 
@@ -1409,7 +1442,7 @@ function getTimestampValue(
 
 
     if (
-        timestamp.seconds
+        timestamp.seconds !== undefined
     ) {
 
         return timestamp.seconds * 1000;
