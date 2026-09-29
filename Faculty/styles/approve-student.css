@@ -1,6 +1,42 @@
-/* =====================================================
+/* =========================================================
+   DEPTCONNECT - APPROVE STUDENT
+   Standard Dashboard Style
+========================================================= */
+
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #eff6ff;
+
+    --success: #16a34a;
+    --success-light: #f0fdf4;
+
+    --danger: #dc2626;
+    --danger-light: #fef2f2;
+
+    --warning: #d97706;
+    --warning-light: #fffbeb;
+
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+
+    --border: #e5e7eb;
+    --background: #f8fafc;
+    --white: #ffffff;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================================
    RESET
-===================================================== */
+========================================================= */
 
 * {
     margin: 0;
@@ -12,45 +48,43 @@
 body {
     font-family:
         Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
         "Segoe UI",
+        Roboto,
+        Arial,
         sans-serif;
 
-    background: #f5f7fb;
-    color: #1f2937;
+    background: var(--background);
+
+    color: var(--text-primary);
 
     min-height: 100vh;
+
+    line-height: 1.5;
 }
 
-
-/* =====================================================
-   MODAL BODY LOCK
-===================================================== */
 
 body.modal-open {
     overflow: hidden;
 }
 
 
-/* =====================================================
-   PAGE CONTAINER
-===================================================== */
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
 
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1180px;
 
     margin: 0 auto;
 
-    padding: 30px 24px;
+    padding: 28px 24px 40px;
 }
 
 
-/* =====================================================
-   HEADER
-===================================================== */
+/* =========================================================
+   PAGE HEADER
+========================================================= */
 
 .page-header {
     display: flex;
@@ -58,31 +92,37 @@ body.modal-open {
     justify-content: space-between;
     align-items: center;
 
-    gap: 20px;
+    margin-bottom: 22px;
 
-    margin-bottom: 30px;
+    gap: 20px;
 }
 
 
 .header-left h1 {
-    font-size: 28px;
+    font-size: 24px;
+
     font-weight: 700;
 
-    color: #111827;
+    color: var(--text-primary);
 
-    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+
+    margin-bottom: 4px;
 }
 
 
 .header-left p {
-    color: #6b7280;
-    font-size: 14px;
+    font-size: 13px;
+
+    color: var(--text-secondary);
 }
 
 
 .header-right {
     display: flex;
+
     align-items: center;
+
     gap: 12px;
 }
 
@@ -93,43 +133,49 @@ body.modal-open {
 
 
 .faculty-name {
+    display: block;
+
     font-size: 14px;
+
     font-weight: 600;
-    color: #111827;
+
+    color: var(--text-primary);
 }
 
 
 .faculty-id {
+    display: block;
+
     font-size: 12px;
-    color: #6b7280;
+
+    color: var(--text-muted);
+
+    margin-top: 1px;
 }
 
 
-/* =====================================================
+/* =========================================================
    DEPARTMENT BAR
-===================================================== */
+========================================================= */
 
 .department-bar {
-    background: white;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 12px;
-
-    padding: 16px 20px;
-
-    margin-bottom: 24px;
-
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
-    gap: 20px;
+    background: var(--white);
 
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-md);
+
+    padding: 14px 18px;
+
+    margin-bottom: 20px;
+
+    box-shadow: var(--shadow-sm);
 }
 
 
@@ -138,77 +184,77 @@ body.modal-open {
 
     align-items: center;
 
-    gap: 10px;
+    gap: 8px;
 }
 
 
 .department-label {
-    color: #6b7280;
+    font-size: 13px;
 
-    font-size: 14px;
+    color: var(--text-secondary);
 }
 
 
 .department-value {
-    color: #111827;
+    font-size: 13px;
 
     font-weight: 600;
 
-    font-size: 15px;
+    color: var(--primary);
 }
 
 
-/* =====================================================
-   STATS
-===================================================== */
+/* =========================================================
+   STAT CARDS
+========================================================= */
 
 .stats-container {
     display: grid;
 
-    grid-template-columns:
-        repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 20px;
+    gap: 16px;
 
-    margin-bottom: 25px;
+    margin-bottom: 24px;
 }
 
 
 .stat-card {
-    background: white;
+    background: var(--white);
 
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
 
-    border-radius: 12px;
+    border-radius: var(--radius-md);
 
-    padding: 20px;
+    padding: 17px 18px;
 
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
 }
 
 
 .stat-label {
-    color: #6b7280;
+    font-size: 12px;
 
-    font-size: 13px;
+    color: var(--text-secondary);
 
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 
 .stat-value {
-    font-size: 28px;
+    font-size: 24px;
 
     font-weight: 700;
 
-    color: #111827;
+    color: var(--text-primary);
+
+    line-height: 1.2;
 }
 
 
-/* =====================================================
+/* =========================================================
    SECTION HEADER
-===================================================== */
+========================================================= */
 
 .section-header {
     display: flex;
@@ -217,122 +263,146 @@ body.modal-open {
 
     align-items: center;
 
-    margin-bottom: 20px;
+    margin-bottom: 14px;
 }
 
 
 .section-header h2 {
-    font-size: 20px;
+    font-size: 18px;
 
-    color: #111827;
+    font-weight: 650;
+
+    color: var(--text-primary);
 }
 
 
-.refresh-button {
-    border: 1px solid #d1d5db;
+/* =========================================================
+   REFRESH BUTTON
+========================================================= */
 
-    background: white;
+.refresh-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    border: 1px solid var(--border);
+
+    background: var(--white);
 
     color: #374151;
 
-    padding: 9px 15px;
+    padding: 8px 13px;
 
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
+
+    font-size: 12px;
+
+    font-weight: 500;
 
     cursor: pointer;
 
-    font-size: 13px;
-
-    transition: 0.2s;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
 }
 
 
 .refresh-button:hover {
-    background: #f3f4f6;
+    background: #f9fafb;
+
+    border-color: #d1d5db;
 }
 
 
 .refresh-button:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
 
     cursor: not-allowed;
 }
 
 
-/* =====================================================
-   STUDENT LIST
-===================================================== */
+/* =========================================================
+   STUDENT GRID
+========================================================= */
 
 .student-list {
     display: grid;
 
     grid-template-columns:
-        repeat(auto-fill, minmax(320px, 1fr));
+        repeat(3, minmax(0, 1fr));
 
-    gap: 20px;
+    gap: 16px;
 }
 
 
-/* =====================================================
+/* =========================================================
    STUDENT CARD
-===================================================== */
+========================================================= */
 
 .student-card {
-    background: white;
+    background: var(--white);
 
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
 
-    border-radius: 14px;
+    border-radius: var(--radius-md);
 
     overflow: hidden;
 
-    box-shadow:
-        0 3px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 
     transition:
-        transform 0.2s ease,
+        border-color 0.2s ease,
         box-shadow 0.2s ease;
 }
 
 
 .student-card:hover {
-    transform: translateY(-2px);
+    border-color: #cbd5e1;
 
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
 }
 
 
-/* =====================================================
-   CARD HEADER
-===================================================== */
+/* =========================================================
+   STUDENT CARD HEADER
+========================================================= */
 
 .student-card-header {
     display: flex;
 
     align-items: center;
 
-    gap: 14px;
+    gap: 12px;
 
-    padding: 20px;
+    padding: 17px;
 
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 
 .student-avatar {
-    width: 55px;
-    height: 55px;
-
-    border-radius: 50%;
-
-    overflow: hidden;
+    width: 46px;
+    height: 46px;
 
     flex-shrink: 0;
 
-    background: #eef2ff;
-
     position: relative;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    background: var(--primary-light);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 }
 
 
@@ -349,90 +419,103 @@ body.modal-open {
     height: 100%;
 
     align-items: center;
+
     justify-content: center;
 
-    background: #e0e7ff;
+    background: var(--primary-light);
 
-    color: #3730a3;
+    color: var(--primary);
+
+    font-size: 13px;
 
     font-weight: 700;
-
-    font-size: 16px;
 }
 
 
 .student-basic-info {
     min-width: 0;
+
+    flex: 1;
 }
 
 
 .student-basic-info h3 {
-    font-size: 16px;
+    font-size: 14px;
 
-    font-weight: 650;
+    font-weight: 600;
 
-    color: #111827;
+    color: var(--text-primary);
 
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
 
 .student-basic-info p {
-    font-size: 13px;
+    font-size: 11px;
 
-    color: #6b7280;
+    color: var(--text-secondary);
 }
 
 
-/* =====================================================
-   CARD BODY
-===================================================== */
+/* =========================================================
+   STUDENT CARD BODY
+========================================================= */
 
 .student-card-body {
-    padding: 18px 20px;
+    padding: 13px 17px;
 }
 
 
 .student-info-row {
     display: flex;
 
+    align-items: center;
+
     justify-content: space-between;
 
-    gap: 15px;
+    gap: 12px;
 
-    padding: 7px 0;
+    padding: 5px 0;
 }
 
 
 .student-info-row .label {
-    color: #6b7280;
+    font-size: 11px;
 
-    font-size: 12px;
+    color: var(--text-muted);
+
+    flex-shrink: 0;
 }
 
 
 .student-info-row .value {
-    color: #111827;
-
-    font-size: 13px;
+    font-size: 12px;
 
     font-weight: 500;
+
+    color: #374151;
 
     text-align: right;
 
     max-width: 65%;
 
+    white-space: nowrap;
+
     overflow: hidden;
 
     text-overflow: ellipsis;
-
-    white-space: nowrap;
 }
 
 
-/* =====================================================
+/* =========================================================
    CARD FOOTER
-===================================================== */
+========================================================= */
 
 .student-card-footer {
     display: flex;
@@ -441,13 +524,11 @@ body.modal-open {
 
     justify-content: space-between;
 
-    gap: 10px;
-
-    padding: 15px 20px;
+    padding: 12px 17px;
 
     background: #fafafa;
 
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid #f1f5f9;
 }
 
 
@@ -456,49 +537,53 @@ body.modal-open {
 
     align-items: center;
 
-    padding: 5px 9px;
+    padding: 4px 8px;
 
-    border-radius: 999px;
+    border-radius: 5px;
 
-    background: #fff7ed;
+    background: var(--warning-light);
 
-    color: #c2410c;
+    color: var(--warning);
 
-    font-size: 11px;
+    border: 1px solid #fde68a;
+
+    font-size: 10px;
 
     font-weight: 600;
 }
 
 
 .view-student-btn {
-    border: none;
+    border: 1px solid #bfdbfe;
 
-    background: #2563eb;
+    background: var(--primary-light);
 
-    color: white;
+    color: var(--primary);
 
-    padding: 8px 15px;
+    padding: 6px 12px;
 
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
 
-    font-size: 12px;
+    font-size: 11px;
 
     font-weight: 600;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition: 0.2s ease;
 }
 
 
 .view-student-btn:hover {
-    background: #1d4ed8;
+    background: #dbeafe;
+
+    border-color: #93c5fd;
 }
 
 
-/* =====================================================
+/* =========================================================
    EMPTY STATE
-===================================================== */
+========================================================= */
 
 .empty-state {
     display: flex;
@@ -511,37 +596,41 @@ body.modal-open {
 
     text-align: center;
 
-    background: white;
+    min-height: 240px;
 
-    border: 1px solid #e5e7eb;
+    padding: 40px 20px;
 
-    border-radius: 14px;
+    background: var(--white);
 
-    padding: 60px 20px;
+    border: 1px solid var(--border);
 
-    min-height: 280px;
+    border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-sm);
 }
 
 
 .empty-state h3 {
-    color: #111827;
+    font-size: 16px;
 
-    font-size: 18px;
+    font-weight: 600;
 
-    margin-bottom: 8px;
+    color: var(--text-primary);
+
+    margin-bottom: 5px;
 }
 
 
 .empty-state p {
-    color: #6b7280;
+    font-size: 13px;
 
-    font-size: 14px;
+    color: var(--text-secondary);
 }
 
 
-/* =====================================================
+/* =========================================================
    LOADING
-===================================================== */
+========================================================= */
 
 .loading {
     display: flex;
@@ -550,28 +639,27 @@ body.modal-open {
 
     justify-content: center;
 
-    min-height: 250px;
+    min-height: 220px;
 
-    color: #6b7280;
+    color: var(--text-secondary);
 
-    font-size: 14px;
+    font-size: 13px;
 }
 
 
 .loading-spinner {
-    width: 30px;
-    height: 30px;
+    width: 22px;
+    height: 22px;
 
-    border: 3px solid #e5e7eb;
+    border: 2px solid #e5e7eb;
 
-    border-top-color: #2563eb;
+    border-top-color: var(--primary);
 
     border-radius: 50%;
 
-    animation:
-        spin 0.8s linear infinite;
+    margin-right: 9px;
 
-    margin-right: 10px;
+    animation: spin 0.8s linear infinite;
 }
 
 
@@ -587,11 +675,9 @@ body.modal-open {
 }
 
 
-/* =====================================================
-   MODAL
-   IMPORTANT:
-   Hidden by default
-===================================================== */
+/* =========================================================
+   MODAL BACKDROP
+========================================================= */
 
 .modal {
     display: none;
@@ -600,18 +686,18 @@ body.modal-open {
 
     inset: 0;
 
+    z-index: 9999;
+
     width: 100%;
     height: 100%;
 
-    z-index: 9999;
+    padding: 20px;
 
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(15, 23, 42, 0.55);
 
     align-items: center;
 
     justify-content: center;
-
-    padding: 20px;
 
     opacity: 0;
 
@@ -623,10 +709,6 @@ body.modal-open {
 }
 
 
-/* =====================================================
-   MODAL ACTIVE
-===================================================== */
-
 .modal.active {
     display: flex;
 
@@ -636,32 +718,33 @@ body.modal-open {
 }
 
 
-/* =====================================================
+/* =========================================================
    MODAL CONTENT
-===================================================== */
+========================================================= */
 
 .modal-content {
     width: 100%;
 
-    max-width: 550px;
+    max-width: 520px;
 
     max-height: 90vh;
 
     overflow-y: auto;
 
-    background: white;
+    background: var(--white);
 
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
+
+    border: 1px solid var(--border);
 
     box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.25);
+        0 20px 45px rgba(0, 0, 0, 0.16);
 
     position: relative;
 
-    transform: translateY(10px);
+    transform: translateY(8px);
 
-    transition:
-        transform 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 
@@ -670,9 +753,9 @@ body.modal-open {
 }
 
 
-/* =====================================================
+/* =========================================================
    MODAL HEADER
-===================================================== */
+========================================================= */
 
 .modal-header {
     display: flex;
@@ -681,36 +764,24 @@ body.modal-open {
 
     justify-content: space-between;
 
-    padding: 20px 24px;
+    padding: 17px 20px;
 
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border);
 }
 
 
 .modal-header h2 {
-    font-size: 19px;
+    font-size: 17px;
 
-    color: #111827;
+    font-weight: 650;
+
+    color: var(--text-primary);
 }
 
 
 .modal-close {
-    width: 34px;
-    height: 34px;
-
-    border: none;
-
-    background: #f3f4f6;
-
-    color: #4b5563;
-
-    border-radius: 50%;
-
-    font-size: 22px;
-
-    line-height: 1;
-
-    cursor: pointer;
+    width: 30px;
+    height: 30px;
 
     display: flex;
 
@@ -718,147 +789,177 @@ body.modal-open {
 
     justify-content: center;
 
-    transition: 0.2s;
+    border: 1px solid var(--border);
+
+    background: white;
+
+    color: var(--text-secondary);
+
+    border-radius: 6px;
+
+    font-size: 19px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
 }
 
 
 .modal-close:hover {
-    background: #e5e7eb;
+    background: #f3f4f6;
 
-    color: #111827;
+    color: var(--text-primary);
 }
 
 
-/* =====================================================
+/* =========================================================
    MODAL BODY
-===================================================== */
+========================================================= */
 
 .modal-body {
-    padding: 25px;
+    padding: 20px;
 }
 
+
+/* =========================================================
+   MODAL PROFILE
+========================================================= */
 
 .modal-profile {
     display: flex;
 
-    flex-direction: column;
-
     align-items: center;
 
-    text-align: center;
+    gap: 14px;
 
-    margin-bottom: 25px;
+    text-align: left;
+
+    padding-bottom: 18px;
+
+    margin-bottom: 18px;
+
+    border-bottom: 1px solid #f1f5f9;
 }
 
 
 .modal-profile img {
-    width: 90px;
-    height: 90px;
+    width: 64px;
+    height: 64px;
 
-    border-radius: 50%;
+    flex-shrink: 0;
 
     object-fit: cover;
 
-    border: 4px solid #f3f4f6;
+    border-radius: 50%;
 
-    margin-bottom: 12px;
+    background: var(--primary-light);
+
+    border: 2px solid #dbeafe;
 }
 
 
 .modal-profile h3 {
-    font-size: 20px;
+    font-size: 17px;
 
-    color: #111827;
+    font-weight: 650;
 
-    margin-bottom: 4px;
+    color: var(--text-primary);
+
+    margin-bottom: 3px;
 }
 
 
 .modal-profile p {
-    color: #6b7280;
+    font-size: 12px;
 
-    font-size: 13px;
+    color: var(--text-secondary);
 }
 
 
-/* =====================================================
+/* =========================================================
    MODAL DETAILS
-===================================================== */
+========================================================= */
 
 .modal-details {
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap: 15px;
+    gap: 10px;
 }
 
 
 .modal-detail {
-    padding: 13px;
+    padding: 11px 12px;
 
-    background: #f9fafb;
+    background: #f8fafc;
 
-    border-radius: 9px;
+    border: 1px solid #eef2f7;
+
+    border-radius: 7px;
 }
 
 
 .modal-detail .label {
     display: block;
 
-    font-size: 11px;
+    font-size: 10px;
 
-    color: #6b7280;
+    color: var(--text-muted);
 
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 
 .modal-detail .value {
     display: block;
 
-    font-size: 13px;
-
-    color: #111827;
+    font-size: 12px;
 
     font-weight: 600;
+
+    color: #374151;
 
     word-break: break-word;
 }
 
 
-/* =====================================================
+/* =========================================================
    MODAL FOOTER
-===================================================== */
+========================================================= */
 
 .modal-footer {
     display: flex;
 
-    gap: 10px;
+    justify-content: flex-end;
 
-    padding: 18px 24px;
+    gap: 9px;
 
-    border-top: 1px solid #e5e7eb;
+    padding: 15px 20px;
+
+    border-top: 1px solid var(--border);
+
+    background: #fafafa;
 }
 
 
 .modal-footer button {
-    flex: 1;
+    min-width: 100px;
 
-    border: none;
+    border-radius: 6px;
 
-    border-radius: 8px;
+    padding: 8px 15px;
 
-    padding: 11px 15px;
-
-    font-size: 13px;
+    font-size: 12px;
 
     font-weight: 600;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition: 0.2s ease;
 }
 
 
@@ -869,8 +970,30 @@ body.modal-open {
 }
 
 
+/* Reject */
+
+#modalReject {
+    border: 1px solid #fecaca;
+
+    background: var(--white);
+
+    color: var(--danger);
+}
+
+
+#modalReject:hover:not(:disabled) {
+    background: var(--danger-light);
+
+    border-color: #fca5a5;
+}
+
+
+/* Approve */
+
 #modalApprove {
-    background: #16a34a;
+    border: 1px solid var(--success);
+
+    background: var(--success);
 
     color: white;
 }
@@ -878,54 +1001,46 @@ body.modal-open {
 
 #modalApprove:hover:not(:disabled) {
     background: #15803d;
+
+    border-color: #15803d;
 }
 
 
-#modalReject {
-    background: #dc2626;
-
-    color: white;
-}
-
-
-#modalReject:hover:not(:disabled) {
-    background: #b91c1c;
-}
-
-
-/* =====================================================
+/* =========================================================
    TOAST
-===================================================== */
+========================================================= */
 
 .toast {
     position: fixed;
 
-    right: 25px;
+    right: 24px;
 
-    bottom: 25px;
+    bottom: 24px;
 
     z-index: 10000;
 
-    padding: 13px 18px;
+    max-width: 360px;
 
-    border-radius: 9px;
+    padding: 11px 15px;
 
-    background: #111827;
+    border-radius: 7px;
 
     color: white;
 
-    font-size: 13px;
+    font-size: 12px;
+
+    font-weight: 500;
 
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.15);
+        0 6px 20px rgba(0, 0, 0, 0.15);
 
-    transform: translateY(20px);
+    transform: translateY(12px);
 
     opacity: 0;
 
     transition:
-        opacity 0.25s ease,
-        transform 0.25s ease;
+        opacity 0.2s ease,
+        transform 0.2s ease;
 }
 
 
@@ -937,30 +1052,43 @@ body.modal-open {
 
 
 .toast-success {
-    background: #166534;
+    background: #15803d;
 }
 
 
 .toast-error {
-    background: #991b1b;
+    background: #b91c1c;
 }
 
 
-/* =====================================================
-   RESPONSIVE
-===================================================== */
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
 
-@media (max-width: 768px) {
+@media (max-width: 950px) {
+
+    .student-list {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
 
     .container {
-        padding: 20px 15px;
+        padding: 20px 15px 30px;
     }
 
 
     .page-header {
-        flex-direction: column;
-
         align-items: flex-start;
+
+        flex-direction: column;
     }
 
 
@@ -977,14 +1105,11 @@ body.modal-open {
 
 
     .department-bar {
+        align-items: flex-start;
+
         flex-direction: column;
 
-        align-items: flex-start;
-    }
-
-
-    .stats-container {
-        grid-template-columns: 1fr;
+        gap: 6px;
     }
 
 
@@ -993,31 +1118,47 @@ body.modal-open {
     }
 
 
-    .modal-details {
+    .stats-container {
         grid-template-columns: 1fr;
     }
 }
 
 
+/* =========================================================
+   RESPONSIVE - SMALL MOBILE
+========================================================= */
+
 @media (max-width: 480px) {
 
+    .container {
+        padding-left: 12px;
+
+        padding-right: 12px;
+    }
+
+
     .header-left h1 {
-        font-size: 23px;
+        font-size: 21px;
+    }
+
+
+    .section-header h2 {
+        font-size: 16px;
     }
 
 
     .student-card-header {
-        padding: 16px;
+        padding: 15px;
     }
 
 
     .student-card-body {
-        padding: 15px 16px;
+        padding: 12px 15px;
     }
 
 
     .student-card-footer {
-        padding: 13px 16px;
+        padding: 11px 15px;
     }
 
 
@@ -1027,20 +1168,51 @@ body.modal-open {
 
 
     .modal-content {
-        max-height: 95vh;
+        max-height: 94vh;
 
-        border-radius: 12px;
+        border-radius: 10px;
+    }
+
+
+    .modal-header {
+        padding: 15px 16px;
     }
 
 
     .modal-body {
-        padding: 18px;
+        padding: 16px;
+    }
+
+
+    .modal-profile {
+        padding-bottom: 15px;
+
+        margin-bottom: 15px;
+    }
+
+
+    .modal-details {
+        grid-template-columns: 1fr;
     }
 
 
     .modal-footer {
-        padding: 15px;
+        padding: 12px 16px;
+    }
 
-        flex-direction: column;
+
+    .modal-footer button {
+        flex: 1;
+    }
+
+
+    .toast {
+        left: 12px;
+
+        right: 12px;
+
+        bottom: 15px;
+
+        max-width: none;
     }
 }
