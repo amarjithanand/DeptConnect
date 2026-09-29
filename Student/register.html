@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect - Student Registration</title>
+
+    <link
+        rel="stylesheet"
+        href="styles/register.css"
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     MAIN CONTAINER
+========================================= -->
+
+<main class="register-page">
+
+
+    <!-- =====================================
+         LEFT SIDE
+    ====================================== -->
+
+    <section class="register-info">
+
+        <div class="brand">
+            DeptConnect
+        </div>
+
+
+        <div class="info-content">
+
+            <span class="eyebrow">
+                STUDENT PORTAL
+            </span>
+
+            <h1>
+                Create your<br>
+                student account.
+            </h1>
+
+            <p>
+                Register with your academic details
+                and submit your account for faculty
+                verification.
+            </p>
+
+
+            <div class="process">
+
+                <div class="process-item">
+
+                    <div class="process-number">
+                        1
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Create Account
+                        </strong>
+
+                        <span>
+                            Submit your personal and academic details.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-line"></div>
+
+
+                <div class="process-item">
+
+                    <div class="process-number">
+                        2
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Faculty Verification
+                        </strong>
+
+                        <span>
+                            Your department faculty reviews your registration.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="process-line"></div>
+
+
+                <div class="process-item">
+
+                    <div class="process-number">
+                        3
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Access DeptConnect
+                        </strong>
+
+                        <span>
+                            Login after your registration is approved.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="info-footer">
+
+            Already have an account?
+
+            <a href="login.html">
+                Login
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         RIGHT SIDE
+    ====================================== -->
+
+    <section class="register-form-area">
+
+
+        <div class="form-container">
+
+
+            <div class="form-heading">
+
+                <h2>
+                    Student Registration
+                </h2>
+
+                <p>
+                    Enter your information accurately.
+                </p>
+
+            </div>
+
+
+            <form id="registerForm">
+
+
+                <!-- =================================
+                     PERSONAL INFORMATION
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="section-title">
+
+                        <span>
+                            01
+                        </span>
+
+                        <h3>
+                            Personal Information
+                        </h3>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <!-- NAME -->
+
+                        <div class="form-group full">
+
+                            <label for="name">
+                                Full Name
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="name"
+                                placeholder="Enter your full name"
+                                autocomplete="name"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="form-group">
+
+                            <label for="email">
+                                Email Address
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="form-group">
+
+                            <label for="password">
+                                Password
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Minimum 6 characters"
+                                autocomplete="new-password"
+                                minlength="6"
+                                required
+                            >
+
+                            <small>
+                                Minimum 6 characters
+                            </small>
+
+                        </div>
+
+
+                        <!-- DOB -->
+
+                        <div class="form-group">
+
+                            <label for="dob">
+                                Date of Birth
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="date"
+                                id="dob"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- GENDER -->
+
+                        <div class="form-group">
+
+                            <label for="gender">
+                                Gender
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="gender"
+                                required
+                            >
+
+                                <option value="">
+                                    Select gender
+                                </option>
+
+                                <option value="male">
+                                    Male
+                                </option>
+
+                                <option value="female">
+                                    Female
+                                </option>
+
+                                <option value="other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- PROFILE IMAGE -->
+
+                        <div class="form-group full">
+
+                            <label for="profileImg">
+                                Profile Image URL
+                            </label>
+
+                            <input
+                                type="url"
+                                id="profileImg"
+                                placeholder="https://example.com/profile.jpg"
+                            >
+
+                            <small>
+                                Optional
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================
+                     ACADEMIC INFORMATION
+                ================================== -->
+
+                <div class="form-section">
+
+                    <div class="section-title">
+
+                        <span>
+                            02
+                        </span>
+
+                        <h3>
+                            Academic Information
+                        </h3>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <!-- STUDENT ID -->
+
+                        <div class="form-group">
+
+                            <label for="studentId">
+                                Student ID
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="studentId"
+                                placeholder="e.g. TVE25MCA-2016"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- BATCH -->
+
+                        <div class="form-group">
+
+                            <label for="batch">
+                                Batch
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="batch"
+                                placeholder="e.g. 2025-27"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- DEPARTMENT -->
+
+                        <div class="form-group">
+
+                            <label for="department">
+                                Department
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="department"
+                                placeholder="e.g. MCA"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- PROGRAMME -->
+
+                        <div class="form-group">
+
+                            <label for="programme">
+                                Programme
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="programme"
+                                placeholder="e.g. MCA"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- SEMESTER -->
+
+                        <div class="form-group">
+
+                            <label for="semester">
+                                Current Semester
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="semester"
+                                required
+                            >
+
+                                <option value="">
+                                    Select semester
+                                </option>
+
+                                <option value="1">
+                                    Semester 1
+                                </option>
+
+                                <option value="2">
+                                    Semester 2
+                                </option>
+
+                                <option value="3">
+                                    Semester 3
+                                </option>
+
+                                <option value="4">
+                                    Semester 4
+                                </option>
+
+                                <option value="5">
+                                    Semester 5
+                                </option>
+
+                                <option value="6">
+                                    Semester 6
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================
+                     SUBMIT
+                ================================== -->
+
+                <div class="submit-section">
+
+
+                    <div class="approval-note">
+
+                        <div class="note-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Faculty approval required
+                            </strong>
+
+                            <p>
+                                Your account will remain pending
+                                until your department faculty approves
+                                your registration.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        id="registerButton"
+                        class="register-button"
+                    >
+
+                        <span id="buttonText">
+                            Submit Registration
+                        </span>
+
+                        <span
+                            id="loader"
+                            class="loader"
+                            hidden
+                        ></span>
+
+                    </button>
+
+
+                    <p class="login-link">
+
+                        Already registered?
+
+                        <a href="login.html">
+                            Login here
+                        </a>
+
+                    </p>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================================
+     TOAST
+========================================= -->
+
+<div
+    id="toast"
+    class="toast"
+>
+
+    <span id="toastMessage"></span>
+
+</div>
+
+
+
+<script
+    type="module"
+    src="scripts/register.js"
+></script>
+
+
+</body>
+
+</html>
