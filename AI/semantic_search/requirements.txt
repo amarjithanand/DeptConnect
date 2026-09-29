@@ -1,0 +1,4 @@
+firebase-admin
+sentence-transformers
+faiss-cpu
+numpy
