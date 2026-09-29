@@ -13,12 +13,11 @@ import {
 
 import {
     getFirestore,
-    doc,
-    getDoc,
     collection,
     query,
     where,
     getDocs,
+    doc,
     updateDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
@@ -55,17 +54,14 @@ const firebaseConfig = {
 
 
 /* =========================================
-   INITIALIZE
+   INITIALIZE FIREBASE
 ========================================= */
 
-const app =
-    initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const auth =
-    getAuth(app);
+const auth = getAuth(app);
 
-const db =
-    getFirestore(app);
+const db = getFirestore(app);
 
 
 /* =========================================
@@ -145,7 +141,7 @@ const modalReject =
 
 
 /* =========================================
-   VARIABLES
+   GLOBAL VARIABLES
 ========================================= */
 
 let currentFaculty = null;
@@ -169,6 +165,15 @@ function showToast(
         document.getElementById("toastMessage");
 
 
+    if (!toast || !toastMessage) {
+
+        alert(message);
+
+        return;
+
+    }
+
+
     toastMessage.textContent =
         message;
 
@@ -179,12 +184,16 @@ function showToast(
             : "#b91c1c";
 
 
-    toast.classList.add("show");
+    toast.classList.add(
+        "show"
+    );
 
 
     setTimeout(() => {
 
-        toast.classList.remove("show");
+        toast.classList.remove(
+            "show"
+        );
 
     }, 3500);
 
@@ -192,7 +201,7 @@ function showToast(
 
 
 /* =========================================
-   AUTH CHECK
+   AUTH STATE
 ========================================= */
 
 onAuthStateChanged(
@@ -205,24 +214,47 @@ onAuthStateChanged(
                 "login.html";
 
             return;
+
         }
+
+
+        console.log(
+            "Logged in faculty UID:",
+            user.uid
+        );
 
 
         try {
 
-            await loadFaculty(user.uid);
+            /*
+             * Load faculty profile
+             * using uid FIELD.
+             */
+
+            await loadFaculty(
+                user.uid
+            );
+
+
+            /*
+             * Load pending students
+             * from same department.
+             */
 
             await loadPendingStudents();
+
 
         } catch (error) {
 
             console.error(
-                "Initialization error:",
+                "Page initialization error:",
                 error
             );
 
+            loading.hidden = true;
+
             showToast(
-                "Unable to load student approvals."
+                "Unable to load faculty/student details."
             );
 
         }
@@ -237,49 +269,85 @@ onAuthStateChanged(
 
 async function loadFaculty(uid) {
 
-    /*
-     * Faculty document should be:
-     *
-     * faculty/{facultyUID}
-     */
+    console.log(
+        "Searching faculty with UID:",
+        uid
+    );
 
-    const facultyRef =
-        doc(
-            db,
-            "faculty",
+
+    /* =====================================
+       FIND FACULTY DOCUMENT
+       USING uid FIELD
+    ===================================== */
+
+    const facultyQuery =
+        query(
+            collection(
+                db,
+                "faculty"
+            ),
+
+            where(
+                "uid",
+                "==",
+                uid
+            )
+        );
+
+
+    const facultySnapshot =
+        await getDocs(
+            facultyQuery
+        );
+
+
+    console.log(
+        "Faculty documents found:",
+        facultySnapshot.size
+    );
+
+
+    /* =====================================
+       FACULTY NOT FOUND
+    ===================================== */
+
+    if (
+        facultySnapshot.empty
+    ) {
+
+        console.error(
+            "Faculty document not found for UID:",
             uid
         );
 
 
-    const facultySnap =
-        await getDoc(facultyRef);
-
-
-    if (!facultySnap.exists()) {
-
-        showToast(
-            "Faculty profile not found."
-        );
-
-        setTimeout(() => {
-
-            window.location.href =
-                "login.html";
-
-        }, 2000);
-
         throw new Error(
             "Faculty profile not found."
         );
+
     }
 
 
+    /* =====================================
+       GET FACULTY DOCUMENT
+    ===================================== */
+
+    const facultyDocument =
+        facultySnapshot.docs[0];
+
+
     currentFaculty =
-        facultySnap.data();
+        facultyDocument.data();
+
+
+    console.log(
+        "Faculty data:",
+        currentFaculty
+    );
 
 
     /* =====================================
-       VERIFY FACULTY
+       VERIFY UID
     ===================================== */
 
     if (
@@ -287,27 +355,44 @@ async function loadFaculty(uid) {
     ) {
 
         throw new Error(
-            "Invalid faculty account."
+            "Faculty UID does not match."
         );
+
     }
 
+
+    /* =====================================
+       CHECK FACULTY STATUS
+    ===================================== */
 
     if (
         currentFaculty.faculty_status === false
     ) {
 
-        showToast(
-            "Your faculty account is inactive."
+        throw new Error(
+            "Faculty account is inactive."
         );
 
-        throw new Error(
-            "Inactive faculty account."
-        );
     }
 
 
     /* =====================================
-       DISPLAY FACULTY INFO
+       CHECK DEPARTMENT
+    ===================================== */
+
+    if (
+        !currentFaculty.department
+    ) {
+
+        throw new Error(
+            "Faculty department is missing."
+        );
+
+    }
+
+
+    /* =====================================
+       DISPLAY FACULTY INFORMATION
     ===================================== */
 
     facultyName.textContent =
@@ -320,16 +405,18 @@ async function loadFaculty(uid) {
         uid;
 
 
-    const department =
-        currentFaculty.department;
-
-
     departmentText.textContent =
-        `Department: ${department || "Not specified"}`;
+        `Department: ${currentFaculty.department}`;
 
 
     departmentCount.textContent =
-        department || "—";
+        currentFaculty.department;
+
+
+    console.log(
+        "Faculty department:",
+        currentFaculty.department
+    );
 
 }
 
@@ -341,9 +428,19 @@ async function loadFaculty(uid) {
 async function loadPendingStudents() {
 
     if (!currentFaculty) {
+
+        console.error(
+            "Faculty data is not loaded."
+        );
+
         return;
+
     }
 
+
+    /* =====================================
+       RESET UI
+    ===================================== */
 
     loading.hidden = false;
 
@@ -351,50 +448,40 @@ async function loadPendingStudents() {
 
     studentList.hidden = true;
 
-
     studentList.innerHTML = "";
 
 
-    const department =
+    /* =====================================
+       FACULTY DEPARTMENT
+    ===================================== */
+
+    const facultyDepartment =
         currentFaculty.department;
 
 
-    if (!department) {
+    console.log(
+        "Loading students from department:",
+        facultyDepartment
+    );
 
-        loading.hidden = true;
 
-        emptyState.hidden = false;
-
-        emptyState.querySelector("h3")
-            .textContent =
-            "Department not configured.";
-
-        return;
-    }
-
+    /* =====================================
+       QUERY STUDENTS
+    ===================================== */
 
     try {
 
-
-        /* =================================
-           QUERY PENDING STUDENTS
-        ================================= */
-
-        const studentsRef =
-            collection(
-                db,
-                "students"
-            );
-
-
-        const studentQuery =
+        const studentsQuery =
             query(
-                studentsRef,
+                collection(
+                    db,
+                    "students"
+                ),
 
                 where(
                     "department",
                     "==",
-                    department
+                    facultyDepartment
                 ),
 
                 where(
@@ -407,16 +494,22 @@ async function loadPendingStudents() {
 
         const snapshot =
             await getDocs(
-                studentQuery
+                studentsQuery
             );
 
 
-        /* =================================
-           FILTER PENDING
-        ================================= */
+        console.log(
+            "Student documents found:",
+            snapshot.size
+        );
+
 
         const students = [];
 
+
+        /* =====================================
+           FILTER ONLY PENDING STUDENTS
+        ===================================== */
 
         snapshot.forEach(
             (studentDoc) => {
@@ -425,12 +518,21 @@ async function loadPendingStudents() {
                     studentDoc.data();
 
 
+                console.log(
+                    "Student:",
+                    studentDoc.id,
+                    data
+                );
+
+
                 /*
-                 * Extra client-side protection:
-                 * only pending accounts.
+                 * A student is considered
+                 * pending when all three
+                 * approval fields are false.
                  */
 
                 if (
+                    data.isApproved === false &&
                     data.account_status === false &&
                     data.student_status === false
                 ) {
@@ -450,16 +552,45 @@ async function loadPendingStudents() {
         );
 
 
-        loading.hidden = true;
+        /* =====================================
+           SORT BY CREATED TIME
+        ===================================== */
 
+        students.sort(
+            (a, b) => {
+
+                const timeA =
+                    getTimestampValue(
+                        a.createdAt
+                    );
+
+
+                const timeB =
+                    getTimestampValue(
+                        b.createdAt
+                    );
+
+
+                return timeB - timeA;
+
+            }
+        );
+
+
+        /* =====================================
+           UPDATE COUNT
+        ===================================== */
 
         pendingCount.textContent =
             students.length;
 
 
-        /* =================================
-           EMPTY
-        ================================= */
+        loading.hidden = true;
+
+
+        /* =====================================
+           NO STUDENTS
+        ===================================== */
 
         if (
             students.length === 0
@@ -470,12 +601,13 @@ async function loadPendingStudents() {
             studentList.hidden = true;
 
             return;
+
         }
 
 
-        /* =================================
-           DISPLAY
-        ================================= */
+        /* =====================================
+           DISPLAY STUDENTS
+        ===================================== */
 
         students.forEach(
             (student) => {
@@ -494,7 +626,7 @@ async function loadPendingStudents() {
     } catch (error) {
 
         console.error(
-            "Error loading students:",
+            "Error loading pending students:",
             error
         );
 
@@ -503,13 +635,12 @@ async function loadPendingStudents() {
 
         emptyState.hidden = false;
 
-        emptyState.querySelector("h3")
-            .textContent =
-            "Unable to load registrations.";
+        pendingCount.textContent =
+            "0";
 
 
         showToast(
-            "Could not load pending students."
+            "Unable to load student registrations."
         );
 
     }
@@ -524,7 +655,9 @@ async function loadPendingStudents() {
 function createStudentCard(student) {
 
     const card =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     card.className =
@@ -543,11 +676,13 @@ function createStudentCard(student) {
     ) {
 
         avatarHTML = `
+
             <img
                 src="${escapeHTML(student.profileImg)}"
                 alt="Student"
                 onerror="this.style.display='none'"
             >
+
         `;
 
     } else {
@@ -561,7 +696,7 @@ function createStudentCard(student) {
 
 
     /* =====================================
-       CARD
+       CARD HTML
     ===================================== */
 
     card.innerHTML = `
@@ -578,30 +713,55 @@ function createStudentCard(student) {
             <div class="student-info">
 
                 <h3>
-                    ${escapeHTML(student.name || "Unknown Student")}
+                    ${escapeHTML(
+                        student.name ||
+                        "Unknown Student"
+                    )}
                 </h3>
 
+
                 <p>
-                    ${escapeHTML(student.email || "")}
+                    ${escapeHTML(
+                        student.email ||
+                        ""
+                    )}
                 </p>
 
 
                 <div class="student-meta">
 
                     <span class="badge">
-                        ${escapeHTML(student.studentId || "No ID")}
+
+                        ${escapeHTML(
+                            student.studentId ||
+                            "No ID"
+                        )}
+
                     </span>
 
-                    <span class="badge">
-                        ${escapeHTML(student.programme || "")}
-                    </span>
 
                     <span class="badge">
-                        Semester ${student.semester || "-"}
+
+                        ${escapeHTML(
+                            student.programme ||
+                            ""
+                        )}
+
                     </span>
+
+
+                    <span class="badge">
+
+                        Semester
+                        ${student.semester || "-"}
+
+                    </span>
+
 
                     <span class="badge pending-badge">
+
                         Pending
+
                     </span>
 
                 </div>
@@ -620,12 +780,14 @@ function createStudentCard(student) {
                 View
             </button>
 
+
             <button
                 class="reject-button"
                 data-action="reject"
             >
                 Reject
             </button>
+
 
             <button
                 class="approve-button"
@@ -640,7 +802,7 @@ function createStudentCard(student) {
 
 
     /* =====================================
-       BUTTON EVENTS
+       VIEW BUTTON
     ===================================== */
 
     card
@@ -659,6 +821,10 @@ function createStudentCard(student) {
         );
 
 
+    /* =====================================
+       APPROVE BUTTON
+    ===================================== */
+
     card
         .querySelector(
             '[data-action="approve"]'
@@ -674,6 +840,10 @@ function createStudentCard(student) {
             }
         );
 
+
+    /* =====================================
+       REJECT BUTTON
+    ===================================== */
 
     card
         .querySelector(
@@ -699,7 +869,7 @@ function createStudentCard(student) {
 
 
 /* =========================================
-   OPEN MODAL
+   OPEN STUDENT MODAL
 ========================================= */
 
 function openStudentModal(student) {
@@ -709,46 +879,62 @@ function openStudentModal(student) {
 
 
     modalName.textContent =
-        student.name || "Student";
+        student.name ||
+        "Student";
 
 
     modalStudentId.textContent =
-        student.studentId || "No Student ID";
+        student.studentId ||
+        "No Student ID";
 
 
     modalEmail.textContent =
-        student.email || "—";
+        student.email ||
+        "—";
 
 
     modalDepartment.textContent =
-        student.department || "—";
+        student.department ||
+        "—";
 
 
     modalProgramme.textContent =
-        student.programme || "—";
+        student.programme ||
+        "—";
 
 
     modalSemester.textContent =
-        student.semester || "—";
+        student.semester ||
+        "—";
 
 
     modalBatch.textContent =
-        student.batch || "—";
+        student.batch ||
+        "—";
 
 
     modalGender.textContent =
-        student.gender || "—";
+        student.gender ||
+        "—";
 
+
+    /* =====================================
+       MODAL IMAGE
+    ===================================== */
 
     if (
         student.profileImg
     ) {
 
         modalAvatar.innerHTML = `
+
             <img
-                src="${escapeHTML(student.profileImg)}"
+                src="${escapeHTML(
+                    student.profileImg
+                )}"
                 alt="Student"
             >
+
         `;
 
     } else {
@@ -807,7 +993,9 @@ modalApprove.addEventListener(
         if (
             !selectedStudent
         ) {
+
             return;
+
         }
 
 
@@ -830,7 +1018,9 @@ modalReject.addEventListener(
         if (
             !selectedStudent
         ) {
+
             return;
+
         }
 
 
@@ -848,6 +1038,45 @@ modalReject.addEventListener(
 
 async function approveStudent(student) {
 
+    /* =====================================
+       VERIFY FACULTY
+    ===================================== */
+
+    if (
+        !currentFaculty
+    ) {
+
+        showToast(
+            "Faculty information is unavailable."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================
+       VERIFY DEPARTMENT
+    ===================================== */
+
+    if (
+        student.department !==
+        currentFaculty.department
+    ) {
+
+        showToast(
+            "You can only approve students from your department."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================
+       CONFIRM
+    ===================================== */
+
     const confirmed =
         confirm(
             `Approve ${student.name} as a student?`
@@ -855,28 +1084,13 @@ async function approveStudent(student) {
 
 
     if (!confirmed) {
+
         return;
+
     }
 
 
     try {
-
-        /*
-         * Extra department verification.
-         */
-
-        if (
-            student.department !==
-            currentFaculty.department
-        ) {
-
-            showToast(
-                "You can only approve students from your department."
-            );
-
-            return;
-        }
-
 
         const studentRef =
             doc(
@@ -887,7 +1101,7 @@ async function approveStudent(student) {
 
 
         /* =================================
-           UPDATE APPROVAL STATUS
+           UPDATE STUDENT
         ================================= */
 
         await updateDoc(
@@ -907,7 +1121,8 @@ async function approveStudent(student) {
                     currentFaculty.uid,
 
                 approvedByName:
-                    currentFaculty.name || "",
+                    currentFaculty.name ||
+                    "",
 
                 approvedAt:
                     serverTimestamp()
@@ -922,6 +1137,10 @@ async function approveStudent(student) {
 
         closeStudentModal();
 
+
+        /* =================================
+           SUCCESS
+        ================================= */
 
         showToast(
             `${student.name} has been approved successfully.`,
@@ -939,14 +1158,27 @@ async function approveStudent(student) {
     } catch (error) {
 
         console.error(
-            "Approval error:",
+            "Student approval error:",
             error
         );
 
 
-        showToast(
-            "Unable to approve this student."
-        );
+        if (
+            error.code ===
+            "permission-denied"
+        ) {
+
+            showToast(
+                "Permission denied. Please check your Firestore rules."
+            );
+
+        } else {
+
+            showToast(
+                "Unable to approve the student."
+            );
+
+        }
 
     }
 
@@ -959,6 +1191,45 @@ async function approveStudent(student) {
 
 async function rejectStudent(student) {
 
+    /* =====================================
+       VERIFY FACULTY
+    ===================================== */
+
+    if (
+        !currentFaculty
+    ) {
+
+        showToast(
+            "Faculty information is unavailable."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================
+       VERIFY DEPARTMENT
+    ===================================== */
+
+    if (
+        student.department !==
+        currentFaculty.department
+    ) {
+
+        showToast(
+            "You can only reject students from your department."
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================
+       CONFIRM
+    ===================================== */
+
     const confirmed =
         confirm(
             `Reject the registration of ${student.name}?`
@@ -966,29 +1237,13 @@ async function rejectStudent(student) {
 
 
     if (!confirmed) {
+
         return;
+
     }
 
 
     try {
-
-
-        /* =================================
-           DEPARTMENT CHECK
-        ================================= */
-
-        if (
-            student.department !==
-            currentFaculty.department
-        ) {
-
-            showToast(
-                "You can only reject students from your department."
-            );
-
-            return;
-        }
-
 
         const studentRef =
             doc(
@@ -1022,7 +1277,8 @@ async function rejectStudent(student) {
                     currentFaculty.uid,
 
                 rejectedByName:
-                    currentFaculty.name || "",
+                    currentFaculty.name ||
+                    "",
 
                 rejectedAt:
                     serverTimestamp()
@@ -1031,8 +1287,16 @@ async function rejectStudent(student) {
         );
 
 
+        /* =================================
+           CLOSE MODAL
+        ================================= */
+
         closeStudentModal();
 
+
+        /* =================================
+           SUCCESS
+        ================================= */
 
         showToast(
             `${student.name}'s registration has been rejected.`,
@@ -1040,20 +1304,37 @@ async function rejectStudent(student) {
         );
 
 
+        /* =================================
+           REFRESH
+        ================================= */
+
         await loadPendingStudents();
 
 
     } catch (error) {
 
         console.error(
-            "Rejection error:",
+            "Student rejection error:",
             error
         );
 
 
-        showToast(
-            "Unable to reject this registration."
-        );
+        if (
+            error.code ===
+            "permission-denied"
+        ) {
+
+            showToast(
+                "Permission denied. Please check your Firestore rules."
+            );
+
+        } else {
+
+            showToast(
+                "Unable to reject this registration."
+            );
+
+        }
 
     }
 
@@ -1061,7 +1342,7 @@ async function rejectStudent(student) {
 
 
 /* =========================================
-   REFRESH
+   REFRESH BUTTON
 ========================================= */
 
 refreshButton.addEventListener(
@@ -1081,7 +1362,9 @@ refreshButton.addEventListener(
 function getInitials(name) {
 
     if (!name) {
+
         return "S";
+
     }
 
 
@@ -1101,7 +1384,46 @@ function getInitials(name) {
 
 
 /* =========================================
-   BASIC HTML ESCAPE
+   TIMESTAMP VALUE
+========================================= */
+
+function getTimestampValue(
+    timestamp
+) {
+
+    if (!timestamp) {
+
+        return 0;
+
+    }
+
+
+    if (
+        typeof timestamp.toMillis ===
+        "function"
+    ) {
+
+        return timestamp.toMillis();
+
+    }
+
+
+    if (
+        timestamp.seconds
+    ) {
+
+        return timestamp.seconds * 1000;
+
+    }
+
+
+    return 0;
+
+}
+
+
+/* =========================================
+   HTML ESCAPE
 ========================================= */
 
 function escapeHTML(value) {
@@ -1117,22 +1439,27 @@ function escapeHTML(value) {
 
 
     return String(value)
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"
