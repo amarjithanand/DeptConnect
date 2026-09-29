@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect - Student Approvals</title>
+
+    <link
+        rel="stylesheet"
+        href="styles/approve-student.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     PAGE
+========================================= -->
+
+<main class="approval-page">
+
+
+    <!-- HEADER -->
+
+    <header class="page-header">
+
+        <div>
+
+            <span class="eyebrow">
+                FACULTY PORTAL
+            </span>
+
+            <h1>
+                Student Approvals
+            </h1>
+
+            <p id="departmentText">
+                Loading department...
+            </p>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <div class="faculty-info">
+
+                <span id="facultyName">
+                    Faculty
+                </span>
+
+                <small id="facultyId">
+                    Faculty ID
+                </small>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================================
+         STATS
+    ========================================== -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <span>
+                Pending Requests
+            </span>
+
+            <strong id="pendingCount">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span>
+                Department
+            </span>
+
+            <strong id="departmentCount">
+                —
+            </strong>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================================
+         CONTENT
+    ========================================== -->
+
+    <section class="content-card">
+
+
+        <div class="content-header">
+
+            <div>
+
+                <h2>
+                    Pending Student Registrations
+                </h2>
+
+                <p>
+                    Review registration requests from students
+                    belonging to your department.
+                </p>
+
+            </div>
+
+
+            <button
+                id="refreshButton"
+                class="refresh-button"
+            >
+                ↻ Refresh
+            </button>
+
+        </div>
+
+
+
+        <!-- LOADING -->
+
+        <div
+            id="loading"
+            class="state-message"
+        >
+
+            <div class="spinner"></div>
+
+            <p>
+                Loading pending registrations...
+            </p>
+
+        </div>
+
+
+
+        <!-- EMPTY -->
+
+        <div
+            id="emptyState"
+            class="state-message"
+            hidden
+        >
+
+            <div class="empty-icon">
+                ✓
+            </div>
+
+            <h3>
+                No pending registrations
+            </h3>
+
+            <p>
+                There are currently no student registration
+                requests waiting for approval.
+            </p>
+
+        </div>
+
+
+
+        <!-- STUDENT LIST -->
+
+        <div
+            id="studentList"
+            class="student-list"
+            hidden
+        ></div>
+
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================================
+     STUDENT DETAILS MODAL
+========================================= -->
+
+<div
+    id="studentModal"
+    class="modal"
+    hidden
+>
+
+    <div class="modal-overlay"></div>
+
+
+    <div class="modal-card">
+
+        <button
+            id="closeModal"
+            class="close-button"
+        >
+            ×
+        </button>
+
+
+        <div class="modal-header">
+
+            <div
+                id="modalAvatar"
+                class="modal-avatar"
+            >
+                S
+            </div>
+
+            <div>
+
+                <h2 id="modalName">
+                    Student
+                </h2>
+
+                <p id="modalStudentId">
+                    Student ID
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-grid">
+
+            <div class="detail">
+
+                <span>
+                    Email
+                </span>
+
+                <strong id="modalEmail">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>
+                    Department
+                </span>
+
+                <strong id="modalDepartment">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>
+                    Programme
+                </span>
+
+                <strong id="modalProgramme">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>
+                    Semester
+                </span>
+
+                <strong id="modalSemester">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>
+                    Batch
+                </span>
+
+                <strong id="modalBatch">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="detail">
+
+                <span>
+                    Gender
+                </span>
+
+                <strong id="modalGender">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button
+                id="modalReject"
+                class="reject-button"
+            >
+                Reject
+            </button>
+
+            <button
+                id="modalApprove"
+                class="approve-button"
+            >
+                Approve Student
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================
+     TOAST
+========================================= -->
+
+<div
+    id="toast"
+    class="toast"
+>
+
+    <span id="toastMessage"></span>
+
+</div>
+
+
+
+<script
+    type="module"
+    src="scripts/approve-student.js"
+></script>
+
+
+</body>
+
+</html>

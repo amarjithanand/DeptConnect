@@ -27,8 +27,7 @@ import {
 
 const firebaseConfig = {
 
-    apiKey:
-        "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+    apiKey: "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
 
     authDomain:
         "deptconnect-8b81c.firebaseapp.com",
@@ -58,10 +57,8 @@ const firebaseConfig = {
 const app =
     initializeApp(firebaseConfig);
 
-
 const auth =
     getAuth(app);
-
 
 const db =
     getFirestore(app);
@@ -72,70 +69,47 @@ const db =
 ========================================= */
 
 const form =
-    document.getElementById(
-        "registerForm"
-    );
-
+    document.getElementById("registerForm");
 
 const registerButton =
-    document.getElementById(
-        "registerButton"
-    );
-
+    document.getElementById("registerButton");
 
 const buttonText =
-    document.getElementById(
-        "buttonText"
-    );
-
+    document.getElementById("buttonText");
 
 const loader =
-    document.getElementById(
-        "loader"
-    );
-
+    document.getElementById("loader");
 
 const toast =
-    document.getElementById(
-        "toast"
-    );
-
+    document.getElementById("toast");
 
 const toastMessage =
-    document.getElementById(
-        "toastMessage"
-    );
+    document.getElementById("toastMessage");
 
 
 /* =========================================
-   TOAST
+   SHOW TOAST MESSAGE
 ========================================= */
 
-function showToast(
-    message,
-    success = false
-) {
+function showToast(message, success = false) {
 
-    toastMessage.textContent =
-        message;
+    if (!toast || !toastMessage) {
+        alert(message);
+        return;
+    }
 
+    toastMessage.textContent = message;
 
     toast.style.background =
         success
             ? "#166534"
             : "#b91c1c";
 
-
-    toast.classList.add(
-        "show"
-    );
-
+    toast.classList.add("show");
 
     setTimeout(() => {
 
-        toast.classList.remove(
-            "show"
-        );
+        toast.classList.remove("show");
 
     }, 4500);
 
@@ -143,25 +117,27 @@ function showToast(
 
 
 /* =========================================
-   SET LOADING STATE
+   LOADING STATE
 ========================================= */
 
-function setLoading(
-    loading
-) {
+function setLoading(loading) {
 
-    registerButton.disabled =
-        loading;
+    if (registerButton) {
+        registerButton.disabled = loading;
+    }
 
+    if (loader) {
+        loader.hidden = !loading;
+    }
 
-    loader.hidden =
-        !loading;
+    if (buttonText) {
 
+        buttonText.textContent =
+            loading
+                ? "Submitting..."
+                : "Submit Registration";
 
-    buttonText.textContent =
-        loading
-            ? "Submitting..."
-            : "Submit Registration";
+    }
 
 }
 
@@ -178,7 +154,7 @@ form.addEventListener(
 
 
         /* =====================================
-           GET VALUES
+           GET FORM VALUES
         ===================================== */
 
         const name =
@@ -274,16 +250,14 @@ form.addEventListener(
         ) {
 
             showToast(
-                "Please fill all required fields."
+                "Please fill in all required fields."
             );
 
             return;
         }
 
 
-        if (
-            password.length < 6
-        ) {
+        if (password.length < 6) {
 
             showToast(
                 "Password must contain at least 6 characters."
@@ -308,7 +282,31 @@ form.addEventListener(
 
 
         /* =====================================
-           LOADING
+           VALIDATE DATE
+        ===================================== */
+
+        const dobDate =
+            new Date(
+                `${dob}T00:00:00`
+            );
+
+
+        if (
+            Number.isNaN(
+                dobDate.getTime()
+            )
+        ) {
+
+            showToast(
+                "Please select a valid date of birth."
+            );
+
+            return;
+        }
+
+
+        /* =====================================
+           START LOADING
         ===================================== */
 
         setLoading(true);
@@ -318,6 +316,7 @@ form.addEventListener(
 
 
             /* =================================
+               STEP 1
                CREATE FIREBASE AUTH ACCOUNT
             ================================= */
 
@@ -333,46 +332,55 @@ form.addEventListener(
                 userCredential.user;
 
 
+            /*
+             * Firebase automatically generates
+             * the UID.
+             */
+
             const uid =
                 user.uid;
 
 
             console.log(
-                "New student UID:",
+                "Student Firebase UID:",
                 uid
             );
 
 
             /* =================================
-               UPDATE AUTH DISPLAY NAME
+               STEP 2
+               UPDATE AUTH PROFILE
             ================================= */
 
             await updateProfile(
                 user,
                 {
-                    displayName:
-                        name
+                    displayName: name
                 }
             );
 
 
             /* =================================
-               CREATE DATE
+               STEP 3
+               CONVERT DOB TO FIRESTORE TIMESTAMP
             ================================= */
 
             const dobTimestamp =
                 Timestamp.fromDate(
-                    new Date(
-                        `${dob}T00:00:00`
-                    )
+                    dobDate
                 );
 
 
             /* =================================
-               STUDENT DOCUMENT
+               STEP 4
+               CREATE STUDENT DATA
             ================================= */
 
             const studentData = {
+
+                /* -----------------------------
+                   PERSONAL INFORMATION
+                ----------------------------- */
 
                 name:
                     name,
@@ -380,26 +388,25 @@ form.addEventListener(
                 email:
                     email,
 
-                batch:
-                    batch,
-
-                account_status:
-                    false,
-
-                createdAt:
-                    serverTimestamp(),
-
-                department:
-                    department,
+                gender:
+                    gender,
 
                 dob:
                     dobTimestamp,
 
-                gender:
-                    gender,
-
                 profileImg:
                     profileImg,
+
+
+                /* -----------------------------
+                   ACADEMIC INFORMATION
+                ----------------------------- */
+
+                studentId:
+                    studentId,
+
+                department:
+                    department,
 
                 programme:
                     programme,
@@ -407,23 +414,45 @@ form.addEventListener(
                 semester:
                     semester,
 
-                studentId:
-                    studentId,
+                batch:
+                    batch,
 
-                student_status:
-                    false,
+
+                /* -----------------------------
+                   FIREBASE UID
+                ----------------------------- */
 
                 uid:
                     uid,
 
-                registration_status:
-                    "pending"
+
+                /* -----------------------------
+                   ACCOUNT STATUS
+                ----------------------------- */
+
+                account_status:
+                    false,
+
+                student_status:
+                    false,
+
+                isApproved:
+                    false,
+
+
+                /* -----------------------------
+                   CREATED TIME
+                ----------------------------- */
+
+                createdAt:
+                    serverTimestamp()
 
             };
 
 
             /* =================================
-               SAVE STUDENT
+               STEP 5
+               SAVE TO FIRESTORE
             ================================= */
 
             await setDoc(
@@ -436,14 +465,14 @@ form.addEventListener(
             );
 
 
-            /* =================================
-               SUCCESS
-            ================================= */
-
             console.log(
-                "Student registration saved."
+                "Student document created successfully."
             );
 
+
+            /* =================================
+               SUCCESS MESSAGE
+            ================================= */
 
             showToast(
                 "Registration submitted successfully. Waiting for faculty approval.",
@@ -452,7 +481,8 @@ form.addEventListener(
 
 
             /* =================================
-               REDIRECT
+               STEP 6
+               REDIRECT TO PENDING PAGE
             ================================= */
 
             setTimeout(() => {
@@ -466,22 +496,23 @@ form.addEventListener(
         } catch (error) {
 
             console.error(
-                "Registration error:",
+                "Registration Error:",
                 error
             );
 
+
+            /* =================================
+               ERROR HANDLING
+            ================================= */
 
             let message =
                 "Registration failed. Please try again.";
 
 
-            switch (
-                error.code
-            ) {
+            switch (error.code) {
 
 
-                case
-                    "auth/email-already-in-use":
+                case "auth/email-already-in-use":
 
                     message =
                         "An account with this email already exists.";
@@ -489,8 +520,7 @@ form.addEventListener(
                     break;
 
 
-                case
-                    "auth/invalid-email":
+                case "auth/invalid-email":
 
                     message =
                         "Please enter a valid email address.";
@@ -498,17 +528,15 @@ form.addEventListener(
                     break;
 
 
-                case
-                    "auth/weak-password":
+                case "auth/weak-password":
 
                     message =
-                        "Password is too weak. Use at least 6 characters.";
+                        "Password must contain at least 6 characters.";
 
                     break;
 
 
-                case
-                    "auth/network-request-failed":
+                case "auth/network-request-failed":
 
                     message =
                         "Network error. Please check your internet connection.";
@@ -516,11 +544,18 @@ form.addEventListener(
                     break;
 
 
-                case
-                    "permission-denied":
+                case "auth/operation-not-allowed":
 
                     message =
-                        "You are not permitted to create this registration.";
+                        "Email/password authentication is not enabled in Firebase.";
+
+                    break;
+
+
+                case "permission-denied":
+
+                    message =
+                        "You do not have permission to create the student profile.";
 
                     break;
 
@@ -528,12 +563,14 @@ form.addEventListener(
                 default:
 
                     if (
-                        error.message
+                        error.message &&
+                        error.message.includes(
+                            "Missing or insufficient permissions"
+                        )
                     ) {
 
-                        console.error(
-                            error.message
-                        );
+                        message =
+                            "Firestore permission denied. Please check your security rules.";
 
                     }
 
@@ -542,9 +579,7 @@ form.addEventListener(
             }
 
 
-            showToast(
-                message
-            );
+            showToast(message);
 
 
         } finally {
