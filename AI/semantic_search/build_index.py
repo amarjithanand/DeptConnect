@@ -77,7 +77,7 @@ os.makedirs(
 
 print("\nReading resolved responses from Firestore...")
 
-responses_ref = db.collection("response")
+responses_ref = db.collection("responses")
 
 documents = responses_ref.stream()
 

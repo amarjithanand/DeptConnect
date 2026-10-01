@@ -289,5 +289,4 @@ def update_query_status(
 
     query_ref.update(
         update_data
-    )AI/semantic_search/serviceAccountKey.json
-AI/semantic_search/.venv/
+    )
