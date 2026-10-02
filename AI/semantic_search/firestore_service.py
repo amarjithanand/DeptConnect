@@ -59,7 +59,7 @@ def get_query(query_id):
 def get_response(response_id):
 
     response_ref = (
-        db.collection("response")
+        db.collection("responses")
         .document(response_id)
     )
 
@@ -249,7 +249,7 @@ def save_ai_response(
     # =====================================================
 
     response_ref = (
-        db.collection("response")
+        db.collection("responses")
         .add(
             response_data
         )

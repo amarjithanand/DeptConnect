@@ -10,13 +10,15 @@ from sentence_transformers import SentenceTransformer
 # CONFIGURATION
 # =========================================================
 
+INDEX_FOLDER = "faiss_index"
+
 INDEX_FILE = os.path.join(
-    "faiss_index",
+    INDEX_FOLDER,
     "responses.index"
 )
 
 METADATA_FILE = os.path.join(
-    "faiss_index",
+    INDEX_FOLDER,
     "metadata.pkl"
 )
 
@@ -30,16 +32,16 @@ MODEL_NAME = (
 # LOAD SENTENCE TRANSFORMER
 # =========================================================
 
-print(
-    "Loading Sentence Transformer..."
-)
+print("\n========================================")
+print("LOADING SENTENCE TRANSFORMER")
+print("========================================")
 
 model = SentenceTransformer(
     MODEL_NAME
 )
 
 print(
-    "Sentence Transformer loaded."
+    "Sentence Transformer loaded successfully."
 )
 
 
@@ -48,6 +50,7 @@ print(
 # =========================================================
 
 index = None
+
 metadata = []
 
 
@@ -61,92 +64,152 @@ def reload_index():
     global metadata
 
 
-    # -----------------------------------------------------
-    # Check FAISS index
-    # -----------------------------------------------------
+    print("\n========================================")
+    print("LOADING FAISS INDEX")
+    print("========================================")
+
+
+    # =====================================================
+    # CHECK INDEX FILE
+    # =====================================================
 
     if not os.path.exists(
         INDEX_FILE
     ):
 
         raise FileNotFoundError(
-            f"FAISS index not found: {INDEX_FILE}"
+            f"FAISS index not found: "
+            f"{INDEX_FILE}\n"
+            f"Run 'python build_index.py' "
+            f"to create the initial index."
         )
 
 
-    # -----------------------------------------------------
-    # Check metadata
-    # -----------------------------------------------------
+    # =====================================================
+    # CHECK METADATA FILE
+    # =====================================================
 
     if not os.path.exists(
         METADATA_FILE
     ):
 
         raise FileNotFoundError(
-            f"Metadata file not found: {METADATA_FILE}"
+            f"Metadata file not found: "
+            f"{METADATA_FILE}\n"
+            f"Run 'python build_index.py' "
+            f"to create the initial metadata."
         )
 
 
-    # -----------------------------------------------------
-    # Load FAISS index
-    # -----------------------------------------------------
+    # =====================================================
+    # LOAD FAISS INDEX
+    # =====================================================
 
     print(
-        "\nLoading FAISS index..."
+        "\nReading FAISS index..."
     )
 
-
-    index = faiss.read_index(
+    loaded_index = faiss.read_index(
         INDEX_FILE
     )
 
 
+    # =====================================================
+    # LOAD METADATA
+    # =====================================================
+
     print(
-        f"FAISS loaded: "
-        f"{index.ntotal} vectors."
+        "Reading metadata..."
     )
-
-
-    # -----------------------------------------------------
-    # Load metadata
-    # -----------------------------------------------------
 
     with open(
         METADATA_FILE,
         "rb"
     ) as file:
 
-        metadata = pickle.load(
+        loaded_metadata = pickle.load(
             file
         )
 
 
-    print(
-        f"Metadata loaded: "
-        f"{len(metadata)} records."
-    )
+    # =====================================================
+    # VALIDATE METADATA
+    # =====================================================
 
-
-    # -----------------------------------------------------
-    # Validate index and metadata
-    # -----------------------------------------------------
-
-    if index.ntotal != len(metadata):
+    if not isinstance(
+        loaded_metadata,
+        list
+    ):
 
         raise RuntimeError(
-            "FAISS index and metadata count do not match. "
-            f"Index vectors: {index.ntotal}, "
-            f"Metadata records: {len(metadata)}"
+            "Invalid metadata format. "
+            "Expected a list."
         )
 
 
+    # =====================================================
+    # VALIDATE INDEX / METADATA COUNT
+    # =====================================================
+
+    if (
+        loaded_index.ntotal
+        != len(loaded_metadata)
+    ):
+
+        raise RuntimeError(
+
+            "FAISS index and metadata "
+            "count do not match.\n"
+
+            f"FAISS vectors: "
+            f"{loaded_index.ntotal}\n"
+
+            f"Metadata records: "
+            f"{len(loaded_metadata)}"
+        )
+
+
+    # =====================================================
+    # UPDATE GLOBAL OBJECTS
+    # =====================================================
+
+    index = loaded_index
+
+    metadata = loaded_metadata
+
+
+    # =====================================================
+    # SUCCESS
+    # =====================================================
+
     print(
-        "FAISS index reload completed."
+        f"\nFAISS vectors loaded: "
+        f"{index.ntotal}"
+    )
+
+    print(
+        f"Metadata records loaded: "
+        f"{len(metadata)}"
+    )
+
+    print(
+        "\nFAISS index loaded successfully."
+    )
+
+    print(
+        "========================================"
     )
 
 
 # =========================================================
 # INITIAL LOAD
+# =========================================================
+#
+# FastAPI imports this module.
+#
+# The FAISS index is loaded ONCE when the
+# application starts.
+#
 # =========================================================
 
 reload_index()
@@ -163,9 +226,13 @@ def search_similar_queries(
     course=None
 ):
 
-    # -----------------------------------------------------
-    # Make sure index is available
-    # -----------------------------------------------------
+    global index
+    global metadata
+
+
+    # =====================================================
+    # VALIDATE INDEX
+    # =====================================================
 
     if index is None:
 
@@ -174,14 +241,60 @@ def search_similar_queries(
         )
 
 
+    # =====================================================
+    # EMPTY INDEX
+    # =====================================================
+
     if index.ntotal == 0:
+
+        print(
+            "\nFAISS index is empty."
+        )
 
         return []
 
 
-    # -----------------------------------------------------
-    # Create query embedding
-    # -----------------------------------------------------
+    # =====================================================
+    # VALIDATE METADATA
+    # =====================================================
+
+    if len(metadata) != index.ntotal:
+
+        raise RuntimeError(
+
+            "FAISS index and metadata "
+            "are out of sync.\n"
+
+            f"FAISS vectors: "
+            f"{index.ntotal}\n"
+
+            f"Metadata records: "
+            f"{len(metadata)}"
+        )
+
+
+    # =====================================================
+    # CLEAN QUERY
+    # =====================================================
+
+    query = str(
+        query
+    ).strip()
+
+
+    if not query:
+
+        return []
+
+
+    # =====================================================
+    # CREATE QUERY EMBEDDING
+    # =====================================================
+
+    print(
+        "\nCreating query embedding..."
+    )
+
 
     query_embedding = model.encode(
 
@@ -194,31 +307,37 @@ def search_similar_queries(
     )
 
 
-    # -----------------------------------------------------
-    # Determine number of vectors to search
-    # -----------------------------------------------------
-
-    search_k = min(
-
-        max(
-            top_k * 3,
-            top_k
-        ),
-
-        index.ntotal
-
+    query_embedding = (
+        query_embedding
+        .astype("float32")
     )
 
 
-    # -----------------------------------------------------
-    # Search FAISS
-    # -----------------------------------------------------
+    # =====================================================
+    # SEARCH ALL FAISS VECTORS
+    # =====================================================
+    #
+    # We search all vectors first and then apply
+    # department/course filters.
+    #
+    # This prevents relevant results from being
+    # accidentally excluded by an arbitrary top-N
+    # search window.
+    #
+    # =====================================================
+
+    search_k = index.ntotal
+
+
+    print(
+        f"Searching FAISS across "
+        f"{search_k} indexed responses..."
+    )
+
 
     scores, indices = index.search(
 
-        query_embedding.astype(
-            "float32"
-        ),
+        query_embedding,
 
         search_k
 
@@ -228,9 +347,45 @@ def search_similar_queries(
     results = []
 
 
-    # -----------------------------------------------------
-    # Process search results
-    # -----------------------------------------------------
+    # =====================================================
+    # NORMALIZE DEPARTMENT FILTER
+    # =====================================================
+
+    requested_department = None
+
+
+    if department:
+
+        requested_department = (
+
+            str(department)
+            .strip()
+            .lower()
+
+        )
+
+
+    # =====================================================
+    # NORMALIZE COURSE FILTER
+    # =====================================================
+
+    requested_course = None
+
+
+    if course:
+
+        requested_course = (
+
+            str(course)
+            .strip()
+            .lower()
+
+        )
+
+
+    # =====================================================
+    # PROCESS SEARCH RESULTS
+    # =====================================================
 
     for score, index_position in zip(
 
@@ -240,45 +395,55 @@ def search_similar_queries(
 
     ):
 
-        # -------------------------------------------------
-        # Ignore invalid FAISS positions
-        # -------------------------------------------------
+
+        # =================================================
+        # INVALID FAISS POSITION
+        # =================================================
 
         if index_position < 0:
 
             continue
 
 
-        # -------------------------------------------------
-        # Get metadata
-        # -------------------------------------------------
+        # =================================================
+        # SAFETY CHECK
+        # =================================================
+
+        if (
+            index_position
+            >= len(metadata)
+        ):
+
+            continue
+
+
+        # =================================================
+        # GET METADATA
+        # =================================================
 
         result = metadata[
             index_position
         ].copy()
 
 
-        # -------------------------------------------------
-        # Department filtering
-        # -------------------------------------------------
+        # =================================================
+        # DEPARTMENT FILTER
+        # =================================================
 
-        if department:
+        if requested_department:
 
-            result_department = str(
+            result_department = (
 
-                result.get(
-                    "department",
-                    ""
+                str(
+                    result.get(
+                        "department",
+                        ""
+                    )
                 )
+                .strip()
+                .lower()
 
-            ).strip().lower()
-
-
-            requested_department = str(
-
-                department
-
-            ).strip().lower()
+            )
 
 
             if (
@@ -289,27 +454,24 @@ def search_similar_queries(
                 continue
 
 
-        # -------------------------------------------------
-        # Course filtering
-        # -------------------------------------------------
+        # =================================================
+        # COURSE FILTER
+        # =================================================
 
-        if course:
+        if requested_course:
 
-            result_course = str(
+            result_course = (
 
-                result.get(
-                    "course",
-                    ""
+                str(
+                    result.get(
+                        "course",
+                        ""
+                    )
                 )
+                .strip()
+                .lower()
 
-            ).strip().lower()
-
-
-            requested_course = str(
-
-                course
-
-            ).strip().lower()
+            )
 
 
             if (
@@ -320,33 +482,88 @@ def search_similar_queries(
                 continue
 
 
-        # -------------------------------------------------
-        # Add similarity score
-        # -------------------------------------------------
+        # =================================================
+        # ADD SIMILARITY SCORE
+        # =================================================
 
-        result[
-            "similarity"
-        ] = float(
+        result["similarity"] = float(
             score
         )
 
 
-        # -------------------------------------------------
-        # Add result
-        # -------------------------------------------------
+        # =================================================
+        # ADD RESULT
+        # =================================================
 
         results.append(
             result
         )
 
 
-        # -------------------------------------------------
-        # Stop when enough results are collected
-        # -------------------------------------------------
+        # =================================================
+        # STOP WHEN TOP-K FILTERED RESULTS FOUND
+        # =================================================
 
         if len(results) >= top_k:
 
             break
+
+
+    # =====================================================
+    # DEBUG INFORMATION
+    # =====================================================
+
+    print(
+        f"Matching results after filters: "
+        f"{len(results)}"
+    )
+
+
+    if results:
+
+        print(
+            "\n========================================"
+        )
+
+        print(
+            "TOP SEMANTIC RESULT"
+        )
+
+        print(
+            "========================================"
+        )
+
+        print(
+            f"Similarity: "
+            f"{results[0].get('similarity', 0):.4f}"
+        )
+
+        print(
+            f"Question: "
+            f"{results[0].get('queryTitle', '')}"
+        )
+
+        print(
+            f"Department: "
+            f"{results[0].get('department', '')}"
+        )
+
+        print(
+            f"Course: "
+            f"{results[0].get('course', '')}"
+        )
+
+        print(
+            "========================================"
+        )
+
+
+    else:
+
+        print(
+            "\nNo matching results found "
+            "after department/course filtering."
+        )
 
 
     return results

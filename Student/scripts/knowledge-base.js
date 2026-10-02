@@ -15,8 +15,6 @@ import {
 import {
     getFirestore,
     collection,
-    query,
-    where,
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
@@ -47,7 +45,6 @@ const firebaseConfig = {
 
     measurementId:
         "G-2B4VN12YW5"
-
 };
 
 
@@ -139,6 +136,22 @@ let knowledgeArticles = [];
 let currentUser = null;
 
 
+/*
+    IMPORTANT
+
+    Do NOT read the active category
+    directly from HTML.
+
+    The page must initially show
+    ALL responses.
+
+    Category filtering happens only
+    after the user clicks a category.
+*/
+
+let activeCategory = "all";
+
+
 /* =========================================
    AUTHENTICATION
 ========================================= */
@@ -153,7 +166,6 @@ onAuthStateChanged(
                 "login.html";
 
             return;
-
         }
 
 
@@ -174,7 +186,7 @@ onAuthStateChanged(
 
 
 /* =========================================
-   LOAD KNOWLEDGE BASE
+   LOAD ALL RESPONSES
 ========================================= */
 
 async function loadKnowledgeBase() {
@@ -182,37 +194,52 @@ async function loadKnowledgeBase() {
     try {
 
         console.log(
-            "Loading Knowledge Base..."
+            "===================================="
+        );
+
+        console.log(
+            "Loading ALL DeptConnect responses..."
+        );
+
+        console.log(
+            "===================================="
         );
 
 
         /*
-         * Only queries explicitly marked
-         * as Knowledge Base entries are fetched.
-         */
+            IMPORTANT:
 
-        const knowledgeQuery =
-            query(
-                collection(
-                    db,
-                    "queries"
-                ),
-                where(
-                    "isKnowledgeBase",
-                    "==",
-                    true
-                )
+            We fetch the ENTIRE "response"
+            collection.
+
+            There is NO:
+
+                where("status", "==", "resolved")
+
+            and NO:
+
+                where("isKnowledgeBase", "==", true)
+
+            because this page is supposed to
+            display every response stored in
+            the response collection.
+        */
+
+        const responseCollection =
+            collection(
+                db,
+                "responses"
             );
 
 
         const snapshot =
             await getDocs(
-                knowledgeQuery
+                responseCollection
             );
 
 
         console.log(
-            "Knowledge Base entries:",
+            "TOTAL FIRESTORE RESPONSE DOCUMENTS:",
             snapshot.size
         );
 
@@ -220,70 +247,341 @@ async function loadKnowledgeBase() {
         knowledgeArticles = [];
 
 
+        /* =====================================
+           READ EVERY DOCUMENT
+        ===================================== */
+
         snapshot.forEach(
-            document => {
+            documentSnapshot => {
 
                 const data =
-                    document.data();
+                    documentSnapshot.data();
 
 
-                knowledgeArticles.push({
+                console.log(
+                    "Response document:",
+                    documentSnapshot.id,
+                    data
+                );
+
+
+                /*
+                    Convert your actual Firestore
+                    response structure into the
+                    structure used by the UI.
+                */
+
+                const article = {
 
                     id:
-                        document.id,
+                        documentSnapshot.id,
 
-                    ...data
 
-                });
+                    /* =========================
+                       QUERY INFORMATION
+                    ========================= */
+
+                    title:
+                        data.queryTitle ||
+                        data.title ||
+                        "Untitled Query",
+
+
+                    description:
+                        data.queryDescription ||
+                        data.description ||
+                        "No description available.",
+
+
+                    /* =========================
+                       RESPONSE
+                    ========================= */
+
+                    response:
+                        data.response ||
+                        "",
+
+
+                    /*
+                        Compatibility aliases.
+                    */
+
+                    facultyAnswer:
+                        data.response ||
+                        "",
+
+
+                    knowledgeBaseAnswer:
+                        data.response ||
+                        "",
+
+
+                    aiAnswer:
+                        data.aiAnswer ||
+                        "",
+
+
+                    /* =========================
+                       ACADEMIC INFORMATION
+                    ========================= */
+
+                    course:
+                        data.course ||
+                        "",
+
+
+                    department:
+                        data.department ||
+                        "",
+
+
+                    category:
+                        data.category ||
+                        "",
+
+
+                    /* =========================
+                       FACULTY INFORMATION
+                    ========================= */
+
+                    facultyId:
+                        data.facultyId ||
+                        "",
+
+
+                    facultyName:
+                        data.facultyName ||
+                        "",
+
+
+                    /* =========================
+                       QUERY INFORMATION
+                    ========================= */
+
+                    queryId:
+                        data.queryId ||
+                        "",
+
+
+                    studentId:
+                        data.studentId ||
+                        "",
+
+
+                    priority:
+                        data.priority ||
+                        "",
+
+
+                    status:
+                        data.status ||
+                        "",
+
+
+                    /* =========================
+                       AI INFORMATION
+                    ========================= */
+
+                    similarityScore:
+                        data.similarityScore ||
+                        0,
+
+
+                    /* =========================
+                       TIMESTAMPS
+                    ========================= */
+
+                    respondedAt:
+                        data.respondedAt ||
+                        null,
+
+
+                    resolvedAt:
+                        data.resolvedAt ||
+                        null,
+
+
+                    createdAt:
+                        data.createdAt ||
+                        null,
+
+
+                    updatedAt:
+                        data.updatedAt ||
+                        null,
+
+
+                    /* =========================
+                       OPTIONAL
+                    ========================= */
+
+                    popularity:
+                        data.popularity ||
+                        0,
+
+
+                    views:
+                        data.views ||
+                        0,
+
+
+                    keywords:
+                        data.keywords ||
+                        ""
+
+                };
+
+
+                /*
+                    Add EVERY document.
+
+                    Nothing is filtered here.
+                */
+
+                knowledgeArticles.push(
+                    article
+                );
+
+            }
+        );
+
+
+        console.log(
+            "TOTAL RESPONSES LOADED:",
+            knowledgeArticles.length
+        );
+
+
+        /* =====================================
+           SORT NEWEST FIRST
+        ===================================== */
+
+        knowledgeArticles.sort(
+            (a, b) => {
+
+                return (
+
+                    getTimestamp(
+                        b.respondedAt ||
+                        b.resolvedAt ||
+                        b.updatedAt ||
+                        b.createdAt
+                    )
+
+                    -
+
+                    getTimestamp(
+                        a.respondedAt ||
+                        a.resolvedAt ||
+                        a.updatedAt ||
+                        a.createdAt
+                    )
+
+                );
 
             }
         );
 
 
         /*
-         * Newest first initially.
-         */
+            Make absolutely sure the page
+            starts with ALL categories.
+        */
 
-        knowledgeArticles.sort(
-            (a, b) =>
-                getTimestamp(
-                    b.updatedAt ||
-                    b.resolvedAt ||
-                    b.createdAt
-                )
-                -
-                getTimestamp(
-                    a.updatedAt ||
-                    a.resolvedAt ||
-                    a.createdAt
-                )
+        activeCategory =
+            "all";
+
+
+        categoryCards.forEach(
+            card => {
+
+                card.classList.remove(
+                    "active"
+                );
+
+            }
         );
 
 
+        /*
+            If an "all" card exists,
+            make it active.
+        */
+
+        categoryCards.forEach(
+            card => {
+
+                if (
+                    card.dataset.category ===
+                    "all"
+                ) {
+
+                    card.classList.add(
+                        "active"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================
+           RENDER ALL
+        ===================================== */
+
         renderArticles();
 
-
         updateCategoryCounts();
+
+
+        console.log(
+            "===================================="
+        );
+
+        console.log(
+            "KNOWLEDGE BASE LOADED SUCCESSFULLY"
+        );
+
+        console.log(
+            "Total articles:",
+            knowledgeArticles.length
+        );
+
+        console.log(
+            "===================================="
+        );
 
 
     } catch (error) {
 
         console.error(
-            "Error loading Knowledge Base:",
+            "ERROR LOADING RESPONSES:",
             error
         );
 
 
-        articleGrid.innerHTML =
-            "";
+        knowledgeArticles = [];
 
 
-        noResults.style.display =
-            "block";
+        if (articleGrid) {
+
+            articleGrid.innerHTML = "";
+        }
 
 
-        articleCount.textContent =
-            "Unable to load Knowledge Base";
+        if (noResults) {
+
+            noResults.style.display =
+                "block";
+        }
+
+
+        if (articleCount) {
+
+            articleCount.textContent =
+                "Unable to load responses";
+        }
 
     }
 
@@ -297,77 +595,127 @@ async function loadKnowledgeBase() {
 function renderArticles() {
 
     const search =
-        searchInput.value
-            .trim()
-            .toLowerCase();
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
 
 
-    const activeCategory =
-        document
-            .querySelector(
-                ".category-card.active"
-            )
-            ?.dataset.category ||
-        "all";
+    /*
+        IMPORTANT:
 
+        Use our own activeCategory variable.
+
+        Do NOT use:
+
+        .category-card.active
+
+        because that was causing the page
+        to depend on whatever category was
+        marked active in the HTML.
+    */
 
     let filtered =
         knowledgeArticles.filter(
             article => {
 
+
+                /* =========================
+                   SEARCH
+                ========================= */
+
                 const title =
-                    (
+                    String(
                         article.title ||
                         ""
-                    ).toLowerCase();
+                    )
+                        .toLowerCase();
 
 
                 const description =
-                    (
+                    String(
                         article.description ||
                         ""
-                    ).toLowerCase();
+                    )
+                        .toLowerCase();
 
 
                 const course =
-                    (
+                    String(
                         article.course ||
                         ""
-                    ).toLowerCase();
+                    )
+                        .toLowerCase();
 
 
                 const department =
-                    (
+                    String(
                         article.department ||
                         ""
-                    ).toLowerCase();
+                    )
+                        .toLowerCase();
+
+
+                const answer =
+                    String(
+                        article.response ||
+                        ""
+                    )
+                        .toLowerCase();
+
+
+                const faculty =
+                    String(
+                        article.facultyName ||
+                        ""
+                    )
+                        .toLowerCase();
 
 
                 const keywords =
-                    (
+                    String(
                         article.keywords ||
                         ""
-                    ).toLowerCase();
+                    )
+                        .toLowerCase();
 
 
                 const matchesSearch =
                     !search ||
+
                     title.includes(
                         search
                     ) ||
+
                     description.includes(
                         search
                     ) ||
+
                     course.includes(
                         search
                     ) ||
+
                     department.includes(
                         search
                     ) ||
+
+                    answer.includes(
+                        search
+                    ) ||
+
+                    faculty.includes(
+                        search
+                    ) ||
+
                     keywords.includes(
                         search
                     );
 
+
+                /* =========================
+                   CATEGORY
+                ========================= */
 
                 const matchesCategory =
                     matchesCategoryFilter(
@@ -399,22 +747,29 @@ function renderArticles() {
        CLEAR OLD CARDS
     ===================================== */
 
-    articleGrid.innerHTML =
-        "";
+    if (articleGrid) {
+
+        articleGrid.innerHTML = "";
+    }
 
 
     /* =====================================
-       RESULT COUNT
+       COUNT
     ===================================== */
 
-    articleCount.textContent =
-        search
-            ? `${filtered.length} result${
-                filtered.length === 1
-                    ? ""
-                    : "s"
-              } found`
-            : `${filtered.length} articles`;
+    if (articleCount) {
+
+        articleCount.textContent =
+            search
+
+                ? `${filtered.length} result${
+                    filtered.length === 1
+                        ? ""
+                        : "s"
+                } found`
+
+                : `${filtered.length} responses`;
+    }
 
 
     /* =====================================
@@ -425,20 +780,25 @@ function renderArticles() {
         filtered.length === 0
     ) {
 
-        noResults.style.display =
-            "block";
+        if (noResults) {
+
+            noResults.style.display =
+                "block";
+        }
 
         return;
-
     }
 
 
-    noResults.style.display =
-        "none";
+    if (noResults) {
+
+        noResults.style.display =
+            "none";
+    }
 
 
     /* =====================================
-       CREATE CARDS
+       CREATE EVERY CARD
     ===================================== */
 
     filtered.forEach(
@@ -450,9 +810,13 @@ function renderArticles() {
                 );
 
 
-            articleGrid.appendChild(
-                card
-            );
+            if (articleGrid) {
+
+                articleGrid.appendChild(
+                    card
+                );
+
+            }
 
         }
     );
@@ -480,13 +844,6 @@ function createArticleCard(
         );
 
 
-    const popularity =
-        Number(
-            article.popularity ||
-            0
-        );
-
-
     const views =
         Number(
             article.views ||
@@ -504,11 +861,7 @@ function createArticleCard(
 
     card.dataset.title =
         article.title ||
-        "Untitled";
-
-
-    card.dataset.popularity =
-        popularity;
+        "Untitled Query";
 
 
     card.innerHTML = `
@@ -516,29 +869,36 @@ function createArticleCard(
         <div class="article-top">
 
             <span class="article-category">
+
                 ${escapeHTML(
                     category.label
                 )}
+
             </span>
 
             <span class="article-icon">
+
                 ${getCategoryIcon(
                     category.slug
                 )}
+
             </span>
 
         </div>
 
 
         <h3>
+
             ${escapeHTML(
                 article.title ||
                 "Untitled Query"
             )}
+
         </h3>
 
 
         <p>
+
             ${escapeHTML(
                 truncate(
                     article.description ||
@@ -546,19 +906,28 @@ function createArticleCard(
                     140
                 )
             )}
+
         </p>
 
 
         <div class="article-footer">
 
             <span>
-                Academic Query
+
+                ${escapeHTML(
+                    article.facultyName ||
+                    "Faculty Response"
+                )}
+
             </span>
 
+
             <span>
+
                 👁 ${formatNumber(
                     views
                 )} views
+
             </span>
 
         </div>
@@ -579,7 +948,6 @@ function createArticleCard(
 
 
     return card;
-
 }
 
 
@@ -592,11 +960,12 @@ function getCategory(
 ) {
 
     const department =
-        (
+        String(
             article.department ||
+            article.category ||
             "General"
         )
-        .trim();
+            .trim();
 
 
     const slug =
@@ -614,8 +983,7 @@ function getCategory(
             slug,
 
         label:
-            department
-                .toUpperCase()
+            department.toUpperCase()
 
     };
 
@@ -628,16 +996,19 @@ function getCategory(
 
 function matchesCategoryFilter(
     article,
-    activeCategory
+    selectedCategory
 ) {
 
+    /*
+        ALL means literally ALL responses.
+    */
+
     if (
-        activeCategory ===
+        selectedCategory ===
         "all"
     ) {
 
         return true;
-
     }
 
 
@@ -646,22 +1017,6 @@ function matchesCategoryFilter(
             article
         );
 
-
-    /*
-     * The existing HTML has categories such as:
-     *
-     * computer-science
-     * academics
-     * registrar
-     * student-services
-     *
-     * Your Firestore department might be:
-     *
-     * MCA
-     *
-     * So also allow matching against
-     * course/department values.
-     */
 
     const values = [
 
@@ -672,10 +1027,16 @@ function matchesCategoryFilter(
         article.category
 
     ]
+
         .filter(Boolean)
+
         .map(
             value =>
-                String(value)
+
+                String(
+                    value
+                )
+                    .trim()
                     .toLowerCase()
                     .replace(
                         /\s+/g,
@@ -685,12 +1046,16 @@ function matchesCategoryFilter(
 
 
     return (
+
         category.slug ===
-        activeCategory
+        selectedCategory
+
         ||
+
         values.includes(
-            activeCategory
+            selectedCategory
         )
+
     );
 
 }
@@ -710,13 +1075,19 @@ function updateCategoryCounts() {
 
 
             const count =
+
                 category ===
                 "all"
 
-                    ? knowledgeArticles.length
+                    ?
 
-                    : knowledgeArticles.filter(
+                    knowledgeArticles.length
+
+                    :
+
+                    knowledgeArticles.filter(
                         article =>
+
                             matchesCategoryFilter(
                                 article,
                                 category
@@ -735,8 +1106,8 @@ function updateCategoryCounts() {
                 small.textContent =
                     `${count} ${
                         count === 1
-                            ? "article"
-                            : "articles"
+                            ? "response"
+                            : "responses"
                     }`;
 
             }
@@ -759,39 +1130,55 @@ function sortArticles(
         [...articles];
 
 
+    /*
+        A-Z
+    */
+
     if (
+        sortSelect &&
         sortSelect.value ===
         "az"
     ) {
 
         sorted.sort(
             (a, b) =>
+
                 String(
                     a.title ||
                     ""
                 ).localeCompare(
+
                     String(
                         b.title ||
                         ""
                     )
+
                 )
         );
 
     }
 
 
+    /*
+        Popular
+    */
+
     else if (
+        sortSelect &&
         sortSelect.value ===
         "popular"
     ) {
 
         sorted.sort(
             (a, b) =>
+
                 Number(
                     b.popularity ||
                     0
                 )
+
                 -
+
                 Number(
                     a.popularity ||
                     0
@@ -801,22 +1188,28 @@ function sortArticles(
     }
 
 
-    else if (
-        sortSelect.value ===
-        "recent"
-    ) {
+    /*
+        Recent / default
+    */
+
+    else {
 
         sorted.sort(
             (a, b) =>
+
                 getTimestamp(
-                    b.updatedAt ||
+                    b.respondedAt ||
                     b.resolvedAt ||
+                    b.updatedAt ||
                     b.createdAt
                 )
+
                 -
+
                 getTimestamp(
-                    a.updatedAt ||
+                    a.respondedAt ||
                     a.resolvedAt ||
+                    a.updatedAt ||
                     a.createdAt
                 )
         );
@@ -830,36 +1223,50 @@ function sortArticles(
 
 
 /* =========================================
-   SEARCH
+   SEARCH BUTTON
 ========================================= */
 
-searchButton.addEventListener(
-    "click",
-    renderArticles
-);
+if (searchButton) {
+
+    searchButton.addEventListener(
+        "click",
+        renderArticles
+    );
+
+}
 
 
-searchInput.addEventListener(
-    "keydown",
-    event => {
+/* =========================================
+   SEARCH INPUT
+========================================= */
 
-        if (
-            event.key ===
-            "Enter"
-        ) {
+if (searchInput) {
 
-            renderArticles();
+    searchInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
+                event.preventDefault();
+
+                renderArticles();
+
+            }
 
         }
-
-    }
-);
+    );
 
 
-searchInput.addEventListener(
-    "input",
-    renderArticles
-);
+    searchInput.addEventListener(
+        "input",
+        renderArticles
+    );
+
+}
 
 
 /* =========================================
@@ -873,11 +1280,29 @@ categoryCards.forEach(
             "click",
             () => {
 
+
+                /*
+                    Get the category the user
+                    explicitly clicked.
+                */
+
+                activeCategory =
+                    card.dataset.category ||
+                    "all";
+
+
+                /*
+                    Update active visual state.
+                */
+
                 categoryCards.forEach(
-                    item =>
+                    item => {
+
                         item.classList.remove(
                             "active"
-                        )
+                        );
+
+                    }
                 );
 
 
@@ -910,14 +1335,19 @@ document
                 "click",
                 () => {
 
-                    searchInput.value =
-                        button.dataset.search;
+                    if (
+                        searchInput
+                    ) {
 
+                        searchInput.value =
+                            button.dataset.search ||
+                            "";
 
-                    renderArticles();
+                        renderArticles();
 
+                        searchInput.focus();
 
-                    searchInput.focus();
+                    }
 
                 }
             );
@@ -927,13 +1357,17 @@ document
 
 
 /* =========================================
-   SORT
+   SORT CHANGE
 ========================================= */
 
-sortSelect.addEventListener(
-    "change",
-    renderArticles
-);
+if (sortSelect) {
+
+    sortSelect.addEventListener(
+        "change",
+        renderArticles
+    );
+
+}
 
 
 /* =========================================
@@ -944,9 +1378,23 @@ function openArticle(
     article
 ) {
 
-    modalTitle.textContent =
-        article.title ||
-        "Untitled Query";
+    if (
+        !articleModal
+    ) {
+
+        return;
+    }
+
+
+    if (
+        modalTitle
+    ) {
+
+        modalTitle.textContent =
+            article.title ||
+            "Untitled Query";
+
+    }
 
 
     const category =
@@ -955,14 +1403,29 @@ function openArticle(
         );
 
 
-    modalCategory.textContent =
-        category.label;
+    if (
+        modalCategory
+    ) {
 
+        modalCategory.textContent =
+            category.label;
+
+    }
+
+
+    /*
+        ACTUAL FIRESTORE FIELD:
+
+            response
+
+        This is the important field.
+    */
 
     const answer =
+        article.response ||
+        article.facultyAnswer ||
         article.knowledgeBaseAnswer ||
-        article.aiAnswer ||
-        article.facultyAnswer;
+        article.aiAnswer;
 
 
     let content = `
@@ -972,48 +1435,66 @@ function openArticle(
         </h3>
 
         <p>
+
             ${escapeHTML(
                 article.description ||
                 "No description available."
             )}
+
         </p>
 
     `;
 
 
-    if (answer) {
+    /* =====================================
+       RESPONSE
+    ===================================== */
+
+    content += `
+
+        <h3>
+            Answer
+        </h3>
+
+    `;
+
+
+    if (
+        answer
+    ) {
 
         content += `
 
-            <h3>
-                Answer
-            </h3>
-
             <p>
+
                 ${escapeHTML(
                     answer
                 )}
-            </p>
 
-        `;
-
-    } else {
-
-        content += `
-
-            <h3>
-                Answer
-            </h3>
-
-            <p>
-                The answer for this query
-                is not available yet.
             </p>
 
         `;
 
     }
 
+    else {
+
+        content += `
+
+            <p>
+
+                No response content available.
+
+            </p>
+
+        `;
+
+    }
+
+
+    /* =====================================
+       METADATA
+    ===================================== */
 
     content += `
 
@@ -1024,10 +1505,84 @@ function openArticle(
             </strong>
 
             <span>
+
                 ${escapeHTML(
                     article.course ||
                     "Not specified"
                 )}
+
+            </span>
+
+        </div>
+
+
+        <div class="source-note">
+
+            <strong>
+                Department
+            </strong>
+
+            <span>
+
+                ${escapeHTML(
+                    article.department ||
+                    "Not specified"
+                )}
+
+            </span>
+
+        </div>
+
+
+        <div class="source-note">
+
+            <strong>
+                Faculty
+            </strong>
+
+            <span>
+
+                ${escapeHTML(
+                    article.facultyName ||
+                    "Not specified"
+                )}
+
+            </span>
+
+        </div>
+
+
+        <div class="source-note">
+
+            <strong>
+                Priority
+            </strong>
+
+            <span>
+
+                ${escapeHTML(
+                    article.priority ||
+                    "Not specified"
+                )}
+
+            </span>
+
+        </div>
+
+
+        <div class="source-note">
+
+            <strong>
+                Status
+            </strong>
+
+            <span>
+
+                ${escapeHTML(
+                    article.status ||
+                    "Not specified"
+                )}
+
             </span>
 
         </div>
@@ -1040,7 +1595,7 @@ function openArticle(
             </strong>
 
             <span>
-                DeptConnect Knowledge Base
+                DeptConnect Response Database
             </span>
 
         </div>
@@ -1048,8 +1603,14 @@ function openArticle(
     `;
 
 
-    modalContent.innerHTML =
-        content;
+    if (
+        modalContent
+    ) {
+
+        modalContent.innerHTML =
+            content;
+
+    }
 
 
     articleModal.classList.add(
@@ -1064,10 +1625,18 @@ function openArticle(
 
 
 /* =========================================
-   CLOSE MODAL
+   CLOSE ARTICLE MODAL
 ========================================= */
 
 function closeArticleModal() {
+
+    if (
+        !articleModal
+    ) {
+
+        return;
+    }
+
 
     articleModal.classList.remove(
         "show"
@@ -1080,31 +1649,45 @@ function closeArticleModal() {
 }
 
 
-document
-    .getElementById(
+const closeModalButton =
+    document.getElementById(
         "closeModal"
-    )
-    .addEventListener(
+    );
+
+
+if (
+    closeModalButton
+) {
+
+    closeModalButton.addEventListener(
         "click",
         closeArticleModal
     );
 
+}
 
-articleModal.addEventListener(
-    "click",
-    event => {
 
-        if (
-            event.target ===
-            articleModal
-        ) {
+if (
+    articleModal
+) {
 
-            closeArticleModal();
+    articleModal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                articleModal
+            ) {
+
+                closeArticleModal();
+
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
 document.addEventListener(
@@ -1147,11 +1730,15 @@ feedbackButtons.forEach(
             "click",
             () => {
 
+
                 feedbackButtons.forEach(
-                    item =>
+                    item => {
+
                         item.classList.remove(
                             "selected"
-                        )
+                        );
+
+                    }
                 );
 
 
@@ -1161,17 +1748,25 @@ feedbackButtons.forEach(
 
 
                 if (
-                    button.dataset.feedback ===
-                    "yes"
+                    feedbackMessage
                 ) {
 
-                    feedbackMessage.textContent =
-                        "Thanks! Your feedback helps improve the Knowledge Base.";
+                    if (
+                        button.dataset.feedback ===
+                        "yes"
+                    ) {
 
-                } else {
+                        feedbackMessage.textContent =
+                            "Thanks! Your feedback helps improve the Knowledge Base.";
 
-                    feedbackMessage.textContent =
-                        "Thanks. You can ask a query if you still need help.";
+                    }
+
+                    else {
+
+                        feedbackMessage.textContent =
+                            "Thanks. You can ask a query if you still need help.";
+
+                    }
 
                 }
 
@@ -1272,43 +1867,47 @@ if (
    LOGOUT
 ========================================= */
 
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
+
+
 if (
-    logoutButtonExists()
+    logoutButton
 ) {
 
-    document
-        .getElementById(
-            "logoutButton"
-        )
-        .addEventListener(
-            "click",
-            async () => {
+    logoutButton.addEventListener(
+        "click",
+        async () => {
 
-                try {
+            try {
 
-                    await signOut(
-                        auth
-                    );
+                await signOut(
+                    auth
+                );
 
 
-                    sessionStorage.clear();
+                sessionStorage.clear();
 
 
-                    window.location.href =
-                        "login.html";
+                window.location.href =
+                    "login.html";
 
-
-                } catch (error) {
-
-                    console.error(
-                        "Logout error:",
-                        error
-                    );
-
-                }
 
             }
-        );
+
+            catch (error) {
+
+                console.error(
+                    "Logout error:",
+                    error
+                );
+
+            }
+
+        }
+    );
 
 }
 
@@ -1323,7 +1922,10 @@ const savedSearch =
     );
 
 
-if (savedSearch) {
+if (
+    savedSearch &&
+    searchInput
+) {
 
     searchInput.value =
         savedSearch;
@@ -1333,32 +1935,26 @@ if (savedSearch) {
         "knowledge_search"
     );
 
+
+    renderArticles();
+
 }
 
 
 /* =========================================
-   HELPERS
+   HELPER:
+   FIRESTORE TIMESTAMP
 ========================================= */
-
-function logoutButtonExists() {
-
-    return Boolean(
-        document.getElementById(
-            "logoutButton"
-        )
-    );
-
-}
-
 
 function getTimestamp(
     value
 ) {
 
-    if (!value) {
+    if (
+        !value
+    ) {
 
         return 0;
-
     }
 
 
@@ -1377,7 +1973,8 @@ function getTimestamp(
         "function"
     ) {
 
-        return value.toDate()
+        return value
+            .toDate()
             .getTime();
 
     }
@@ -1388,8 +1985,11 @@ function getTimestamp(
         undefined
     ) {
 
-        return value.seconds *
-            1000;
+        return (
+            Number(
+                value.seconds
+            ) * 1000
+        );
 
     }
 
@@ -1403,29 +2003,42 @@ function getTimestamp(
     return Number.isNaN(
         date.getTime()
     )
+
         ? 0
+
         : date.getTime();
 
 }
 
+
+/* =========================================
+   TRUNCATE
+========================================= */
 
 function truncate(
     text,
     length
 ) {
 
+    const value =
+        String(
+            text ||
+            ""
+        );
+
+
     if (
-        text.length <=
+        value.length <=
         length
     ) {
 
-        return text;
+        return value;
 
     }
 
 
     return (
-        text.substring(
+        value.substring(
             0,
             length
         )
@@ -1436,18 +2049,27 @@ function truncate(
 }
 
 
+/* =========================================
+   NUMBER FORMAT
+========================================= */
+
 function formatNumber(
     number
 ) {
 
     return Number(
-        number || 0
+        number ||
+        0
     ).toLocaleString(
         "en-IN"
     );
 
 }
 
+
+/* =========================================
+   CATEGORY ICON
+========================================= */
 
 function getCategoryIcon(
     category
@@ -1486,29 +2108,39 @@ function getCategoryIcon(
 }
 
 
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
 function escapeHTML(
     value
 ) {
 
     return String(
-        value || ""
+        value ||
+        ""
     )
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"

@@ -1,6 +1,4 @@
-/* =========================================
-   FIREBASE IMPORTS
-========================================= */
+console.log("🔥 ASK-QUERY.JS LOADED");
 
 import {
     initializeApp
@@ -23,9 +21,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 
-/* =========================================
-   FIREBASE CONFIG
-========================================= */
+/* =========================================================
+   FIREBASE
+========================================================= */
 
 const firebaseConfig = {
 
@@ -53,10 +51,6 @@ const firebaseConfig = {
 };
 
 
-/* =========================================
-   INITIALIZE FIREBASE
-========================================= */
-
 const app =
     initializeApp(firebaseConfig);
 
@@ -67,9 +61,9 @@ const db =
     getFirestore(app);
 
 
-/* =========================================
+/* =========================================================
    DOM ELEMENTS
-========================================= */
+========================================================= */
 
 const queryForm =
     document.getElementById("queryForm");
@@ -105,9 +99,9 @@ const logoutButton =
     document.getElementById("logoutButton");
 
 
-/* =========================================
+/* =========================================================
    AI MODAL
-========================================= */
+========================================================= */
 
 const aiModal =
     document.getElementById("aiModal");
@@ -122,9 +116,9 @@ const continueButton =
     document.getElementById("continueButton");
 
 
-/* =========================================
+/* =========================================================
    GLOBAL STATE
-========================================= */
+========================================================= */
 
 let currentUser = null;
 
@@ -135,17 +129,17 @@ let submittedQueryId = null;
 let currentAIResult = null;
 
 
-/* =========================================
+/* =========================================================
    API CONFIGURATION
-========================================= */
+========================================================= */
 
 const AI_API_URL =
     "http://127.0.0.1:8000";
 
 
-/* =========================================
+/* =========================================================
    AUTHENTICATION
-========================================= */
+========================================================= */
 
 onAuthStateChanged(
     auth,
@@ -157,21 +151,18 @@ onAuthStateChanged(
                 "login.html";
 
             return;
+
         }
 
+
         currentUser = user;
+
 
         console.log(
             "Authenticated UID:",
             user.uid
         );
 
-        /*
-         * IMPORTANT:
-         *
-         * Do NOT print Firebase ID tokens
-         * in the browser console.
-         */
 
         await loadStudentProfile(
             user.uid
@@ -181,9 +172,9 @@ onAuthStateChanged(
 );
 
 
-/* =========================================
+/* =========================================================
    LOAD STUDENT PROFILE
-========================================= */
+========================================================= */
 
 async function loadStudentProfile(uid) {
 
@@ -195,6 +186,7 @@ async function loadStudentProfile(uid) {
                 "students"
             );
 
+
         const studentQuery =
             query(
                 studentRef,
@@ -205,10 +197,12 @@ async function loadStudentProfile(uid) {
                 )
             );
 
+
         const snapshot =
             await getDocs(
                 studentQuery
             );
+
 
         if (snapshot.empty) {
 
@@ -216,28 +210,36 @@ async function loadStudentProfile(uid) {
                 "Student profile not found."
             );
 
+
             showFormError(
                 "Student profile could not be found."
             );
 
+
             return;
+
         }
+
 
         studentData =
             snapshot.docs[0].data();
+
 
         console.log(
             "Student profile loaded:",
             studentData
         );
 
+
         setStudentDepartment(
             studentData.department
         );
 
+
         updateProfileAvatar(
             studentData.name
         );
+
 
     } catch (error) {
 
@@ -246,14 +248,19 @@ async function loadStudentProfile(uid) {
             error
         );
 
+
+        showFormError(
+            "Unable to load your student profile."
+        );
+
     }
 
 }
 
 
-/* =========================================
+/* =========================================================
    SET STUDENT DEPARTMENT
-========================================= */
+========================================================= */
 
 function setStudentDepartment(
     studentDepartment
@@ -265,14 +272,19 @@ function setStudentDepartment(
     ) {
 
         return;
+
     }
+
 
     const normalized =
         studentDepartment
             .trim()
             .toLowerCase();
 
-    let matchingOption = null;
+
+    let matchingOption =
+        null;
+
 
     for (
         const option
@@ -291,6 +303,7 @@ function setStudentDepartment(
                 option;
 
             break;
+
         }
 
     }
@@ -303,11 +316,14 @@ function setStudentDepartment(
                 "option"
             );
 
+
         matchingOption.value =
             studentDepartment;
 
+
         matchingOption.textContent =
             studentDepartment;
+
 
         department.appendChild(
             matchingOption
@@ -322,9 +338,9 @@ function setStudentDepartment(
 }
 
 
-/* =========================================
+/* =========================================================
    PROFILE AVATAR
-========================================= */
+========================================================= */
 
 function updateProfileAvatar(
     name
@@ -333,17 +349,22 @@ function updateProfileAvatar(
     if (!profileButton) {
 
         return;
+
     }
+
 
     const avatar =
         profileButton.querySelector(
             ".profile-avatar"
         );
 
+
     if (!avatar) {
 
         return;
+
     }
+
 
     if (!name) {
 
@@ -351,18 +372,24 @@ function updateProfileAvatar(
             "A";
 
         return;
+
     }
+
 
     const parts =
         name
             .trim()
             .split(/\s+/);
 
+
     const initials =
         parts.length >= 2
+
             ? parts[0][0] +
               parts[parts.length - 1][0]
+
             : parts[0][0];
+
 
     avatar.textContent =
         initials.toUpperCase();
@@ -370,9 +397,9 @@ function updateProfileAvatar(
 }
 
 
-/* =========================================
+/* =========================================================
    CHARACTER COUNTER
-========================================= */
+========================================================= */
 
 if (
     description &&
@@ -392,9 +419,9 @@ if (
 }
 
 
-/* =========================================
+/* =========================================================
    FORM SUBMISSION
-========================================= */
+========================================================= */
 
 if (queryForm) {
 
@@ -405,9 +432,14 @@ if (queryForm) {
             event.preventDefault();
 
 
-            /* =============================
+            console.log(
+                "🚀 SUBMIT HANDLER STARTED"
+            );
+
+
+            /* =========================================
                AUTHENTICATION CHECK
-            ============================= */
+            ========================================= */
 
             if (!currentUser) {
 
@@ -416,45 +448,44 @@ if (queryForm) {
                 );
 
                 return;
+
             }
 
 
-            /* =============================
+            /* =========================================
                GET FORM VALUES
-            ============================= */
+            ========================================= */
 
             const departmentValue =
-                department.value.trim();
+                department?.value.trim() ||
+                "";
+
 
             const courseValue =
-                subject.value.trim();
+                subject?.value.trim() ||
+                "";
+
 
             const titleValue =
-                queryTitle.value.trim();
+                queryTitle?.value.trim() ||
+                "";
+
 
             const descriptionValue =
-                description.value.trim();
+                description?.value.trim() ||
+                "";
+
 
             const priorityInput =
                 document.querySelector(
                     'input[name="priority"]:checked'
                 );
 
+
             const selectedPriority =
-                priorityInput
-                    ? priorityInput.value
-                    : "normal";
+                priorityInput?.value ||
+                "normal";
 
-
-            /*
-             * HTML:
-             *
-             * normal
-             *
-             * Firestore:
-             *
-             * medium
-             */
 
             const priority =
                 selectedPriority === "normal"
@@ -462,9 +493,30 @@ if (queryForm) {
                     : selectedPriority;
 
 
-            /* =============================
+            console.log(
+                "Form values:",
+                {
+                    department:
+                        departmentValue,
+
+                    course:
+                        courseValue,
+
+                    title:
+                        titleValue,
+
+                    descriptionLength:
+                        descriptionValue.length,
+
+                    priority:
+                        priority
+                }
+            );
+
+
+            /* =========================================
                VALIDATION
-            ============================= */
+            ========================================= */
 
             if (!departmentValue) {
 
@@ -473,6 +525,7 @@ if (queryForm) {
                 );
 
                 return;
+
             }
 
 
@@ -483,6 +536,7 @@ if (queryForm) {
                 );
 
                 return;
+
             }
 
 
@@ -493,6 +547,7 @@ if (queryForm) {
                 );
 
                 return;
+
             }
 
 
@@ -503,6 +558,7 @@ if (queryForm) {
                 );
 
                 return;
+
             }
 
 
@@ -516,19 +572,22 @@ if (queryForm) {
                 );
 
                 return;
+
             }
 
 
-            /* =============================
-               DISABLE BUTTON
-            ============================= */
+            /* =========================================
+               DISABLE SUBMIT BUTTON
+            ========================================= */
 
             if (submitButton) {
 
                 submitButton.disabled =
                     true;
 
+
                 submitButton.innerHTML = `
+
                     <span>
                         Submitting...
                     </span>
@@ -536,6 +595,7 @@ if (queryForm) {
                     <span>
                         ⏳
                     </span>
+
                 `;
 
             }
@@ -543,16 +603,16 @@ if (queryForm) {
 
             try {
 
-                /* =============================
+                /* =========================================
                    START AI MODAL
-                ============================= */
+                ========================================= */
 
                 showProcessingModal();
 
 
-                /* =============================
+                /* =========================================
                    STEP 1
-                ============================= */
+                ========================================= */
 
                 updateProcessingStep(
                     "step1",
@@ -560,20 +620,16 @@ if (queryForm) {
                 );
 
 
-                /* =============================
+                /* =========================================
                    STEP 2
-                   CREATE QUERY
-                ============================= */
+                   CREATE FIRESTORE QUERY
+                ========================================= */
 
                 updateProcessingStep(
                     "step2",
                     "active"
                 );
 
-
-                /*
-                 * Firestore query structure
-                 */
 
                 const queryData = {
 
@@ -625,9 +681,11 @@ if (queryForm) {
                 };
 
 
-                /*
-                 * Save query to Firestore
-                 */
+                console.log(
+                    "Creating Firestore query:",
+                    queryData
+                );
+
 
                 const queryDocument =
                     await addDoc(
@@ -639,10 +697,6 @@ if (queryForm) {
                     );
 
 
-                /*
-                 * Save generated query ID
-                 */
-
                 submittedQueryId =
                     queryDocument.id;
 
@@ -653,20 +707,16 @@ if (queryForm) {
                 );
 
 
-                /* =============================
-                   STEP 2 COMPLETE
-                ============================= */
-
                 updateProcessingStep(
                     "step2",
                     "completed"
                 );
 
 
-                /* =============================
+                /* =========================================
                    STEP 3
                    AI PROCESSING
-                ============================= */
+                ========================================= */
 
                 updateProcessingStep(
                     "step3",
@@ -675,38 +725,58 @@ if (queryForm) {
 
 
                 console.log(
-                    "Starting DeptConnect AI processing..."
+                    "🚀 AI FETCH START"
                 );
 
 
-                /*
-                 * Call AI backend
-                 *
-                 * IMPORTANT:
-                 * No Firebase ID token is sent.
-                 */
+                console.log(
+                    "AI endpoint:",
+                    `${AI_API_URL}/process-query`
+                );
+
+
+                console.log(
+                    "Query ID sent to AI:",
+                    submittedQueryId
+                );
+
 
                 const aiResponse =
                     await fetch(
                         `${AI_API_URL}/process-query`,
                         {
-                            method: "POST",
+
+                            method:
+                                "POST",
 
                             headers: {
+
                                 "Content-Type":
                                     "application/json"
+
                             },
 
                             body:
                                 JSON.stringify({
+
                                     queryId:
                                         submittedQueryId
+
                                 })
+
                         }
                     );
 
 
+                console.log(
+                    "AI HTTP status:",
+                    aiResponse.status,
+                    aiResponse.statusText
+                );
+
+
                 let aiResult;
+
 
                 try {
 
@@ -714,6 +784,12 @@ if (queryForm) {
                         await aiResponse.json();
 
                 } catch (parseError) {
+
+                    console.error(
+                        "AI JSON parse error:",
+                        parseError
+                    );
+
 
                     throw new Error(
                         "AI service returned an invalid response."
@@ -723,17 +799,62 @@ if (queryForm) {
 
 
                 console.log(
+                    "========== AI RESPONSE RECEIVED =========="
+                );
+
+
+                console.log(
                     "AI response:",
                     aiResult
+                );
+
+
+                console.log(
+                    "aiAnswered:",
+                    aiResult?.aiAnswered
+                );
+
+
+                console.log(
+                    "aiAnswer:",
+                    aiResult?.aiAnswer
+                );
+
+
+                console.log(
+                    "aiAnswer type:",
+                    typeof aiResult?.aiAnswer
+                );
+
+
+                console.log(
+                    "aiAnswer length:",
+                    aiResult?.aiAnswer?.length
+                );
+
+
+                console.log(
+                    "similarity:",
+                    aiResult?.similarity
+                );
+
+
+                console.log(
+                    "similarQueryId:",
+                    aiResult?.similarQueryId
                 );
 
 
                 if (!aiResponse.ok) {
 
                     throw new Error(
-                        aiResult.detail ||
-                        aiResult.message ||
+
+                        aiResult?.detail ||
+
+                        aiResult?.message ||
+
                         "AI processing failed."
+
                     );
 
                 }
@@ -743,20 +864,16 @@ if (queryForm) {
                     aiResult;
 
 
-                /* =============================
-                   STEP 3 COMPLETE
-                ============================= */
-
                 updateProcessingStep(
                     "step3",
                     "completed"
                 );
 
 
-                /* =============================
+                /* =========================================
                    STEP 4
                    ANALYSIS COMPLETE
-                ============================= */
+                ========================================= */
 
                 updateProcessingStep(
                     "step4",
@@ -780,12 +897,22 @@ if (queryForm) {
                 );
 
 
-                /* =============================
+                /* =========================================
                    SHOW AI RESULT
-                ============================= */
+                ========================================= */
+
+                console.log(
+                    "========== BEFORE SHOW AI RESULT =========="
+                );
+
 
                 showAIResult(
                     aiResult
+                );
+
+
+                console.log(
+                    "========== AFTER SHOW AI RESULT =========="
                 );
 
 
@@ -814,7 +941,9 @@ if (queryForm) {
                     submitButton.disabled =
                         false;
 
+
                     submitButton.innerHTML = `
+
                         <span>
                             Submit Query
                         </span>
@@ -822,6 +951,7 @@ if (queryForm) {
                         <span>
                             →
                         </span>
+
                     `;
 
                 }
@@ -834,11 +964,16 @@ if (queryForm) {
 }
 
 
-/* =========================================
+/* =========================================================
    PROCESSING MODAL
-========================================= */
+========================================================= */
 
 function showProcessingModal() {
+
+    console.log(
+        "========== OPENING AI MODAL =========="
+    );
+
 
     if (
         !processingState ||
@@ -846,15 +981,65 @@ function showProcessingModal() {
         !aiModal
     ) {
 
+        console.error(
+            "AI modal elements are missing."
+        );
+
         return;
+
     }
+
+
+    /*
+        Remove previous dynamic result elements.
+
+        This prevents stale AI answers,
+        feedback buttons and confirmation
+        messages from remaining when a new
+        query is submitted.
+    */
+
+    [
+
+        "aiAnswerContainer",
+
+        "aiFeedbackContainer",
+
+        "aiConfirmationMessage"
+
+    ].forEach(
+        (id) => {
+
+            const element =
+                document.getElementById(
+                    id
+                );
+
+
+            if (element) {
+
+                element.remove();
+
+            }
+
+        }
+    );
 
 
     processingState.style.display =
         "block";
 
+
+    processingState.style.visibility =
+        "visible";
+
+
     resultState.style.display =
         "none";
+
+
+    resultState.style.visibility =
+        "hidden";
 
 
     resetProcessingSteps();
@@ -864,31 +1049,43 @@ function showProcessingModal() {
         "show"
     );
 
+
+    console.log(
+        "AI modal opened."
+    );
+
 }
 
 
-/* =========================================
+/* =========================================================
    RESET PROCESSING STEPS
-========================================= */
+========================================================= */
 
 function resetProcessingSteps() {
 
     [
+
         "step1",
+
         "step2",
+
         "step3",
+
         "step4"
+
     ].forEach(
-        id => {
+        (id) => {
 
             const step =
                 document.getElementById(
                     id
                 );
 
+
             if (!step) {
 
                 return;
+
             }
 
 
@@ -917,9 +1114,9 @@ function resetProcessingSteps() {
 }
 
 
-/* =========================================
+/* =========================================================
    UPDATE PROCESSING STEP
-========================================= */
+========================================================= */
 
 function updateProcessingStep(
     stepId,
@@ -935,6 +1132,7 @@ function updateProcessingStep(
     if (!step) {
 
         return;
+
     }
 
 
@@ -958,6 +1156,7 @@ function updateProcessingStep(
     if (!icon) {
 
         return;
+
     }
 
 
@@ -987,13 +1186,226 @@ function updateProcessingStep(
 }
 
 
-/* =========================================
+/* =========================================================
+   CREATE AI RESULT CONTAINERS
+========================================================= */
+
+function ensureAIResultContainers() {
+
+    if (!resultState) {
+
+        return null;
+
+    }
+
+
+    let answerContainer =
+        document.getElementById(
+            "aiAnswerContainer"
+        );
+
+
+    let feedbackContainer =
+        document.getElementById(
+            "aiFeedbackContainer"
+        );
+
+
+    /* =========================================
+       ANSWER CONTAINER
+    ========================================= */
+
+    if (!answerContainer) {
+
+        answerContainer =
+            document.createElement(
+                "div"
+            );
+
+
+        answerContainer.id =
+            "aiAnswerContainer";
+
+
+        answerContainer.style.display =
+            "block";
+
+
+        answerContainer.style.width =
+            "100%";
+
+
+        answerContainer.style.boxSizing =
+            "border-box";
+
+
+        answerContainer.style.marginTop =
+            "20px";
+
+
+        answerContainer.style.padding =
+            "18px";
+
+
+        answerContainer.style.borderRadius =
+            "12px";
+
+
+        answerContainer.style.background =
+            "#f8fafc";
+
+
+        answerContainer.style.border =
+            "1px solid #e2e8f0";
+
+
+        answerContainer.style.textAlign =
+            "left";
+
+
+        answerContainer.style.position =
+            "relative";
+
+
+        answerContainer.style.zIndex =
+            "2";
+
+
+        if (
+            continueButton &&
+            continueButton.parentNode ===
+                resultState
+        ) {
+
+            resultState.insertBefore(
+                answerContainer,
+                continueButton
+            );
+
+        } else {
+
+            resultState.appendChild(
+                answerContainer
+            );
+
+        }
+
+    }
+
+
+    /* =========================================
+       FEEDBACK CONTAINER
+    ========================================= */
+
+    if (!feedbackContainer) {
+
+        feedbackContainer =
+            document.createElement(
+                "div"
+            );
+
+
+        feedbackContainer.id =
+            "aiFeedbackContainer";
+
+
+        feedbackContainer.style.display =
+            "block";
+
+
+        feedbackContainer.style.width =
+            "100%";
+
+
+        feedbackContainer.style.boxSizing =
+            "border-box";
+
+
+        feedbackContainer.style.marginTop =
+            "20px";
+
+
+        feedbackContainer.style.textAlign =
+            "center";
+
+
+        feedbackContainer.style.position =
+            "relative";
+
+
+        feedbackContainer.style.zIndex =
+            "2";
+
+
+        if (
+            continueButton &&
+            continueButton.parentNode ===
+                resultState
+        ) {
+
+            resultState.insertBefore(
+                feedbackContainer,
+                continueButton
+            );
+
+        } else {
+
+            resultState.appendChild(
+                feedbackContainer
+            );
+
+        }
+
+    }
+
+
+    return {
+
+        answerContainer,
+
+        feedbackContainer
+
+    };
+
+}
+
+
+/* =========================================================
    SHOW AI RESULT
-========================================= */
+========================================================= */
 
 function showAIResult(
     aiResult
 ) {
+
+    console.log(
+        "========== SHOW AI RESULT =========="
+    );
+
+
+    console.log(
+        "Full AI Result:",
+        aiResult
+    );
+
+
+    console.log(
+        "aiAnswered:",
+        aiResult?.aiAnswered
+    );
+
+
+    console.log(
+        "aiAnswer:",
+        aiResult?.aiAnswer
+    );
+
+
+    console.log(
+        "aiAnswer length:",
+        aiResult?.aiAnswer?.length
+    );
+
 
     if (
         !processingState ||
@@ -1001,16 +1413,83 @@ function showAIResult(
         !aiModal
     ) {
 
+        console.error(
+            "Cannot render AI result: modal elements missing."
+        );
+
         return;
+
     }
 
+
+    /*
+        IMPORTANT FIX:
+
+        The frontend should not depend only
+        on aiAnswered === true.
+
+        If the backend actually returned
+        a non-empty aiAnswer, display it.
+    */
+
+    const aiAnswer =
+        typeof aiResult?.aiAnswer ===
+            "string"
+
+            ? aiResult.aiAnswer.trim()
+
+            : "";
+
+
+    const hasAIAnswer =
+        aiAnswer.length >
+        0;
+
+
+    /* =========================================
+       SWITCH FROM PROCESSING TO RESULT
+    ========================================= */
 
     processingState.style.display =
         "none";
 
+
+    processingState.style.visibility =
+        "hidden";
+
+
     resultState.style.display =
         "block";
 
+
+    resultState.style.visibility =
+        "visible";
+
+
+    /*
+        Prevent long AI responses from
+        being clipped by the modal.
+    */
+
+    resultState.style.maxHeight =
+        "70vh";
+
+
+    resultState.style.overflowY =
+        "auto";
+
+
+    resultState.style.overflowX =
+        "hidden";
+
+
+    resultState.style.boxSizing =
+        "border-box";
+
+
+    /* =========================================
+       RESULT SUMMARY
+    ========================================= */
 
     const category =
         document.getElementById(
@@ -1038,23 +1517,23 @@ function showAIResult(
     }
 
 
-    const hasAIAnswer =
-        aiResult &&
-        aiResult.aiAnswered === true &&
-        typeof aiResult.aiAnswer === "string" &&
-        aiResult.aiAnswer.trim().length > 0;
-
-
     if (similarity) {
 
+        const score =
+            Number(
+                aiResult?.similarity
+            );
+
+
         if (
-            typeof aiResult.similarity ===
-            "number"
+            Number.isFinite(
+                score
+            )
         ) {
 
             similarity.textContent =
                 `${(
-                    aiResult.similarity * 100
+                    score * 100
                 ).toFixed(1)}% similarity`;
 
         } else {
@@ -1071,26 +1550,45 @@ function showAIResult(
 
         nextStep.textContent =
             hasAIAnswer
+
                 ? "AI answer generated"
+
                 : "Faculty review required";
 
     }
 
 
-    /*
-     * Display actual AI answer.
-     */
+    /* =========================================
+       CREATE CONTAINERS
+    ========================================= */
+
+    const containers =
+        ensureAIResultContainers();
+
+
+    if (!containers) {
+
+        console.error(
+            "Unable to create AI result containers."
+        );
+
+        return;
+
+    }
+
+
+    /* =========================================
+       SHOW ACTUAL AI ANSWER
+    ========================================= */
 
     showAIAnswer(
         aiResult
     );
 
 
-    /*
-     * If AI generated a valid answer,
-     * ask student whether it solved
-     * the query.
-     */
+    /* =========================================
+       FEEDBACK / FACULTY FLOW
+    ========================================= */
 
     if (hasAIAnswer) {
 
@@ -1106,18 +1604,55 @@ function showAIResult(
 
     }
 
+
+    /*
+        Force browser reflow.
+
+        This helps ensure dynamically inserted
+        content is painted immediately.
+    */
+
+    void resultState.offsetHeight;
+
+
+    console.log(
+        "AI answer rendered:",
+        hasAIAnswer
+    );
+
+
+    console.log(
+        "Answer container text length:",
+        document
+            .getElementById(
+                "aiAnswerContainer"
+            )
+            ?.innerText
+            ?.length
+    );
+
+
+    console.log(
+        "========================================"
+    );
+
 }
 
 
-/* =========================================
+/* =========================================================
    DISPLAY AI ANSWER
-========================================= */
+========================================================= */
 
 function showAIAnswer(
     aiResult
 ) {
 
-    let answerContainer =
+    console.log(
+        "========== SHOW AI ANSWER =========="
+    );
+
+
+    const answerContainer =
         document.getElementById(
             "aiAnswerContainer"
         );
@@ -1125,132 +1660,183 @@ function showAIAnswer(
 
     if (!answerContainer) {
 
-        answerContainer =
-            document.createElement(
-                "div"
-            );
+        console.error(
+            "#aiAnswerContainer was not found."
+        );
 
-        answerContainer.id =
-            "aiAnswerContainer";
-
-
-        answerContainer.style.marginTop =
-            "20px";
-
-        answerContainer.style.padding =
-            "18px";
-
-        answerContainer.style.borderRadius =
-            "12px";
-
-        answerContainer.style.background =
-            "#f8fafc";
-
-        answerContainer.style.border =
-            "1px solid #e2e8f0";
-
-        answerContainer.style.textAlign =
-            "left";
-
-
-        /*
-         * Insert before buttons /
-         * continue button.
-         */
-
-        const feedbackContainer =
-            document.getElementById(
-                "aiFeedbackContainer"
-            );
-
-
-        if (feedbackContainer) {
-
-            resultState.insertBefore(
-                answerContainer,
-                feedbackContainer
-            );
-
-        } else if (continueButton) {
-
-            resultState.insertBefore(
-                answerContainer,
-                continueButton
-            );
-
-        } else {
-
-            resultState.appendChild(
-                answerContainer
-            );
-
-        }
+        return;
 
     }
 
 
     const aiAnswer =
-        aiResult &&
-        aiResult.aiAnswer
-            ? aiResult.aiAnswer
-            : null;
+        typeof aiResult?.aiAnswer ===
+            "string"
+
+            ? aiResult.aiAnswer.trim()
+
+            : "";
 
 
-    if (!aiAnswer) {
+    console.log(
+        "Answer received:",
+        aiAnswer
+    );
 
-        answerContainer.innerHTML = `
-            <div style="
-                font-weight:600;
-                margin-bottom:8px;
-            ">
-                AI Response
-            </div>
 
-            <div style="
-                color:#64748b;
-                line-height:1.6;
-            ">
-                No AI answer was generated.
-                Your query will require faculty review.
-            </div>
-        `;
+    console.log(
+        "Answer length:",
+        aiAnswer.length
+    );
 
-        return;
+
+    /*
+        Remove previous answer content.
+    */
+
+    answerContainer.replaceChildren();
+
+
+    answerContainer.style.display =
+        "block";
+
+
+    answerContainer.style.visibility =
+        "visible";
+
+
+    answerContainer.style.opacity =
+        "1";
+
+
+    /* =========================================
+       HEADING
+    ========================================= */
+
+    const heading =
+        document.createElement(
+            "div"
+        );
+
+
+    heading.textContent =
+        "AI Answer";
+
+
+    heading.style.fontWeight =
+        "700";
+
+
+    heading.style.fontSize =
+        "16px";
+
+
+    heading.style.marginBottom =
+        "10px";
+
+
+    heading.style.color =
+        "#0f172a";
+
+
+    /* =========================================
+       ANSWER TEXT
+    ========================================= */
+
+    const answerText =
+        document.createElement(
+            "div"
+        );
+
+
+    answerText.style.color =
+        "#334155";
+
+
+    answerText.style.lineHeight =
+        "1.7";
+
+
+    answerText.style.whiteSpace =
+        "pre-wrap";
+
+
+    answerText.style.overflowWrap =
+        "anywhere";
+
+
+    answerText.style.wordBreak =
+        "break-word";
+
+
+    /*
+        IMPORTANT:
+
+        Use textContent instead of
+        innerHTML for the model response.
+    */
+
+    if (aiAnswer) {
+
+        answerText.textContent =
+            aiAnswer;
+
+    } else {
+
+        answerText.textContent =
+            "No AI answer was generated. Your query will require faculty review.";
+
     }
 
 
-    answerContainer.innerHTML = `
+    answerContainer.appendChild(
+        heading
+    );
 
-        <div style="
-            font-weight:700;
-            font-size:16px;
-            margin-bottom:10px;
-        ">
-            AI Answer
-        </div>
 
-        <div style="
-            color:#334155;
-            line-height:1.7;
-            white-space:pre-wrap;
-        ">
-            ${escapeHTML(aiAnswer)}
-        </div>
+    answerContainer.appendChild(
+        answerText
+    );
 
-    `;
+
+    /*
+        Keep the answer visible inside
+        the result area.
+    */
+
+    answerContainer.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+
+
+    console.log(
+        "AI answer DOM updated successfully."
+    );
+
+
+    console.log(
+        "Rendered text:",
+        answerContainer.innerText
+    );
+
+
+    console.log(
+        "========================================"
+    );
 
 }
 
 
-/* =========================================
+/* =========================================================
    AI FEEDBACK BUTTONS
-========================================= */
+========================================================= */
 
 function showAIFeedback(
     aiResult
 ) {
 
-    let feedbackContainer =
+    const feedbackContainer =
         document.getElementById(
             "aiFeedbackContainer"
         );
@@ -1258,152 +1844,246 @@ function showAIFeedback(
 
     if (!feedbackContainer) {
 
-        feedbackContainer =
-            document.createElement(
-                "div"
-            );
+        console.error(
+            "#aiFeedbackContainer was not found."
+        );
 
-        feedbackContainer.id =
-            "aiFeedbackContainer";
+        return;
 
-
-        feedbackContainer.style.marginTop =
-            "20px";
+    }
 
 
-        feedbackContainer.style.textAlign =
-            "center";
+    feedbackContainer.replaceChildren();
 
 
-        /*
-         * Insert before Continue button.
-         */
+    feedbackContainer.style.display =
+        "block";
 
-        if (continueButton) {
 
-            resultState.insertBefore(
-                feedbackContainer,
-                continueButton
-            );
+    feedbackContainer.style.visibility =
+        "visible";
 
-        } else {
 
-            resultState.appendChild(
-                feedbackContainer
+    /* =========================================
+       QUESTION
+    ========================================= */
+
+    const question =
+        document.createElement(
+            "div"
+        );
+
+
+    question.textContent =
+        "Did this answer solve your query?";
+
+
+    question.style.fontWeight =
+        "600";
+
+
+    question.style.marginBottom =
+        "12px";
+
+
+    question.style.color =
+        "#0f172a";
+
+
+    /* =========================================
+       BUTTON ROW
+    ========================================= */
+
+    const buttonRow =
+        document.createElement(
+            "div"
+        );
+
+
+    buttonRow.style.display =
+        "flex";
+
+
+    buttonRow.style.gap =
+        "10px";
+
+
+    buttonRow.style.justifyContent =
+        "center";
+
+
+    buttonRow.style.flexWrap =
+        "wrap";
+
+
+    /* =========================================
+       YES BUTTON
+    ========================================= */
+
+    const acceptButton =
+        document.createElement(
+            "button"
+        );
+
+
+    acceptButton.type =
+        "button";
+
+
+    acceptButton.id =
+        "aiAcceptButton";
+
+
+    acceptButton.textContent =
+        "✓ Yes, this solved my query";
+
+
+    acceptButton.style.padding =
+        "11px 18px";
+
+
+    acceptButton.style.border =
+        "none";
+
+
+    acceptButton.style.borderRadius =
+        "8px";
+
+
+    acceptButton.style.cursor =
+        "pointer";
+
+
+    acceptButton.style.background =
+        "#16a34a";
+
+
+    acceptButton.style.color =
+        "white";
+
+
+    acceptButton.style.fontWeight =
+        "600";
+
+
+    /* =========================================
+       NO BUTTON
+    ========================================= */
+
+    const rejectButton =
+        document.createElement(
+            "button"
+        );
+
+
+    rejectButton.type =
+        "button";
+
+
+    rejectButton.id =
+        "aiRejectButton";
+
+
+    rejectButton.textContent =
+        "No, I need faculty help";
+
+
+    rejectButton.style.padding =
+        "11px 18px";
+
+
+    rejectButton.style.border =
+        "none";
+
+
+    rejectButton.style.borderRadius =
+        "8px";
+
+
+    rejectButton.style.cursor =
+        "pointer";
+
+
+    rejectButton.style.background =
+        "#dc2626";
+
+
+    rejectButton.style.color =
+        "white";
+
+
+    rejectButton.style.fontWeight =
+        "600";
+
+
+    /* =========================================
+       ADD BUTTONS
+    ========================================= */
+
+    buttonRow.appendChild(
+        acceptButton
+    );
+
+
+    buttonRow.appendChild(
+        rejectButton
+    );
+
+
+    feedbackContainer.appendChild(
+        question
+    );
+
+
+    feedbackContainer.appendChild(
+        buttonRow
+    );
+
+
+    /* =========================================
+       EVENTS
+    ========================================= */
+
+    acceptButton.addEventListener(
+        "click",
+        () => {
+
+            confirmAIAnswer(
+                aiResult
             );
 
         }
-
-    }
-
-
-    feedbackContainer.innerHTML = `
-
-        <div style="
-            font-weight:600;
-            margin-bottom:12px;
-        ">
-            Did this answer solve your query?
-        </div>
-
-        <div style="
-            display:flex;
-            gap:10px;
-            justify-content:center;
-            flex-wrap:wrap;
-        ">
-
-            <button
-                type="button"
-                id="aiAcceptButton"
-                style="
-                    padding:11px 18px;
-                    border:none;
-                    border-radius:8px;
-                    cursor:pointer;
-                    background:#16a34a;
-                    color:white;
-                    font-weight:600;
-                "
-            >
-                ✓ Yes, this solved my query
-            </button>
-
-            <button
-                type="button"
-                id="aiRejectButton"
-                style="
-                    padding:11px 18px;
-                    border:none;
-                    border-radius:8px;
-                    cursor:pointer;
-                    background:#dc2626;
-                    color:white;
-                    font-weight:600;
-                "
-            >
-                No, I need faculty help
-            </button>
-
-        </div>
-    `;
+    );
 
 
-    const acceptButton =
-        document.getElementById(
-            "aiAcceptButton"
-        );
+    rejectButton.addEventListener(
+        "click",
+        () => {
+
+            escalateToFaculty(
+                aiResult
+            );
+
+        }
+    );
 
 
-    const rejectButton =
-        document.getElementById(
-            "aiRejectButton"
-        );
-
-
-    if (acceptButton) {
-
-        acceptButton.addEventListener(
-            "click",
-            () => {
-
-                confirmAIAnswer(
-                    aiResult
-                );
-
-            }
-        );
-
-    }
-
-
-    if (rejectButton) {
-
-        rejectButton.addEventListener(
-            "click",
-            () => {
-
-                escalateToFaculty(
-                    aiResult
-                );
-
-            }
-        );
-
-    }
+    console.log(
+        "AI feedback buttons rendered."
+    );
 
 }
 
 
-/* =========================================
+/* =========================================================
    NO AI ANSWER STATE
-========================================= */
+========================================================= */
 
 function showNoAIAnswerState(
     aiResult
 ) {
 
-    let feedbackContainer =
+    const feedbackContainer =
         document.getElementById(
             "aiFeedbackContainer"
         );
@@ -1411,117 +2091,172 @@ function showNoAIAnswerState(
 
     if (!feedbackContainer) {
 
-        feedbackContainer =
-            document.createElement(
-                "div"
-            );
+        console.error(
+            "#aiFeedbackContainer was not found."
+        );
 
-        feedbackContainer.id =
-            "aiFeedbackContainer";
+        return;
 
-
-        feedbackContainer.style.marginTop =
-            "20px";
+    }
 
 
-        feedbackContainer.style.padding =
-            "15px";
+    feedbackContainer.replaceChildren();
 
 
-        feedbackContainer.style.borderRadius =
-            "10px";
+    feedbackContainer.style.display =
+        "block";
 
 
-        feedbackContainer.style.background =
-            "#fff7ed";
+    feedbackContainer.style.visibility =
+        "visible";
 
 
-        feedbackContainer.style.color =
-            "#9a3412";
+    feedbackContainer.style.marginTop =
+        "20px";
 
 
-        if (continueButton) {
+    feedbackContainer.style.padding =
+        "15px";
 
-            resultState.insertBefore(
-                feedbackContainer,
-                continueButton
-            );
 
-        } else {
+    feedbackContainer.style.borderRadius =
+        "10px";
 
-            resultState.appendChild(
-                feedbackContainer
+
+    feedbackContainer.style.background =
+        "#fff7ed";
+
+
+    feedbackContainer.style.color =
+        "#9a3412";
+
+
+    /* =========================================
+       TITLE
+    ========================================= */
+
+    const title =
+        document.createElement(
+            "div"
+        );
+
+
+    title.textContent =
+        "Faculty Review Required";
+
+
+    title.style.fontWeight =
+        "700";
+
+
+    title.style.marginBottom =
+        "8px";
+
+
+    /* =========================================
+       MESSAGE
+    ========================================= */
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+
+    message.textContent =
+        "No useful resolved academic information was found. Your query needs faculty assistance.";
+
+
+    message.style.lineHeight =
+        "1.6";
+
+
+    /* =========================================
+       ESCALATION BUTTON
+    ========================================= */
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+
+    button.type =
+        "button";
+
+
+    button.id =
+        "noResultEscalateButton";
+
+
+    button.textContent =
+        "Forward to Faculty";
+
+
+    button.style.marginTop =
+        "14px";
+
+
+    button.style.padding =
+        "10px 18px";
+
+
+    button.style.border =
+        "none";
+
+
+    button.style.borderRadius =
+        "8px";
+
+
+    button.style.background =
+        "#2563eb";
+
+
+    button.style.color =
+        "white";
+
+
+    button.style.cursor =
+        "pointer";
+
+
+    button.style.fontWeight =
+        "600";
+
+
+    feedbackContainer.appendChild(
+        title
+    );
+
+
+    feedbackContainer.appendChild(
+        message
+    );
+
+
+    feedbackContainer.appendChild(
+        button
+    );
+
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            escalateToFaculty(
+                aiResult
             );
 
         }
-
-    }
-
-
-    feedbackContainer.innerHTML = `
-
-        <div style="
-            font-weight:700;
-            margin-bottom:8px;
-        ">
-            Faculty Review Required
-        </div>
-
-        <div style="
-            line-height:1.6;
-        ">
-            No sufficiently similar resolved
-            academic query was found.
-            Your query needs faculty assistance.
-        </div>
-
-        <button
-            type="button"
-            id="noResultEscalateButton"
-            style="
-                margin-top:14px;
-                padding:10px 18px;
-                border:none;
-                border-radius:8px;
-                background:#2563eb;
-                color:white;
-                cursor:pointer;
-                font-weight:600;
-            "
-        >
-            Forward to Faculty
-        </button>
-
-    `;
-
-
-    const button =
-        document.getElementById(
-            "noResultEscalateButton"
-        );
-
-
-    if (button) {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                escalateToFaculty(
-                    aiResult
-                );
-
-            }
-        );
-
-    }
+    );
 
 }
 
 
-/* =========================================
-   AI CONFIRM
-========================================= */
+/* =========================================================
+   CONFIRM AI ANSWER
+========================================================= */
 
 async function confirmAIAnswer(
     aiResult
@@ -1534,6 +2269,7 @@ async function confirmAIAnswer(
         );
 
         return;
+
     }
 
 
@@ -1551,11 +2287,15 @@ async function confirmAIAnswer(
             await fetch(
                 `${AI_API_URL}/ai-confirm`,
                 {
-                    method: "POST",
+
+                    method:
+                        "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
@@ -1565,16 +2305,19 @@ async function confirmAIAnswer(
                                 submittedQueryId,
 
                             aiAnswer:
-                                aiResult.aiAnswer,
+                                aiResult?.aiAnswer ||
+                                "",
 
                             similarity:
-                                typeof aiResult.similarity ===
+                                typeof aiResult?.similarity ===
                                 "number"
+
                                     ? aiResult.similarity
+
                                     : 0,
 
                             similarQueryId:
-                                aiResult.similarQueryId ||
+                                aiResult?.similarQueryId ||
                                 "nil"
 
                         })
@@ -1583,19 +2326,10 @@ async function confirmAIAnswer(
             );
 
 
-        let result;
-
-
-        try {
-
-            result =
-                await response.json();
-
-        } catch (error) {
-
-            result = {};
-
-        }
+        const result =
+            await readJSON(
+                response
+            );
 
 
         console.log(
@@ -1607,26 +2341,22 @@ async function confirmAIAnswer(
         if (!response.ok) {
 
             throw new Error(
-                result.detail ||
-                result.message ||
+
+                result?.detail ||
+
+                result?.message ||
+
                 "Unable to confirm AI answer."
+
             );
 
         }
 
 
-        /*
-         * Update UI.
-         */
-
         showConfirmationMessage(
             "Your query has been resolved by AI."
         );
 
-
-        /*
-         * Continue button remains available.
-         */
 
     } catch (error) {
 
@@ -1649,9 +2379,9 @@ async function confirmAIAnswer(
 }
 
 
-/* =========================================
+/* =========================================================
    ESCALATE TO FACULTY
-========================================= */
+========================================================= */
 
 async function escalateToFaculty(
     aiResult
@@ -1664,6 +2394,7 @@ async function escalateToFaculty(
         );
 
         return;
+
     }
 
 
@@ -1677,27 +2408,19 @@ async function escalateToFaculty(
         );
 
 
-        /*
-         * IMPORTANT:
-         *
-         * No Firebase Authorization token
-         * is sent here.
-         *
-         * The AI backend handles the
-         * secure internal call to:
-         *
-         * /assign-faculty-internal
-         */
-
         const response =
             await fetch(
                 `${AI_API_URL}/ai-escalate`,
                 {
-                    method: "POST",
+
+                    method:
+                        "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
@@ -1709,7 +2432,9 @@ async function escalateToFaculty(
                             similarity:
                                 typeof aiResult?.similarity ===
                                 "number"
+
                                     ? aiResult.similarity
+
                                     : 0,
 
                             similarQueryId:
@@ -1722,19 +2447,10 @@ async function escalateToFaculty(
             );
 
 
-        let result;
-
-
-        try {
-
-            result =
-                await response.json();
-
-        } catch (error) {
-
-            result = {};
-
-        }
+        const result =
+            await readJSON(
+                response
+            );
 
 
         console.log(
@@ -1746,17 +2462,17 @@ async function escalateToFaculty(
         if (!response.ok) {
 
             throw new Error(
-                result.detail ||
-                result.message ||
+
+                result?.detail ||
+
+                result?.message ||
+
                 "Unable to forward query to faculty."
+
             );
 
         }
 
-
-        /*
-         * Show successful escalation.
-         */
 
         showConfirmationMessage(
             "Your query has been forwarded to the appropriate faculty member."
@@ -1784,9 +2500,30 @@ async function escalateToFaculty(
 }
 
 
-/* =========================================
+/* =========================================================
+   READ JSON
+========================================================= */
+
+async function readJSON(
+    response
+) {
+
+    try {
+
+        return await response.json();
+
+    } catch {
+
+        return {};
+
+    }
+
+}
+
+
+/* =========================================================
    DISABLE AI FEEDBACK BUTTONS
-========================================= */
+========================================================= */
 
 function disableAIFeedbackButtons() {
 
@@ -1797,13 +2534,15 @@ function disableAIFeedbackButtons() {
 
 
     buttons.forEach(
-        button => {
+        (button) => {
 
             button.disabled =
                 true;
 
+
             button.style.opacity =
                 "0.6";
+
 
             button.style.cursor =
                 "not-allowed";
@@ -1814,9 +2553,9 @@ function disableAIFeedbackButtons() {
 }
 
 
-/* =========================================
+/* =========================================================
    ENABLE AI FEEDBACK BUTTONS
-========================================= */
+========================================================= */
 
 function enableAIFeedbackButtons() {
 
@@ -1827,13 +2566,15 @@ function enableAIFeedbackButtons() {
 
 
     buttons.forEach(
-        button => {
+        (button) => {
 
             button.disabled =
                 false;
 
+
             button.style.opacity =
                 "1";
+
 
             button.style.cursor =
                 "pointer";
@@ -1844,13 +2585,20 @@ function enableAIFeedbackButtons() {
 }
 
 
-/* =========================================
+/* =========================================================
    CONFIRMATION MESSAGE
-========================================= */
+========================================================= */
 
 function showConfirmationMessage(
     message
 ) {
+
+    if (!resultState) {
+
+        return;
+
+    }
+
 
     let container =
         document.getElementById(
@@ -1864,6 +2612,7 @@ function showConfirmationMessage(
             document.createElement(
                 "div"
             );
+
 
         container.id =
             "aiConfirmationMessage";
@@ -1893,7 +2642,11 @@ function showConfirmationMessage(
             "600";
 
 
-        if (continueButton) {
+        if (
+            continueButton &&
+            continueButton.parentNode ===
+                resultState
+        ) {
 
             resultState.insertBefore(
                 container,
@@ -1915,11 +2668,6 @@ function showConfirmationMessage(
         message;
 
 
-    /*
-     * Remove feedback buttons after
-     * successful action.
-     */
-
     const feedback =
         document.getElementById(
             "aiFeedbackContainer"
@@ -1935,15 +2683,16 @@ function showConfirmationMessage(
 }
 
 
-/* =========================================
+/* =========================================================
    CLOSE AI MODAL
-========================================= */
+========================================================= */
 
 function closeAiModal() {
 
     if (!aiModal) {
 
         return;
+
     }
 
 
@@ -1951,12 +2700,39 @@ function closeAiModal() {
         "show"
     );
 
+
+    [
+
+        "aiAnswerContainer",
+
+        "aiFeedbackContainer",
+
+        "aiConfirmationMessage"
+
+    ].forEach(
+        (id) => {
+
+            const element =
+                document.getElementById(
+                    id
+                );
+
+
+            if (element) {
+
+                element.remove();
+
+            }
+
+        }
+    );
+
 }
 
 
-/* =========================================
+/* =========================================================
    CONTINUE BUTTON
-========================================= */
+========================================================= */
 
 if (continueButton) {
 
@@ -1973,22 +2749,23 @@ if (continueButton) {
 }
 
 
-/* =========================================
+/* =========================================================
    MODAL CLOSE
-========================================= */
+========================================================= */
 
 if (aiModal) {
 
     aiModal.addEventListener(
         "click",
-        event => {
+        (event) => {
 
             /*
-             * Don't allow accidental closing
-             * while AI processing is running.
-             */
+                Allow closing only after
+                processing has finished.
+            */
 
             if (
+
                 event.target ===
                 aiModal &&
 
@@ -1996,6 +2773,7 @@ if (aiModal) {
 
                 processingState.style.display ===
                 "none"
+
             ) {
 
                 closeAiModal();
@@ -2008,66 +2786,31 @@ if (aiModal) {
 }
 
 
-/* =========================================
+/* =========================================================
    DELAY
-========================================= */
+========================================================= */
 
 function delay(
     milliseconds
 ) {
 
     return new Promise(
-        resolve =>
+        (resolve) => {
+
             setTimeout(
                 resolve,
                 milliseconds
-            )
+            );
+
+        }
     );
 
 }
 
 
-/* =========================================
-   HTML ESCAPE
-========================================= */
-
-function escapeHTML(
-    value
-) {
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-    div.textContent =
-        value ?? "";
-
-    return div.innerHTML;
-
-}
-
-
-/* =========================================
-   SANITIZE FILE NAME
-========================================= */
-
-function sanitizeFileName(
-    fileName
-) {
-
-    return fileName
-        .replace(
-            /[^a-zA-Z0-9._-]/g,
-            "_"
-        );
-
-}
-
-
-/* =========================================
+/* =========================================================
    FORM ERROR
-========================================= */
+========================================================= */
 
 function showFormError(
     message
@@ -2080,9 +2823,9 @@ function showFormError(
 }
 
 
-/* =========================================
+/* =========================================================
    FIREBASE ERROR MESSAGE
-========================================= */
+========================================================= */
 
 function getFirebaseErrorMessage(
     error
@@ -2153,9 +2896,9 @@ function getFirebaseErrorMessage(
 }
 
 
-/* =========================================
+/* =========================================================
    PROFILE MENU
-========================================= */
+========================================================= */
 
 if (
     profileButton &&
@@ -2164,9 +2907,10 @@ if (
 
     profileButton.addEventListener(
         "click",
-        event => {
+        (event) => {
 
             event.stopPropagation();
+
 
             profileMenu.classList.toggle(
                 "show"
@@ -2190,7 +2934,7 @@ if (
 
     profileMenu.addEventListener(
         "click",
-        event => {
+        (event) => {
 
             event.stopPropagation();
 
@@ -2200,9 +2944,9 @@ if (
 }
 
 
-/* =========================================
+/* =========================================================
    NOTIFICATIONS
-========================================= */
+========================================================= */
 
 if (
     notificationButton
@@ -2221,9 +2965,9 @@ if (
 }
 
 
-/* =========================================
+/* =========================================================
    LOGOUT
-========================================= */
+========================================================= */
 
 if (
     logoutButton

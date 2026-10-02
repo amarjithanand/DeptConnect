@@ -63,14 +63,187 @@ print("Sentence Transformer loaded.")
 
 
 # =========================================================
-# BUILD FAISS INDEX
+# HELPER
+# CREATE SEARCHABLE TEXT
+# =========================================================
+
+def create_search_text(data):
+
+    query_title = str(
+        data.get(
+            "queryTitle",
+            ""
+        )
+    ).strip()
+
+    query_description = str(
+        data.get(
+            "queryDescription",
+            ""
+        )
+    ).strip()
+
+    response = str(
+        data.get(
+            "response",
+            ""
+        )
+    ).strip()
+
+    course = str(
+        data.get(
+            "course",
+            ""
+        )
+    ).strip()
+
+    department = str(
+        data.get(
+            "department",
+            ""
+        )
+    ).strip()
+
+
+    text = f"""
+Course: {course}
+
+Department: {department}
+
+Question: {query_title}
+
+Description: {query_description}
+
+Faculty Answer: {response}
+""".strip()
+
+
+    return text
+
+
+# =========================================================
+# HELPER
+# CREATE METADATA
+# =========================================================
+
+def create_metadata(
+    document_id,
+    data
+):
+
+    query_title = str(
+        data.get(
+            "queryTitle",
+            ""
+        )
+    ).strip()
+
+    query_description = str(
+        data.get(
+            "queryDescription",
+            ""
+        )
+    ).strip()
+
+    response = str(
+        data.get(
+            "response",
+            ""
+        )
+    ).strip()
+
+    course = str(
+        data.get(
+            "course",
+            ""
+        )
+    ).strip()
+
+    department = str(
+        data.get(
+            "department",
+            ""
+        )
+    ).strip()
+
+
+    return {
+
+        "document_id":
+            document_id,
+
+        "queryId":
+            data.get(
+                "queryId"
+            ),
+
+        "queryTitle":
+            query_title,
+
+        "queryDescription":
+            query_description,
+
+        "response":
+            response,
+
+        "course":
+            course,
+
+        "department":
+            department,
+
+        "facultyId":
+            data.get(
+                "facultyId"
+            ),
+
+        "facultyName":
+            data.get(
+                "facultyName"
+            ),
+
+        "studentId":
+            data.get(
+                "studentId"
+            ),
+
+        "priority":
+            data.get(
+                "priority"
+            ),
+
+        "status":
+            data.get(
+                "status"
+            ),
+
+        "respondedAt":
+            data.get(
+                "respondedAt"
+            )
+
+    }
+
+
+# =========================================================
+# FULL FAISS INDEX BUILD
+# =========================================================
+#
+# Used for:
+#
+# 1. First-time index creation
+# 2. Rebuilding the complete index
+# 3. Recovering a corrupted/missing index
+#
+# DO NOT call this for every student query.
+#
 # =========================================================
 
 def build_faiss_index():
 
     print("\n")
     print("========================================")
-    print("STARTING FAISS INDEX REBUILD")
+    print("STARTING FAISS FULL INDEX BUILD")
     print("========================================")
 
 
@@ -115,12 +288,28 @@ def build_faiss_index():
 
 
         # -------------------------------------------------
-        # ONLY RESOLVED RESPONSES
+        # ONLY INDEX RESOLVED RESPONSES
         # -------------------------------------------------
 
-        if data.get("status") != "resolved":
+        if data.get(
+            "status"
+        ) != "resolved":
+
             continue
 
+
+        # -------------------------------------------------
+        # CREATE SEARCH TEXT
+        # -------------------------------------------------
+
+        text = create_search_text(
+            data
+        )
+
+
+        # -------------------------------------------------
+        # SKIP EMPTY RECORDS
+        # -------------------------------------------------
 
         query_title = str(
             data.get(
@@ -129,14 +318,12 @@ def build_faiss_index():
             )
         ).strip()
 
-
         query_description = str(
             data.get(
                 "queryDescription",
                 ""
             )
         ).strip()
-
 
         response = str(
             data.get(
@@ -146,53 +333,17 @@ def build_faiss_index():
         ).strip()
 
 
-        course = str(
-            data.get(
-                "course",
-                ""
-            )
-        ).strip()
-
-
-        department = str(
-            data.get(
-                "department",
-                ""
-            )
-        ).strip()
-
-
-        # -------------------------------------------------
-        # CREATE SEARCHABLE TEXT
-        # -------------------------------------------------
-
-        text = f"""
-Course: {course}
-
-Department: {department}
-
-Question: {query_title}
-
-Description: {query_description}
-
-Faculty Answer: {response}
-""".strip()
-
-
-        # -------------------------------------------------
-        # SKIP COMPLETELY EMPTY RECORDS
-        # -------------------------------------------------
-
         if not (
             query_title
             or query_description
             or response
         ):
+
             continue
 
 
         # -------------------------------------------------
-        # ADD SEARCH TEXT
+        # STORE SEARCH TEXT
         # -------------------------------------------------
 
         search_texts.append(
@@ -204,66 +355,17 @@ Faculty Answer: {response}
         # STORE METADATA
         # -------------------------------------------------
 
-        metadata.append({
-
-            "document_id":
+        metadata.append(
+            create_metadata(
                 document.id,
-
-            "queryId":
-                data.get(
-                    "queryId"
-                ),
-
-            "queryTitle":
-                query_title,
-
-            "queryDescription":
-                query_description,
-
-            "response":
-                response,
-
-            "course":
-                course,
-
-            "department":
-                department,
-
-            "facultyId":
-                data.get(
-                    "facultyId"
-                ),
-
-            "facultyName":
-                data.get(
-                    "facultyName"
-                ),
-
-            "studentId":
-                data.get(
-                    "studentId"
-                ),
-
-            "priority":
-                data.get(
-                    "priority"
-                ),
-
-            "status":
-                data.get(
-                    "status"
-                ),
-
-            "respondedAt":
-                data.get(
-                    "respondedAt"
-                )
-
-        })
+                data
+            )
+        )
 
 
     print(
-        f"Found {len(search_texts)} resolved responses."
+        f"Found {len(search_texts)} "
+        f"resolved responses."
     )
 
 
@@ -274,7 +376,8 @@ Faculty Answer: {response}
     if len(search_texts) == 0:
 
         print(
-            "\nNo resolved responses available for indexing."
+            "\nNo resolved responses available "
+            "for indexing."
         )
 
         return False
@@ -303,7 +406,7 @@ Faculty Answer: {response}
 
 
     print(
-        "Embedding shape:",
+        "\nEmbedding shape:",
         embeddings.shape
     )
 
@@ -321,8 +424,11 @@ Faculty Answer: {response}
     )
 
 
-    # Inner Product on normalized vectors
-    # is equivalent to cosine similarity.
+    # -----------------------------------------------------
+    # IndexFlatIP + normalized embeddings
+    #
+    # Inner Product becomes cosine similarity
+    # -----------------------------------------------------
 
     index = faiss.IndexFlatIP(
         dimension
@@ -347,11 +453,8 @@ Faculty Answer: {response}
     # =====================================================
 
     faiss.write_index(
-
         index,
-
         INDEX_FILE
-
     )
 
 
@@ -365,16 +468,13 @@ Faculty Answer: {response}
     ) as file:
 
         pickle.dump(
-
             metadata,
-
             file
-
         )
 
 
     # =====================================================
-    # SUCCESS MESSAGE
+    # SUCCESS
     # =====================================================
 
     print(
@@ -382,13 +482,12 @@ Faculty Answer: {response}
     )
 
     print(
-        "FAISS INDEX CREATED SUCCESSFULLY"
+        "FAISS FULL INDEX CREATED SUCCESSFULLY"
     )
 
     print(
         "========================================"
     )
-
 
     print(
         f"Index: {INDEX_FILE}"
@@ -402,13 +501,334 @@ Faculty Answer: {response}
         f"Documents indexed: {index.ntotal}"
     )
 
+    print(
+        "========================================"
+    )
+
+
+    return True
+
+
+# =========================================================
+# INCREMENTAL FAISS INDEXING
+# =========================================================
+#
+# Adds ONE newly resolved response to the existing
+# FAISS index.
+#
+# This is what we will call automatically when
+# a faculty member resolves a query.
+#
+# =========================================================
+
+def add_response_to_faiss(
+    response_id
+):
+
+    print("\n")
+    print("========================================")
+    print("ADDING RESPONSE TO FAISS")
+    print("========================================")
+
+    print(
+        f"Response ID: {response_id}"
+    )
+
+
+    # =====================================================
+    # GET RESPONSE FROM FIRESTORE
+    # =====================================================
+
+    response_ref = db.collection(
+        "responses"
+    ).document(
+        response_id
+    )
+
+
+    response_snapshot = response_ref.get()
+
+
+    if not response_snapshot.exists:
+
+        print(
+            "\nResponse document not found."
+        )
+
+        return False
+
+
+    data = response_snapshot.to_dict()
+
+
+    # =====================================================
+    # ONLY INDEX RESOLVED RESPONSES
+    # =====================================================
+
+    if data.get(
+        "status"
+    ) != "resolved":
+
+        print(
+            "\nResponse is not resolved."
+        )
+
+        return False
+
+
+    # =====================================================
+    # CHECK REQUIRED CONTENT
+    # =====================================================
+
+    query_title = str(
+        data.get(
+            "queryTitle",
+            ""
+        )
+    ).strip()
+
+    query_description = str(
+        data.get(
+            "queryDescription",
+            ""
+        )
+    ).strip()
+
+    response = str(
+        data.get(
+            "response",
+            ""
+        )
+    ).strip()
+
+
+    if not (
+        query_title
+        or query_description
+        or response
+    ):
+
+        print(
+            "\nResponse contains no searchable content."
+        )
+
+        return False
+
+
+    # =====================================================
+    # CHECK WHETHER INDEX EXISTS
+    # =====================================================
+
+    if not os.path.exists(
+        INDEX_FILE
+    ):
+
+        print(
+            "\nFAISS index does not exist."
+        )
+
+        print(
+            "Creating full index first..."
+        )
+
+
+        return build_faiss_index()
+
+
+    # =====================================================
+    # LOAD EXISTING FAISS INDEX
+    # =====================================================
+
+    print(
+        "\nLoading existing FAISS index..."
+    )
+
+
+    index = faiss.read_index(
+        INDEX_FILE
+    )
+
+
+    print(
+        f"Current FAISS vectors: "
+        f"{index.ntotal}"
+    )
+
+
+    # =====================================================
+    # CREATE SEARCH TEXT
+    # =====================================================
+
+    search_text = create_search_text(
+        data
+    )
+
+
+    # =====================================================
+    # CREATE SINGLE EMBEDDING
+    # =====================================================
+
+    print(
+        "\nCreating embedding for new response..."
+    )
+
+
+    embedding = model.encode(
+
+        [search_text],
+
+        convert_to_numpy=True,
+
+        normalize_embeddings=True
+
+    )
+
+
+    embedding = embedding.astype(
+        "float32"
+    )
+
+
+    # =====================================================
+    # VERIFY DIMENSION
+    # =====================================================
+
+    if embedding.shape[1] != index.d:
+
+        print(
+            "\nEmbedding dimension mismatch."
+        )
+
+        print(
+            f"FAISS dimension: {index.d}"
+        )
+
+        print(
+            f"Embedding dimension: "
+            f"{embedding.shape[1]}"
+        )
+
+        return False
+
+
+    # =====================================================
+    # PREVENT DUPLICATE INDEXING
+    # =====================================================
+
+    if os.path.exists(
+        METADATA_FILE
+    ):
+
+        with open(
+            METADATA_FILE,
+            "rb"
+        ) as file:
+
+            metadata = pickle.load(
+                file
+            )
+
+    else:
+
+        metadata = []
+
+
+    # -----------------------------------------------------
+    # Check whether this Firestore document is already
+    # indexed.
+    # -----------------------------------------------------
+
+    for item in metadata:
+
+        if item.get(
+            "document_id"
+        ) == response_id:
+
+            print(
+                "\nResponse is already indexed."
+            )
+
+            return True
+
+
+    # =====================================================
+    # ADD VECTOR TO FAISS
+    # =====================================================
+
+    index.add(
+        embedding
+    )
+
+
+    print(
+        f"\nNew FAISS vector added."
+    )
+
+    print(
+        f"Total vectors: {index.ntotal}"
+    )
+
+
+    # =====================================================
+    # ADD METADATA
+    # =====================================================
+
+    metadata.append(
+        create_metadata(
+            response_id,
+            data
+        )
+    )
+
+
+    # =====================================================
+    # SAVE UPDATED FAISS INDEX
+    # =====================================================
+
+    faiss.write_index(
+        index,
+        INDEX_FILE
+    )
+
+
+    # =====================================================
+    # SAVE UPDATED METADATA
+    # =====================================================
+
+    with open(
+        METADATA_FILE,
+        "wb"
+    ) as file:
+
+        pickle.dump(
+            metadata,
+            file
+        )
+
+
+    # =====================================================
+    # SUCCESS
+    # =====================================================
+
+    print(
+        "\n========================================"
+    )
+
+    print(
+        "RESPONSE ADDED TO FAISS SUCCESSFULLY"
+    )
 
     print(
         "========================================"
     )
 
     print(
-        "FAISS INDEX REBUILD COMPLETED"
+        f"Response ID: {response_id}"
+    )
+
+    print(
+        f"Total indexed responses: "
+        f"{index.ntotal}"
     )
 
     print(
@@ -421,6 +841,14 @@ Faculty Answer: {response}
 
 # =========================================================
 # RUN DIRECTLY
+# =========================================================
+#
+# Running:
+#
+#     python build_index.py
+#
+# performs a COMPLETE rebuild.
+#
 # =========================================================
 
 if __name__ == "__main__":

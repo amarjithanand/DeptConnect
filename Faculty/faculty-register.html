@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Faculty Registration | DeptConnect
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles/faculty-register.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         PAGE CONTAINER
+    ========================================== -->
+
+    <main class="register-page">
+
+
+        <!-- =====================================
+             LEFT BRANDING PANEL
+        ====================================== -->
+
+        <section class="brand-panel">
+
+
+            <div class="brand-content">
+
+
+                <div class="brand-logo">
+
+                    <div class="logo-mark">
+                        DC
+                    </div>
+
+                    <span>
+                        DeptConnect
+                    </span>
+
+                </div>
+
+
+                <div class="brand-message">
+
+                    <span class="eyebrow">
+                        FACULTY PORTAL
+                    </span>
+
+                    <h1>
+                        Join DeptConnect
+                    </h1>
+
+                    <p>
+                        Create your faculty account and
+                        become part of the academic
+                        query management system.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-list">
+
+
+                    <div class="feature-item">
+
+                        <div class="feature-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Manage Student Queries
+                            </strong>
+
+                            <span>
+                                Handle and resolve academic
+                                queries efficiently.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature-item">
+
+                        <div class="feature-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Smart Query Assignment
+                            </strong>
+
+                            <span>
+                                Receive queries based on
+                                your expertise and workload.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature-item">
+
+                        <div class="feature-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Academic Knowledge Base
+                            </strong>
+
+                            <span>
+                                Build a reusable source of
+                                resolved academic queries.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <div class="brand-footer">
+
+                <span>
+                    © 2026 DeptConnect
+                </span>
+
+                <span>
+                    Smart Academic Query Management
+                </span>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================
+             REGISTRATION PANEL
+        ====================================== -->
+
+        <section class="form-panel">
+
+
+            <div class="form-container">
+
+
+                <!-- HEADER -->
+
+                <div class="form-header">
+
+                    <div class="mobile-logo">
+
+                        <div class="logo-mark">
+                            DC
+                        </div>
+
+                        <span>
+                            DeptConnect
+                        </span>
+
+                    </div>
+
+
+                    <span class="form-eyebrow">
+                        FACULTY REGISTRATION
+                    </span>
+
+
+                    <h2>
+                        Create your account
+                    </h2>
+
+
+                    <p>
+                        Enter your professional details
+                        to register as a faculty member.
+                    </p>
+
+                </div>
+
+
+
+                <!-- =================================
+                     ALERT
+                ================================== -->
+
+                <div
+                    id="formMessage"
+                    class="form-message"
+                    role="alert"
+                ></div>
+
+
+
+                <!-- =================================
+                     REGISTRATION FORM
+                ================================== -->
+
+                <form
+                    id="facultyRegisterForm"
+                    novalidate
+                >
+
+
+                    <!-- =================================
+                         PERSONAL INFORMATION
+                    ================================== -->
+
+                    <div class="section-heading">
+
+                        <span class="section-number">
+                            01
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Personal Information
+                            </h3>
+
+                            <p>
+                                Basic faculty details
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="form-grid">
+
+
+                        <!-- NAME -->
+
+                        <div class="form-group full-width">
+
+                            <label for="name">
+                                Full Name
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                placeholder="e.g. Dr. Anil Kumar"
+                                autocomplete="name"
+                                maxlength="100"
+                                required
+                            >
+
+                            <small
+                                id="nameError"
+                                class="field-error"
+                            ></small>
+
+                        </div>
+
+
+
+                        <!-- FACULTY ID -->
+
+                        <div class="form-group">
+
+                            <label for="facultyId">
+                                Faculty ID
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="facultyId"
+                                name="facultyId"
+                                placeholder="e.g. FAC23CSE001"
+                                maxlength="30"
+                                required
+                            >
+
+                            <small
+                                id="facultyIdError"
+                                class="field-error"
+                            ></small>
+
+                        </div>
+
+
+
+                        <!-- EMAIL -->
+
+                        <div class="form-group">
+
+                            <label for="email">
+                                Official Email
+                                <span>*</span>
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="faculty@college.edu"
+                                autocomplete="email"
+                                required
+                            >
+
+                            <small
+                                id="emailError"
+                                class="field-error"
+                            ></small>
+
+                        </div>
+
+
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         ACADEMIC INFORMATION
+                    ================================== -->
+
+                    <div class="section-heading section-spacing">
+
+                        <span class="section-number">
+                            02
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Academic Information
+                            </h3>
+
+                            <p>
+                                Department and teaching details
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="form-grid">
+
+
+                        <!-- DEPARTMENT -->
+
+                        <div class="form-group">
+
+                            <label for="department">
+                                Department
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="department"
+                                name="department"
+                                required
+                            >
+
+                                <option
+                                    value=""
+                                    selected
+                                    disabled
+                                >
+                                    Select department
+                                </option>
+
+                                <option value="MCA">
+                                    MCA
+                                </option>
+
+                                <option value="computer-science">
+                                    Computer Science
+                                </option>
+
+                                <option value="information-technology">
+                                    Information Technology
+                                </option>
+
+                                <option value="electronics">
+                                    Electronics
+                                </option>
+
+                                <option value="electrical">
+                                    Electrical
+                                </option>
+
+                                <option value="mechanical">
+                                    Mechanical
+                                </option>
+
+                                <option value="civil">
+                                    Civil
+                                </option>
+
+                                <option value="mathematics">
+                                    Mathematics
+                                </option>
+
+                                <option value="physics">
+                                    Physics
+                                </option>
+
+                                <option value="chemistry">
+                                    Chemistry
+                                </option>
+
+                                <option value="other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                            <small
+                                id="departmentError"
+                                class="field-error"
+                            ></small>
+
+                        </div>
+
+
+
+                        <!-- DESIGNATION -->
+
+                        <div class="form-group">
+
+                            <label for="designation">
+                                Designation
+                                <span>*</span>
+                            </label>
+
+                            <select
+                                id="designation"
+                                name="designation"
+                                required
+                            >
+
+                                <option
+                                    value=""
+                                    selected
+                                    disabled
+                                >
+                                    Select designation
+                                </option>
+
+                                <option value="Professor">
+                                    Professor
+                                </option>
+
+                                <option value="Associate Professor">
+                                    Associate Professor
+                                </option>
+
+                                <option value="Assistant Professor">
+                                    Assistant Professor
+                                </option>
+
+                                <option value="Lecturer">
+                                    Lecturer
+                                </option>
+
+                                <option value="Guest Faculty">
+                                    Guest Faculty
+                                </option>
+
+                            </select>
+
+                            <small
+                                id="designationError"
+                                class="field-error"
+                            ></small>
+
+                        </div>
+
+
+
+                        <!-- SUBJECTS -->
+
+                        <div class="form-group full-width">
+
+                            <label for="subjectInput">
+                                Subjects / Areas of Expertise
+                                <span>*</span>
+                            </label>
+
+
+                            <div class="subject-input-wrapper">
+
+                                <input
+                                    type="text"
+                                    id="subjectInput"
+                                    placeholder="e.g. Web Development"
+                                    maxlength="60"
+                                >
+
+                                <button
+                                    type="button"
+                                    id="addSubjectButton"
+                                    class="add-subject-button"
+                                >
+                                    Add
+                                </button>
+
+                            </div>
+
+
+                            <div
+                                id="subjectsContainer"
+                                class="subjects-container"
+                            ></div>
+
+
+                            <small class="input-hint">
+                                Add at least one subject.
+                                Press Enter to add.
+                            </small>
+
+
+                            <small
+                                id="subjectsError"
+                                class="field-error"
+                            ></small>
+
+                        </div>
+
+
+
+                        <!-- PROFILE IMAGE -->
+
+                        <div class="form-group full-width">
+
+                            <label for="profileImg">
+                                Profile Image URL
+                                <span class="optional">
+                                    Optional
+                                </span>
+                            </label>
+
+                            <input
+                                type="url"
+                                id="profileImg"
+                                name="profileImg"
+                                placeholder="https://example.com/profile.jpg"
+                            >
+
+                            <small class="input-hint">
+                                You can leave this empty and
+                                add a profile image later.
+                            </small>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         SECURITY
+                    ================================== -->
+
+                    <div class="section-heading section-spacing">
+
+                        <span class="section-number">
+                            03
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Account Security
+                            </h3>
+
+                            <p>
+                                Create your login credentials
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="form-grid">
+
+
+                        <!-- PASSWORD -->
+
+                        <div class="form-group">
+
+                            <label for="password">
+                                Password
+                                <span>*</span>
+                            </label>
+
+
+                            <div class="password-wrapper">
+
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Minimum 6 characters"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    data-target="password"
+                                    aria-label="Show password"
+                                >
+                                    Show
+                                </button>
+
+                            </div>
+
+
+                            <div
+                                id="passwordStrength"
+                                class="password-strength"
+                            ></div>
+
+
+                            <small
+                                id="passwordError"
+                                class="field-error"
+                            ></small>
+
+                        </div>
+
+
+
+                        <!-- CONFIRM PASSWORD -->
+
+                        <div class="form-group">
+
+                            <label for="confirmPassword">
+                                Confirm Password
+                                <span>*</span>
+                            </label>
+
+
+                            <div class="password-wrapper">
+
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    placeholder="Re-enter password"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    data-target="confirmPassword"
+                                    aria-label="Show password"
+                                >
+                                    Show
+                                </button>
+
+                            </div>
+
+
+                            <small
+                                id="confirmPasswordError"
+                                class="field-error"
+                            ></small>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         APPROVAL NOTICE
+                    ================================== -->
+
+                    <div class="approval-notice">
+
+                        <div class="approval-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Account approval
+                            </strong>
+
+                            <p>
+                                Your faculty account will be
+                                submitted for administrator approval.
+                                You may be required to wait until
+                                your account is approved before
+                                accessing faculty features.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =================================
+                         SUBMIT
+                    ================================== -->
+
+                    <button
+                        type="submit"
+                        id="registerButton"
+                        class="register-button"
+                    >
+
+                        <span id="registerButtonText">
+                            Create Faculty Account
+                        </span>
+
+                        <span
+                            id="registerLoader"
+                            class="button-loader"
+                        ></span>
+
+                        <span class="button-arrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+
+                    <!-- LOGIN -->
+
+                    <div class="login-link">
+
+                        Already have a faculty account?
+
+                        <a href="login.html">
+                            Sign in
+                        </a>
+
+                    </div>
+
+
+                </form>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <script
+        type="module"
+        src="scripts/faculty-register.js"
+    ></script>
+
+
+</body>
+
+</html>
