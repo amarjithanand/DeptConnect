@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect - Knowledge Base</title>
+
+    <link
+        rel="stylesheet"
+        href="styles/knowledge-base.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+<body>
+
+
+<!-- =========================================
+     NAVBAR
+========================================= -->
+
+<header class="navbar">
+
+    <a
+        href="dashboard.html"
+        class="brand"
+    >
+        DeptConnect
+    </a>
+</header>
+
+
+<!-- =========================================
+     MAIN CONTENT
+========================================= -->
+
+<main class="page-container">
+
+
+    <!-- =====================================
+         PAGE HEADER
+    ====================================== -->
+
+    <section class="page-header">
+
+        <div>
+
+            <div class="breadcrumb">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <span>›</span>
+
+                <span>
+                    Knowledge Base
+                </span>
+
+            </div>
+
+
+            <h1>
+                Knowledge Base
+            </h1>
+
+            <p>
+                Find answers to common academic and
+                administrative questions.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         SEARCH HERO
+    ====================================== -->
+
+    <section class="search-hero">
+
+        <div class="search-hero-content">
+
+            <div class="search-symbol">
+                ⌕
+            </div>
+
+            <div>
+
+                <h2>
+                    What can we help you find?
+                </h2>
+
+                <p>
+                    Search across academic guidelines,
+                    procedures, policies and FAQs.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="main-search">
+
+            <span>
+                ⌕
+            </span>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search for an answer..."
+                autocomplete="off"
+            >
+
+            <button
+                id="searchButton"
+            >
+                Search
+            </button>
+
+        </div>
+
+
+        <div class="search-hints">
+
+            <span>
+                Try:
+            </span>
+
+            <button data-search="exam">
+                Exam registration
+            </button>
+
+            <button data-search="attendance">
+                Attendance
+            </button>
+
+            <button data-search="project">
+                Project guidelines
+            </button>
+
+            <button data-search="leave">
+                Leave policy
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         CATEGORY FILTERS
+    ====================================== -->
+
+    <section class="category-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>
+                    Browse by Department
+                </h2>
+
+                <p>
+                    Explore information relevant to you.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="category-grid">
+
+
+            <button
+                class="category-card active"
+                data-category="all"
+            >
+
+                <span class="category-icon">
+                    ◈
+                </span>
+
+                <strong>
+                    All
+                </strong>
+
+                <small>
+                    42 articles
+                </small>
+
+            </button>
+
+
+            <button
+                class="category-card"
+                data-category="computer-science"
+            >
+
+                <span class="category-icon">
+                    &lt;/&gt;
+                </span>
+
+                <strong>
+                    Computer Science
+                </strong>
+
+                <small>
+                    18 articles
+                </small>
+
+            </button>
+
+
+            <button
+                class="category-card"
+                data-category="academics"
+            >
+
+                <span class="category-icon">
+                    ▣
+                </span>
+
+                <strong>
+                    Academics
+                </strong>
+
+                <small>
+                    12 articles
+                </small>
+
+            </button>
+
+
+            <button
+                class="category-card"
+                data-category="registrar"
+            >
+
+                <span class="category-icon">
+                    ▤
+                </span>
+
+                <strong>
+                    Registrar
+                </strong>
+
+                <small>
+                    7 articles
+                </small>
+
+            </button>
+
+
+            <button
+                class="category-card"
+                data-category="student-services"
+            >
+
+                <span class="category-icon">
+                    ♙
+                </span>
+
+                <strong>
+                    Student Services
+                </strong>
+
+                <small>
+                    5 articles
+                </small>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         POPULAR ARTICLES
+    ====================================== -->
+
+    <section class="articles-section">
+
+
+        <div class="articles-header">
+
+            <div>
+
+                <h2>
+                    Popular Articles
+                </h2>
+
+                <p id="articleCount">
+                    Frequently accessed information
+                </p>
+
+            </div>
+
+
+            <select id="sortSelect">
+
+                <option value="popular">
+                    Most Popular
+                </option>
+
+                <option value="recent">
+                    Recently Updated
+                </option>
+
+                <option value="az">
+                    A - Z
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div
+            class="article-grid"
+            id="articleGrid"></div>
+
+
+        <!-- NO RESULTS -->
+
+        <div
+            class="no-results"
+            id="noResults"
+        >
+
+            <div class="no-results-icon">
+                ⌕
+            </div>
+
+            <h3>
+                No articles found
+            </h3>
+
+            <p>
+                We couldn't find an answer matching your search.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         ASK CTA
+    ====================================== -->
+
+    
+</main>
+
+
+<!-- =========================================
+     ARTICLE MODAL
+========================================= -->
+
+<div
+    class="modal-overlay"
+    id="articleModal"
+>
+
+    <div class="article-modal">
+
+        <button
+            class="close-button"
+            id="closeModal"
+        >
+            ×
+        </button>
+
+
+        <div class="modal-category">
+            ACADEMICS
+        </div>
+
+
+        <h2 id="modalTitle">
+            How to Register for Semester Exams
+        </h2>
+
+
+        <div class="modal-meta">
+
+            <span>
+                📖 5 min read
+            </span>
+
+            <span>
+                Updated recently
+            </span>
+
+        </div>
+
+
+        <div
+            class="modal-content"
+            id="modalContent"
+        >
+
+            <h3>
+                Overview
+            </h3>
+
+            <p>
+                Students can complete semester examination
+                registration through the designated academic
+                registration process.
+            </p>
+
+
+            <h3>
+                Registration Process
+            </h3>
+
+            <ol>
+
+                <li>
+                    Check the examination notification
+                    and registration dates.
+                </li>
+
+                <li>
+                    Verify your registered courses.
+                </li>
+
+                <li>
+                    Complete the examination registration
+                    form.
+                </li>
+
+                <li>
+                    Verify the details before submitting.
+                </li>
+
+                <li>
+                    Save the confirmation for future reference.
+                </li>
+
+            </ol>
+
+
+            <div class="source-note">
+
+                <strong>
+                    Source
+                </strong>
+
+                <span>
+                    Academic Office / Official Institutional Guidelines
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEEDBACK -->
+
+        <div class="article-feedback">
+
+            <strong>
+                Was this article helpful?
+            </strong>
+
+            <div>
+
+                <button
+                    class="feedback-button"
+                    data-feedback="yes"
+                >
+                    👍 Yes
+                </button>
+
+                <button
+                    class="feedback-button"
+                    data-feedback="no"
+                >
+                    👎 No
+                </button>
+
+            </div>
+
+            <p
+                id="feedbackMessage"
+            ></p>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <span>
+                Can't find the answer?
+            </span>
+
+            <a href="ask-query.html">
+                Ask a Query →
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type ="module" src="scripts/knowledge-base.js"></script>
+
+</body>
+</html>

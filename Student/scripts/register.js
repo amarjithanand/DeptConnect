@@ -16,6 +16,8 @@ import {
     getFirestore,
     doc,
     setDoc,
+    addDoc,
+    collection,
     serverTimestamp,
     Timestamp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
@@ -464,6 +466,26 @@ form.addEventListener(
                 studentData
             );
 
+ /* =====================================
+               6. CREATE ROLE DOCUMENT
+            ====================================== */
+
+            await addDoc(
+
+                collection(
+                    db,
+                    "role"
+                ),
+
+                {
+                    role:
+                        "student",
+
+                    uid:
+                        user.uid
+                }
+
+            );
 
             console.log(
                 "Student document created successfully."

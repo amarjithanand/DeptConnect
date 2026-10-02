@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DeptConnect - Faculty Profile</title>
+
+    <link
+        rel="stylesheet"
+        href="styles/profile.css"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+====================================================== -->
+
+<header class="navbar">
+
+    <a
+        href="dashboard.html"
+        class="brand"
+    >
+        DeptConnect
+    </a>
+
+
+    <nav class="nav-links">
+
+        <a
+            href="dashboard.html"
+            class="nav-link"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="knowledge-base.html"
+            class="nav-link"
+        >
+            Knowledge Base
+        </a>
+
+    </nav>
+
+
+    <div class="nav-actions">
+
+        <button
+            class="profile-button active-profile"
+            id="profileButton"
+            title="Profile"
+        >
+
+            <span
+                class="profile-avatar"
+                id="navAvatar"
+            >
+                F
+            </span>
+
+        </button>
+
+
+        <div
+            class="profile-menu"
+            id="profileMenu"
+        >
+
+            <div class="profile-menu-header">
+
+                <div
+                    class="menu-avatar"
+                    id="menuAvatar"
+                >
+                    F
+                </div>
+
+                <div>
+
+                    <strong id="menuFacultyName">
+                        Faculty
+                    </strong>
+
+                    <span>
+                        Faculty
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="menu-divider"></div>
+
+
+            <a href="profile.html">
+                👤 My Profile
+            </a>
+
+
+            <div class="menu-divider"></div>
+
+
+            <button id="logoutButton">
+                ↪ Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+====================================================== -->
+
+<main class="page-container">
+
+
+    <!-- PAGE HEADER -->
+
+    <section class="page-header">
+
+        <div>
+
+            <div class="breadcrumb">
+
+                <a href="dashboard.html">
+                    Dashboard
+                </a>
+
+                <span>›</span>
+
+                <span>
+                    My Profile
+                </span>
+
+            </div>
+
+
+            <h1>
+                My Profile
+            </h1>
+
+
+            <p>
+                Manage your faculty information and academic profile.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         PROFILE HERO
+    ================================================== -->
+
+    <section class="profile-hero">
+
+        <div class="profile-photo-section">
+
+            <div class="profile-photo-wrapper">
+
+                <img
+                    id="profileImage"
+                    class="profile-image"
+                    alt="Faculty Profile Photo"
+                >
+
+                <div
+                    class="profile-placeholder"
+                    id="profilePlaceholder"
+                >
+                    F
+                </div>
+
+            </div>
+
+
+            <div class="profile-identity">
+
+                <h2 id="facultyName">
+                    Faculty
+                </h2>
+
+                <p id="facultyDesignation">
+                    Faculty
+                </p>
+
+                <span>
+                    Faculty ID:
+                    <strong id="facultyId">
+                        —
+                    </strong>
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-status">
+
+            <span
+                class="status-dot"
+                id="statusDot"
+            ></span>
+
+            <span id="statusText">
+                Active Faculty
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         PERSONAL INFORMATION
+    ================================================== -->
+
+    <section class="profile-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    PERSONAL
+                </span>
+
+                <h2>
+                    Personal Information
+                </h2>
+
+                <p>
+                    Your basic faculty information.
+                </p>
+
+            </div>
+
+
+            <button
+                class="edit-button"
+                id="editPersonalButton"
+            >
+                ✎ Edit
+            </button>
+
+        </div>
+
+
+
+        <div class="information-grid">
+
+
+            <!-- NAME -->
+
+            <div class="information-item">
+
+                <label>
+                    Full Name
+                </label>
+
+                <p id="displayName">
+                    —
+                </p>
+
+                <input
+                    type="text"
+                    id="nameInput"
+                    class="edit-input"
+                    hidden
+                >
+
+            </div>
+
+
+            <!-- FACULTY ID -->
+
+            <div class="information-item">
+
+                <label>
+                    Faculty ID
+                </label>
+
+                <p id="displayFacultyId">
+                    —
+                </p>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="information-item">
+
+                <label>
+                    Email Address
+                </label>
+
+                <p id="displayEmail">
+                    —
+                </p>
+
+            </div>
+
+
+            <!-- DEPARTMENT -->
+
+            <div class="information-item">
+
+                <label>
+                    Department
+                </label>
+
+                <p id="displayDepartment">
+                    —
+                </p>
+
+            </div>
+
+
+            <!-- DESIGNATION -->
+
+            <div class="information-item">
+
+                <label>
+                    Designation
+                </label>
+
+                <p id="displayDesignation">
+                    —
+                </p>
+
+                <select
+                    id="designationInput"
+                    class="edit-input"
+                    hidden
+                >
+
+                    <option value="">
+                        Select Designation
+                    </option>
+
+                    <option value="Professor">
+                        Professor
+                    </option>
+
+                    <option value="Associate Professor">
+                        Associate Professor
+                    </option>
+
+                    <option value="Assistant Professor">
+                        Assistant Professor
+                    </option>
+
+                    <option value="Lecturer">
+                        Lecturer
+                    </option>
+
+                    <option value="HOD">
+                        HOD
+                    </option>
+
+                    <option value="Guest Faculty">
+                        Guest Faculty
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- PROFILE IMAGE URL -->
+
+            <div class="information-item">
+
+                <label>
+                    Profile Image URL
+                </label>
+
+                <p id="displayProfileImg">
+                    Not set
+                </p>
+
+                <input
+                    type="url"
+                    id="profileImgInput"
+                    class="edit-input"
+                    placeholder="https://example.com/profile.jpg"
+                    hidden
+                >
+
+            </div>
+
+        </div>
+
+
+
+        <div
+            class="section-actions"
+            id="personalActions"
+            hidden
+        >
+
+            <button
+                class="cancel-button"
+                id="cancelPersonalButton"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                class="save-button"
+                id="savePersonalButton"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         ACADEMIC / PROFESSIONAL INFORMATION
+    ================================================== -->
+
+    <section class="profile-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    ACADEMIC
+                </span>
+
+                <h2>
+                    Professional Information
+                </h2>
+
+                <p>
+                    Your department, designation and teaching expertise.
+                </p>
+
+            </div>
+
+
+            <button
+                class="edit-button"
+                id="editSubjectsButton"
+            >
+                ✎ Edit Subjects
+            </button>
+
+        </div>
+
+
+
+        <div class="information-grid">
+
+
+            <!-- DEPARTMENT -->
+
+            <div class="information-item">
+
+                <label>
+                    Department
+                </label>
+
+                <p id="professionalDepartment">
+                    —
+                </p>
+
+            </div>
+
+
+            <!-- DESIGNATION -->
+
+            <div class="information-item">
+
+                <label>
+                    Designation
+                </label>
+
+                <p id="professionalDesignation">
+                    —
+                </p>
+
+            </div>
+
+
+            <!-- SUBJECTS -->
+
+            <div class="information-item subjects-item">
+
+                <label>
+                    Subjects / Expertise
+                </label>
+
+                <div
+                    class="subjects-container"
+                    id="subjectsContainer"
+                >
+
+                    <span class="empty-subject">
+                        No subjects added
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div
+            class="subjects-editor"
+            id="subjectsEditor"
+            hidden
+        >
+
+            <label>
+                Subjects / Areas of Expertise
+            </label>
+
+
+            <div class="subject-input-row">
+
+                <input
+                    type="text"
+                    id="subjectInput"
+                    placeholder="Enter subject or expertise"
+                >
+
+                <button
+                    type="button"
+                    id="addSubjectButton"
+                >
+                    Add
+                </button>
+
+            </div>
+
+
+            <div
+                class="editable-subjects"
+                id="editableSubjects"
+            ></div>
+
+
+            <div class="section-actions">
+
+                <button
+                    class="cancel-button"
+                    id="cancelSubjectsButton"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    class="save-button"
+                    id="saveSubjectsButton"
+                >
+                    Save Subjects
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         ACCOUNT INFORMATION
+    ================================================== -->
+
+    <section class="profile-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    ACCOUNT
+                </span>
+
+                <h2>
+                    Account Information
+                </h2>
+
+                <p>
+                    Information about your DeptConnect faculty account.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="account-grid">
+
+
+            <!-- ACCOUNT STATUS -->
+
+            <div class="account-item">
+
+                <div class="account-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        Account Status
+                    </span>
+
+                    <strong id="accountStatus">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- APPROVAL STATUS -->
+
+            <div class="account-item">
+
+                <div class="account-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        Approval Status
+                    </span>
+
+                    <strong id="approvalStatus">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- ROLE -->
+
+            <div class="account-item">
+
+                <div class="account-icon">
+                    F
+                </div>
+
+                <div>
+
+                    <span>
+                        Account Role
+                    </span>
+
+                    <strong>
+                        Faculty
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- CREATED -->
+
+            <div class="account-item">
+
+                <div class="account-icon">
+                    ◷
+                </div>
+
+                <div>
+
+                    <span>
+                        Member Since
+                    </span>
+
+                    <strong id="memberSince">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         UID INFORMATION
+    ================================================== -->
+
+    <section class="profile-section uid-section">
+
+        <div class="section-heading">
+
+            <div>
+
+                <span class="section-label">
+                    SECURITY
+                </span>
+
+                <h2>
+                    Account Identifier
+                </h2>
+
+                <p>
+                    Your Firebase account identifier.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="uid-box">
+
+            <span id="uidValue">
+                —
+            </span>
+
+            <button
+                id="copyUidButton"
+                class="copy-button"
+            >
+                Copy
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         LOGOUT
+    ================================================== -->
+
+    <section class="logout-section">
+
+        <div>
+
+            <h3>
+                Sign out of DeptConnect
+            </h3>
+
+            <p>
+                You will need to sign in again to access your faculty account.
+            </p>
+
+        </div>
+
+
+        <button
+            id="pageLogoutButton"
+            class="logout-button"
+        >
+            Logout
+        </button>
+
+    </section>
+
+</main>
+
+
+
+<!-- =====================================================
+     LOADING OVERLAY
+====================================================== -->
+
+<div
+    class="loading-overlay"
+    id="loadingOverlay"
+>
+
+    <div class="loading-card">
+
+        <div class="spinner"></div>
+
+        <p id="loadingText">
+            Loading profile...
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TOAST
+====================================================== -->
+
+<div
+    class="toast"
+    id="toast"
+>
+    Profile updated successfully.
+</div>
+
+
+
+<script
+    type="module"
+    src="scripts/profile.js"
+></script>
+
+</body>
+
+</html>
