@@ -6,9 +6,9 @@ import faiss
 from sentence_transformers import SentenceTransformer
 
 
-# --------------------------------------------------
-# Configuration
-# --------------------------------------------------
+# =========================================================
+# CONFIGURATION
+# =========================================================
 
 INDEX_FILE = os.path.join(
     "faiss_index",
@@ -26,9 +26,9 @@ MODEL_NAME = (
 )
 
 
-# --------------------------------------------------
-# Load Sentence Transformer
-# --------------------------------------------------
+# =========================================================
+# LOAD SENTENCE TRANSFORMER
+# =========================================================
 
 print(
     "Loading Sentence Transformer..."
@@ -43,45 +43,118 @@ print(
 )
 
 
-# --------------------------------------------------
-# Load FAISS index
-# --------------------------------------------------
+# =========================================================
+# GLOBAL FAISS OBJECTS
+# =========================================================
 
-print(
-    "Loading FAISS index..."
-)
-
-index = faiss.read_index(
-    INDEX_FILE
-)
-
-print(
-    f"FAISS loaded: {index.ntotal} vectors."
-)
+index = None
+metadata = []
 
 
-# --------------------------------------------------
-# Load metadata
-# --------------------------------------------------
+# =========================================================
+# LOAD / RELOAD FAISS INDEX
+# =========================================================
 
-with open(
-    METADATA_FILE,
-    "rb"
-) as file:
+def reload_index():
 
-    metadata = pickle.load(
-        file
+    global index
+    global metadata
+
+
+    # -----------------------------------------------------
+    # Check FAISS index
+    # -----------------------------------------------------
+
+    if not os.path.exists(
+        INDEX_FILE
+    ):
+
+        raise FileNotFoundError(
+            f"FAISS index not found: {INDEX_FILE}"
+        )
+
+
+    # -----------------------------------------------------
+    # Check metadata
+    # -----------------------------------------------------
+
+    if not os.path.exists(
+        METADATA_FILE
+    ):
+
+        raise FileNotFoundError(
+            f"Metadata file not found: {METADATA_FILE}"
+        )
+
+
+    # -----------------------------------------------------
+    # Load FAISS index
+    # -----------------------------------------------------
+
+    print(
+        "\nLoading FAISS index..."
     )
 
 
-print(
-    f"Metadata loaded: {len(metadata)} records."
-)
+    index = faiss.read_index(
+        INDEX_FILE
+    )
 
 
-# --------------------------------------------------
-# Search similar queries
-# --------------------------------------------------
+    print(
+        f"FAISS loaded: "
+        f"{index.ntotal} vectors."
+    )
+
+
+    # -----------------------------------------------------
+    # Load metadata
+    # -----------------------------------------------------
+
+    with open(
+        METADATA_FILE,
+        "rb"
+    ) as file:
+
+        metadata = pickle.load(
+            file
+        )
+
+
+    print(
+        f"Metadata loaded: "
+        f"{len(metadata)} records."
+    )
+
+
+    # -----------------------------------------------------
+    # Validate index and metadata
+    # -----------------------------------------------------
+
+    if index.ntotal != len(metadata):
+
+        raise RuntimeError(
+            "FAISS index and metadata count do not match. "
+            f"Index vectors: {index.ntotal}, "
+            f"Metadata records: {len(metadata)}"
+        )
+
+
+    print(
+        "FAISS index reload completed."
+    )
+
+
+# =========================================================
+# INITIAL LOAD
+# =========================================================
+
+reload_index()
+
+
+# =========================================================
+# SEARCH SIMILAR QUERIES
+# =========================================================
 
 def search_similar_queries(
     query,
@@ -90,9 +163,25 @@ def search_similar_queries(
     course=None
 ):
 
-    # ----------------------------------------------
+    # -----------------------------------------------------
+    # Make sure index is available
+    # -----------------------------------------------------
+
+    if index is None:
+
+        raise RuntimeError(
+            "FAISS index is not loaded."
+        )
+
+
+    if index.ntotal == 0:
+
+        return []
+
+
+    # -----------------------------------------------------
     # Create query embedding
-    # ----------------------------------------------
+    # -----------------------------------------------------
 
     query_embedding = model.encode(
 
@@ -101,18 +190,29 @@ def search_similar_queries(
         convert_to_numpy=True,
 
         normalize_embeddings=True
+
     )
 
 
-    # ----------------------------------------------
-    # Search FAISS
-    # ----------------------------------------------
+    # -----------------------------------------------------
+    # Determine number of vectors to search
+    # -----------------------------------------------------
 
     search_k = min(
-        max(top_k * 3, top_k),
+
+        max(
+            top_k * 3,
+            top_k
+        ),
+
         index.ntotal
+
     )
 
+
+    # -----------------------------------------------------
+    # Search FAISS
+    # -----------------------------------------------------
 
     scores, indices = index.search(
 
@@ -121,91 +221,131 @@ def search_similar_queries(
         ),
 
         search_k
+
     )
 
 
     results = []
 
 
-    # ----------------------------------------------
-    # Process results
-    # ----------------------------------------------
+    # -----------------------------------------------------
+    # Process search results
+    # -----------------------------------------------------
 
     for score, index_position in zip(
 
         scores[0],
 
         indices[0]
+
     ):
 
+        # -------------------------------------------------
+        # Ignore invalid FAISS positions
+        # -------------------------------------------------
+
         if index_position < 0:
+
             continue
 
+
+        # -------------------------------------------------
+        # Get metadata
+        # -------------------------------------------------
 
         result = metadata[
             index_position
         ].copy()
 
 
-        # ------------------------------------------
-        # Optional department filtering
-        # ------------------------------------------
+        # -------------------------------------------------
+        # Department filtering
+        # -------------------------------------------------
 
         if department:
 
             result_department = str(
+
                 result.get(
                     "department",
                     ""
                 )
+
+            ).strip().lower()
+
+
+            requested_department = str(
+
+                department
+
             ).strip().lower()
 
 
             if (
                 result_department
-                != str(
-                    department
-                ).strip().lower()
+                != requested_department
             ):
 
                 continue
 
 
-        # ------------------------------------------
-        # Optional course filtering
-        # ------------------------------------------
+        # -------------------------------------------------
+        # Course filtering
+        # -------------------------------------------------
 
         if course:
 
             result_course = str(
+
                 result.get(
                     "course",
                     ""
                 )
+
+            ).strip().lower()
+
+
+            requested_course = str(
+
+                course
+
             ).strip().lower()
 
 
             if (
                 result_course
-                != str(
-                    course
-                ).strip().lower()
+                != requested_course
             ):
 
                 continue
 
 
+        # -------------------------------------------------
+        # Add similarity score
+        # -------------------------------------------------
+
         result[
             "similarity"
-        ] = float(score)
+        ] = float(
+            score
+        )
 
+
+        # -------------------------------------------------
+        # Add result
+        # -------------------------------------------------
 
         results.append(
             result
         )
 
 
+        # -------------------------------------------------
+        # Stop when enough results are collected
+        # -------------------------------------------------
+
         if len(results) >= top_k:
+
             break
 
 

@@ -28,7 +28,6 @@ METADATA_FILE = os.path.join(
     "metadata.pkl"
 )
 
-
 MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 
@@ -42,14 +41,16 @@ if not firebase_admin._apps:
         SERVICE_ACCOUNT_FILE
     )
 
-    firebase_admin.initialize_app(cred)
+    firebase_admin.initialize_app(
+        cred
+    )
 
 
 db = firestore.client()
 
 
 # =========================================================
-# LOAD MODEL
+# LOAD SENTENCE TRANSFORMER
 # =========================================================
 
 print("\nLoading Sentence Transformer...")
@@ -58,78 +59,114 @@ model = SentenceTransformer(
     MODEL_NAME
 )
 
-print("Model loaded.")
+print("Sentence Transformer loaded.")
 
 
 # =========================================================
-# CREATE INDEX DIRECTORY
+# BUILD FAISS INDEX
 # =========================================================
 
-os.makedirs(
-    INDEX_FOLDER,
-    exist_ok=True
-)
+def build_faiss_index():
+
+    print("\n")
+    print("========================================")
+    print("STARTING FAISS INDEX REBUILD")
+    print("========================================")
 
 
-# =========================================================
-# READ RESPONSE COLLECTION
-# =========================================================
+    # =====================================================
+    # CREATE INDEX DIRECTORY
+    # =====================================================
 
-print("\nReading resolved responses from Firestore...")
-
-responses_ref = db.collection("responses")
-
-documents = responses_ref.stream()
-
-
-search_texts = []
-
-metadata = []
+    os.makedirs(
+        INDEX_FOLDER,
+        exist_ok=True
+    )
 
 
-for document in documents:
+    # =====================================================
+    # READ RESPONSE COLLECTION
+    # =====================================================
 
-    data = document.to_dict()
-
-
-    # -----------------------------------------------------
-    # ONLY RESOLVED RESPONSES
-    # -----------------------------------------------------
-
-    if data.get("status") != "resolved":
-        continue
+    print(
+        "\nReading resolved responses from Firestore..."
+    )
 
 
-    query_title = str(
-        data.get("queryTitle", "")
-    ).strip()
+    responses_ref = db.collection(
+        "responses"
+    )
+
+    documents = responses_ref.stream()
 
 
-    query_description = str(
-        data.get("queryDescription", "")
-    ).strip()
+    search_texts = []
+
+    metadata = []
 
 
-    response = str(
-        data.get("response", "")
-    ).strip()
+    # =====================================================
+    # PROCESS RESPONSES
+    # =====================================================
+
+    for document in documents:
+
+        data = document.to_dict()
 
 
-    course = str(
-        data.get("course", "")
-    ).strip()
+        # -------------------------------------------------
+        # ONLY RESOLVED RESPONSES
+        # -------------------------------------------------
+
+        if data.get("status") != "resolved":
+            continue
 
 
-    department = str(
-        data.get("department", "")
-    ).strip()
+        query_title = str(
+            data.get(
+                "queryTitle",
+                ""
+            )
+        ).strip()
 
 
-    # -----------------------------------------------------
-    # CREATE SEARCHABLE TEXT
-    # -----------------------------------------------------
+        query_description = str(
+            data.get(
+                "queryDescription",
+                ""
+            )
+        ).strip()
 
-    text = f"""
+
+        response = str(
+            data.get(
+                "response",
+                ""
+            )
+        ).strip()
+
+
+        course = str(
+            data.get(
+                "course",
+                ""
+            )
+        ).strip()
+
+
+        department = str(
+            data.get(
+                "department",
+                ""
+            )
+        ).strip()
+
+
+        # -------------------------------------------------
+        # CREATE SEARCHABLE TEXT
+        # -------------------------------------------------
+
+        text = f"""
 Course: {course}
 
 Department: {department}
@@ -142,171 +179,250 @@ Faculty Answer: {response}
 """.strip()
 
 
-    # Don't index completely empty records
+        # -------------------------------------------------
+        # SKIP COMPLETELY EMPTY RECORDS
+        # -------------------------------------------------
 
-    if not (
-        query_title
-        or query_description
-        or response
-    ):
-        continue
-
-
-    search_texts.append(text)
-
-
-    # -----------------------------------------------------
-    # STORE METADATA
-    # -----------------------------------------------------
-
-    metadata.append({
-
-        "document_id": document.id,
-
-        "queryId":
-            data.get("queryId"),
-
-        "queryTitle":
-            query_title,
-
-        "queryDescription":
-            query_description,
-
-        "response":
-            response,
-
-        "course":
-            course,
-
-        "department":
-            department,
-
-        "facultyId":
-            data.get("facultyId"),
-
-        "facultyName":
-            data.get("facultyName"),
-
-        "studentId":
-            data.get("studentId"),
-
-        "priority":
-            data.get("priority"),
-
-        "status":
-            data.get("status"),
-
-        "respondedAt":
-            data.get("respondedAt")
-
-    })
+        if not (
+            query_title
+            or query_description
+            or response
+        ):
+            continue
 
 
-print(
-    f"Found {len(search_texts)} resolved responses."
-)
+        # -------------------------------------------------
+        # ADD SEARCH TEXT
+        # -------------------------------------------------
+
+        search_texts.append(
+            text
+        )
 
 
-# =========================================================
-# STOP IF NOTHING FOUND
-# =========================================================
+        # -------------------------------------------------
+        # STORE METADATA
+        # -------------------------------------------------
 
-if len(search_texts) == 0:
+        metadata.append({
+
+            "document_id":
+                document.id,
+
+            "queryId":
+                data.get(
+                    "queryId"
+                ),
+
+            "queryTitle":
+                query_title,
+
+            "queryDescription":
+                query_description,
+
+            "response":
+                response,
+
+            "course":
+                course,
+
+            "department":
+                department,
+
+            "facultyId":
+                data.get(
+                    "facultyId"
+                ),
+
+            "facultyName":
+                data.get(
+                    "facultyName"
+                ),
+
+            "studentId":
+                data.get(
+                    "studentId"
+                ),
+
+            "priority":
+                data.get(
+                    "priority"
+                ),
+
+            "status":
+                data.get(
+                    "status"
+                ),
+
+            "respondedAt":
+                data.get(
+                    "respondedAt"
+                )
+
+        })
+
 
     print(
-        "No resolved responses available for indexing."
-    )
-
-    exit()
-
-
-# =========================================================
-# CREATE EMBEDDINGS
-# =========================================================
-
-print("\nCreating embeddings...")
-
-embeddings = model.encode(
-    search_texts,
-    convert_to_numpy=True,
-    normalize_embeddings=True,
-    show_progress_bar=True
-)
-
-
-print(
-    "Embedding shape:",
-    embeddings.shape
-)
-
-
-# =========================================================
-# CREATE FAISS INDEX
-# =========================================================
-
-dimension = embeddings.shape[1]
-
-
-print(
-    f"\nCreating FAISS index with dimension {dimension}..."
-)
-
-
-# Inner Product on normalized vectors
-# is equivalent to cosine similarity.
-
-index = faiss.IndexFlatIP(
-    dimension
-)
-
-
-index.add(
-    embeddings.astype("float32")
-)
-
-
-print(
-    f"FAISS index contains {index.ntotal} vectors."
-)
-
-
-# =========================================================
-# SAVE INDEX
-# =========================================================
-
-faiss.write_index(
-    index,
-    INDEX_FILE
-)
-
-
-# =========================================================
-# SAVE METADATA
-# =========================================================
-
-with open(
-    METADATA_FILE,
-    "wb"
-) as file:
-
-    pickle.dump(
-        metadata,
-        file
+        f"Found {len(search_texts)} resolved responses."
     )
 
 
-print("\n========================================")
-print("FAISS INDEX CREATED SUCCESSFULLY")
-print("========================================")
+    # =====================================================
+    # STOP IF NOTHING FOUND
+    # =====================================================
 
-print(
-    f"Index: {INDEX_FILE}"
-)
+    if len(search_texts) == 0:
 
-print(
-    f"Metadata: {METADATA_FILE}"
-)
+        print(
+            "\nNo resolved responses available for indexing."
+        )
 
-print(
-    f"Documents indexed: {index.ntotal}"
-)
+        return False
+
+
+    # =====================================================
+    # CREATE EMBEDDINGS
+    # =====================================================
+
+    print(
+        "\nCreating embeddings..."
+    )
+
+
+    embeddings = model.encode(
+
+        search_texts,
+
+        convert_to_numpy=True,
+
+        normalize_embeddings=True,
+
+        show_progress_bar=True
+
+    )
+
+
+    print(
+        "Embedding shape:",
+        embeddings.shape
+    )
+
+
+    # =====================================================
+    # CREATE FAISS INDEX
+    # =====================================================
+
+    dimension = embeddings.shape[1]
+
+
+    print(
+        f"\nCreating FAISS index "
+        f"with dimension {dimension}..."
+    )
+
+
+    # Inner Product on normalized vectors
+    # is equivalent to cosine similarity.
+
+    index = faiss.IndexFlatIP(
+        dimension
+    )
+
+
+    index.add(
+        embeddings.astype(
+            "float32"
+        )
+    )
+
+
+    print(
+        f"FAISS index contains "
+        f"{index.ntotal} vectors."
+    )
+
+
+    # =====================================================
+    # SAVE FAISS INDEX
+    # =====================================================
+
+    faiss.write_index(
+
+        index,
+
+        INDEX_FILE
+
+    )
+
+
+    # =====================================================
+    # SAVE METADATA
+    # =====================================================
+
+    with open(
+        METADATA_FILE,
+        "wb"
+    ) as file:
+
+        pickle.dump(
+
+            metadata,
+
+            file
+
+        )
+
+
+    # =====================================================
+    # SUCCESS MESSAGE
+    # =====================================================
+
+    print(
+        "\n========================================"
+    )
+
+    print(
+        "FAISS INDEX CREATED SUCCESSFULLY"
+    )
+
+    print(
+        "========================================"
+    )
+
+
+    print(
+        f"Index: {INDEX_FILE}"
+    )
+
+    print(
+        f"Metadata: {METADATA_FILE}"
+    )
+
+    print(
+        f"Documents indexed: {index.ntotal}"
+    )
+
+
+    print(
+        "========================================"
+    )
+
+    print(
+        "FAISS INDEX REBUILD COMPLETED"
+    )
+
+    print(
+        "========================================"
+    )
+
+
+    return True
+
+
+# =========================================================
+# RUN DIRECTLY
+# =========================================================
+
+if __name__ == "__main__":
+
+    build_faiss_index()
