@@ -1,293 +1,169 @@
-import firebase_admin
-
-from firebase_admin import credentials
-from firebase_admin import firestore
+# =========================================================
+# DEPTCONNECT - GITIGNORE
+# =========================================================
 
 
 # =========================================================
-# FIREBASE CONFIGURATION
+# PYTHON
 # =========================================================
 
-SERVICE_ACCOUNT_FILE = "serviceAccountKey.json"
+__pycache__/
+*.py[cod]
+*$py.class
 
+*.pyo
+*.pyd
 
-if not firebase_admin._apps:
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-    cred = credentials.Certificate(
-        SERVICE_ACCOUNT_FILE
-    )
-
-    firebase_admin.initialize_app(
-        cred
-    )
-
-
-db = firestore.client()
+.python-version
 
 
 # =========================================================
-# GET QUERY
+# PYTHON VIRTUAL ENVIRONMENTS
 # =========================================================
 
-def get_query(query_id):
+.venv/
+venv/
+env/
+ENV/
 
-    query_ref = (
-        db.collection("queries")
-        .document(query_id)
-    )
-
-    query_snapshot = query_ref.get()
-
-    if not query_snapshot.exists:
-
-        return None
-
-    data = query_snapshot.to_dict()
-
-    # Add Firestore document ID
-    data["document_id"] = (
-        query_snapshot.id
-    )
-
-    return data
+AI/.venv/
+AI/*/.venv/
 
 
 # =========================================================
-# GET RESPONSE
+# ENVIRONMENT VARIABLES / SECRETS
 # =========================================================
 
-def get_response(response_id):
+.env
+.env.*
+!.env.example
 
-    response_ref = (
-        db.collection("response")
-        .document(response_id)
-    )
-
-    response_snapshot = (
-        response_ref.get()
-    )
-
-    if not response_snapshot.exists:
-
-        return None
-
-    data = (
-        response_snapshot.to_dict()
-    )
-
-    # Add Firestore document ID
-    data["document_id"] = (
-        response_snapshot.id
-    )
-
-    return data
+*.env
 
 
 # =========================================================
-# MARK AI PROCESSED
+# FIREBASE SERVICE ACCOUNT KEYS
 # =========================================================
 
-def mark_ai_processed(
-    query_id,
-    ai_answered,
-    ai_confidence,
-    similar_query_id
-):
+serviceAccountKey.json
+firebase-service-account.json
+firebase-adminsdk-*.json
 
-    query_ref = (
-        db.collection("queries")
-        .document(query_id)
-    )
-
-    query_ref.update({
-
-        "aiProcessed":
-            True,
-
-        "aiAnswered":
-            ai_answered,
-
-        "aiConfidence":
-            ai_confidence,
-
-        "similiarQueryId":
-            similar_query_id
-
-    })
+# Explicit DeptConnect locations
+AI/semantic_search/serviceAccountKey.json
+AI/RecommendationSystem/serviceAccountKey.json
 
 
 # =========================================================
-# SAVE AI RESPONSE
+# NODE.JS
 # =========================================================
 
-def save_ai_response(
-    query_data,
-    ai_answer,
-    similarity_score,
-    source_response
-):
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-    response_data = {
-
-        # =================================================
-        # ORIGINAL QUERY INFORMATION
-        # =================================================
-
-        "queryId":
-            query_data.get(
-                "document_id"
-            ),
-
-        "studentId":
-            query_data.get(
-                "studentId"
-            ),
-
-        "studentUid":
-            query_data.get(
-                "uid"
-            ),
-
-        "queryTitle":
-            query_data.get(
-                "title"
-            ),
-
-        "queryDescription":
-            query_data.get(
-                "description"
-            ),
-
-        "course":
-            query_data.get(
-                "course"
-            ),
-
-        "department":
-            query_data.get(
-                "department"
-            ),
-
-        "priority":
-            query_data.get(
-                "priority"
-            ),
-
-
-        # =================================================
-        # AI RESPONSE
-        # =================================================
-
-        "response":
-            ai_answer,
-
-        "responseType":
-            "AI",
-
-        "respondedBy":
-            "AI",
-
-        "aiGenerated":
-            True,
-
-
-        # =================================================
-        # AI INFORMATION
-        # =================================================
-
-        "similarityScore":
-            similarity_score,
-
-        "sourceResponseId":
-            (
-                source_response.get(
-                    "document_id"
-                )
-                if source_response
-                else None
-            ),
-
-        "sourceQueryId":
-            (
-                source_response.get(
-                    "queryId"
-                )
-                if source_response
-                else None
-            ),
-
-
-        # =================================================
-        # AI ACTS AS RESPONSE PROVIDER
-        # =================================================
-
-        "facultyId":
-            "AI",
-
-        "facultyName":
-            "DeptConnect AI",
-
-        "uid":
-            "AI",
-
-
-        # =================================================
-        # RESPONSE STATUS
-        # =================================================
-
-        "status":
-            "resolved",
-
-        "respondedAt":
-            firestore.SERVER_TIMESTAMP
-
-    }
-
-
-    # =====================================================
-    # CREATE RESPONSE DOCUMENT
-    # =====================================================
-
-    response_ref = (
-        db.collection("response")
-        .add(
-            response_data
-        )
-    )
-
-    return response_ref
+.npm/
 
 
 # =========================================================
-# UPDATE QUERY STATUS
+# BUILD / CACHE FILES
 # =========================================================
 
-def update_query_status(
-    query_id,
-    status,
-    extra_data=None
-):
+dist/
+build/
+.cache/
+.parcel-cache/
+.vite/
+.next/
 
-    query_ref = (
-        db.collection("queries")
-        .document(query_id)
-    )
 
-    update_data = {
+# =========================================================
+# FAISS / GENERATED AI INDEX FILES
+# =========================================================
 
-        "status":
-            status
+# Uncomment these if FAISS indexes are generated locally
+# and rebuilt using build_index.py
 
-    }
+# AI/semantic_search/faiss_index/
 
-    # Add additional fields if provided
-    if extra_data:
 
-        update_data.update(
-            extra_data
-        )
+# =========================================================
+# PYTHON / AI GENERATED FILES
+# =========================================================
 
-    query_ref.update(
-        update_data
-    )AI/semantic_search/serviceAccountKey.json
-AI/semantic_search/.venv/
+*.pkl
+*.pickle
+
+# If your trained recommendation model must be committed,
+# remove/override the following line:
+# AI/RecommendationSystem/Model/
+
+
+# =========================================================
+# LOG FILES
+# =========================================================
+
+*.log
+logs/
+
+
+# =========================================================
+# DATABASE / LOCAL DEVELOPMENT FILES
+# =========================================================
+
+*.db
+*.sqlite
+*.sqlite3
+
+
+# =========================================================
+# WINDOWS
+# =========================================================
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+
+# =========================================================
+# VS CODE
+# =========================================================
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+
+# =========================================================
+# MACOS
+# =========================================================
+
+.DS_Store
+
+
+# =========================================================
+# TEMPORARY FILES
+# =========================================================
+
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# =========================================================
+# FIREBASE LOCAL EMULATOR
+# =========================================================
+
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log

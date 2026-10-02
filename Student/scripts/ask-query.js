@@ -16,7 +16,10 @@ import {
     getFirestore,
     collection,
     addDoc,
-    serverTimestamp
+    serverTimestamp,
+    query,
+    where,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 
@@ -46,6 +49,7 @@ const firebaseConfig = {
 
     measurementId:
         "G-2B4VN12YW5"
+
 };
 
 
@@ -128,6 +132,16 @@ let studentData = null;
 
 let submittedQueryId = null;
 
+let currentAIResult = null;
+
+
+/* =========================================
+   API CONFIGURATION
+========================================= */
+
+const AI_API_URL =
+    "http://127.0.0.1:8000";
+
 
 /* =========================================
    AUTHENTICATION
@@ -152,9 +166,17 @@ onAuthStateChanged(
             user.uid
         );
 
+        /*
+         * IMPORTANT:
+         *
+         * Do NOT print Firebase ID tokens
+         * in the browser console.
+         */
+
         await loadStudentProfile(
             user.uid
         );
+
     }
 );
 
@@ -167,32 +189,11 @@ async function loadStudentProfile(uid) {
 
     try {
 
-        /*
-         * Student document ID is different
-         * from Firebase Auth UID.
-         *
-         * Therefore query using uid field.
-         */
-
         const studentRef =
             collection(
                 db,
                 "students"
             );
-
-
-        /*
-         * Import Firestore query functions.
-         */
-
-        const {
-            query,
-            where,
-            getDocs
-        } = await import(
-            "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js"
-        );
-
 
         const studentQuery =
             query(
@@ -204,16 +205,12 @@ async function loadStudentProfile(uid) {
                 )
             );
 
-
         const snapshot =
             await getDocs(
                 studentQuery
             );
 
-
-        if (
-            snapshot.empty
-        ) {
+        if (snapshot.empty) {
 
             console.error(
                 "Student profile not found."
@@ -226,30 +223,17 @@ async function loadStudentProfile(uid) {
             return;
         }
 
-
         studentData =
             snapshot.docs[0].data();
-
 
         console.log(
             "Student profile loaded:",
             studentData
         );
 
-
-        /*
-         * Automatically set student's
-         * department.
-         */
-
         setStudentDepartment(
             studentData.department
         );
-
-
-        /*
-         * Update profile avatar.
-         */
 
         updateProfileAvatar(
             studentData.name
@@ -263,6 +247,7 @@ async function loadStudentProfile(uid) {
         );
 
     }
+
 }
 
 
@@ -282,15 +267,12 @@ function setStudentDepartment(
         return;
     }
 
-
     const normalized =
         studentDepartment
             .trim()
             .toLowerCase();
 
-
     let matchingOption = null;
-
 
     for (
         const option
@@ -310,13 +292,9 @@ function setStudentDepartment(
 
             break;
         }
+
     }
 
-
-    /*
-     * If department is not already
-     * available, add it dynamically.
-     */
 
     if (!matchingOption) {
 
@@ -334,6 +312,7 @@ function setStudentDepartment(
         department.appendChild(
             matchingOption
         );
+
     }
 
 
@@ -356,18 +335,15 @@ function updateProfileAvatar(
         return;
     }
 
-
     const avatar =
         profileButton.querySelector(
             ".profile-avatar"
         );
 
-
     if (!avatar) {
 
         return;
     }
-
 
     if (!name) {
 
@@ -377,19 +353,16 @@ function updateProfileAvatar(
         return;
     }
 
-
     const parts =
-        name.trim().split(
-            /\s+/
-        );
-
+        name
+            .trim()
+            .split(/\s+/);
 
     const initials =
         parts.length >= 2
             ? parts[0][0] +
               parts[parts.length - 1][0]
             : parts[0][0];
-
 
     avatar.textContent =
         initials.toUpperCase();
@@ -447,30 +420,25 @@ if (queryForm) {
 
 
             /* =============================
-               GET VALUES
+               GET FORM VALUES
             ============================= */
 
             const departmentValue =
                 department.value.trim();
 
-
             const courseValue =
                 subject.value.trim();
-
 
             const titleValue =
                 queryTitle.value.trim();
 
-
             const descriptionValue =
                 description.value.trim();
-
 
             const priorityInput =
                 document.querySelector(
                     'input[name="priority"]:checked'
                 );
-
 
             const selectedPriority =
                 priorityInput
@@ -479,17 +447,13 @@ if (queryForm) {
 
 
             /*
-             * Firestore uses:
-             * low
-             * medium
-             * high
+             * HTML:
              *
-             * HTML uses:
-             * low
              * normal
-             * high
              *
-             * Convert normal → medium.
+             * Firestore:
+             *
+             * medium
              */
 
             const priority =
@@ -573,6 +537,7 @@ if (queryForm) {
                         ⏳
                     </span>
                 `;
+
             }
 
 
@@ -586,7 +551,7 @@ if (queryForm) {
 
 
                 /* =============================
-                   CREATE QUERY
+                   STEP 1
                 ============================= */
 
                 updateProcessingStep(
@@ -595,6 +560,11 @@ if (queryForm) {
                 );
 
 
+                /* =============================
+                   STEP 2
+                   CREATE QUERY
+                ============================= */
+
                 updateProcessingStep(
                     "step2",
                     "active"
@@ -602,31 +572,16 @@ if (queryForm) {
 
 
                 /*
-                 * Query document structure
+                 * Firestore query structure
                  */
 
                 const queryData = {
 
-                    /*
-                     * Firebase Auth UID
-                     */
-
                     uid:
                         currentUser.uid,
 
-
-                    /*
-                     * Current database uses
-                     * Auth UID as studentId.
-                     */
-
                     studentId:
                         currentUser.uid,
-
-
-                    /*
-                     * Form data
-                     */
 
                     title:
                         titleValue,
@@ -643,11 +598,6 @@ if (queryForm) {
                     priority:
                         priority,
 
-
-                    /*
-                     * Initial processing state
-                     */
-
                     status:
                         "pending",
 
@@ -660,37 +610,23 @@ if (queryForm) {
                     aiConfidence:
                         0,
 
-
-                    /*
-                     * Faculty assignment
-                     */
-
                     assignedFacultyId:
                         "nil",
 
-
-                    /*
-                     * Similar query
-                     */
-
                     similiarQueryId:
                         "nil",
-
-
-                    /*
-                     * Timestamps
-                     */
 
                     createdAt:
                         serverTimestamp(),
 
                     resolvedAt:
                         "nil"
+
                 };
 
 
                 /*
-                 * Save query to Firestore.
+                 * Save query to Firestore
                  */
 
                 const queryDocument =
@@ -703,10 +639,9 @@ if (queryForm) {
                     );
 
 
-                /* =========================================
-                   IMPORTANT:
-                   SAVE QUERY ID IMMEDIATELY
-                ========================================= */
+                /*
+                 * Save generated query ID
+                 */
 
                 submittedQueryId =
                     queryDocument.id;
@@ -718,158 +653,8 @@ if (queryForm) {
                 );
 
 
-                /* =========================================
-                   AUTOMATIC FACULTY ASSIGNMENT
-                ========================================= */
-
-                try {
-
-                    console.log(
-                        "Starting automatic faculty assignment..."
-                    );
-
-
-                    /* -------------------------------------
-                       Get Firebase Authentication ID Token
-                    ------------------------------------- */
-
-                    const idToken =
-                        await currentUser.getIdToken();
-
-
-                    /* -------------------------------------
-                       Prepare request body
-                    ------------------------------------- */
-
-                    const requestBody = {
-
-                        queryId:
-                            submittedQueryId
-
-                    };
-
-
-                    console.log(
-                        "Assignment request:",
-                        requestBody
-                    );
-
-
-                    /* -------------------------------------
-                       Call FastAPI
-                    ------------------------------------- */
-
-                    const assignmentResponse =
-                        await fetch(
-                            "http://127.0.0.1:8000/assign-faculty",
-                            {
-
-                                method:
-                                    "POST",
-
-                                headers: {
-
-                                    "Content-Type":
-                                        "application/json",
-
-                                    "Authorization":
-                                        `Bearer ${idToken}`
-
-                                },
-
-                                body:
-                                    JSON.stringify(
-                                        requestBody
-                                    )
-                            }
-                        );
-
-
-                    /* -------------------------------------
-                       Read API response
-                    ------------------------------------- */
-
-                    const assignmentResult =
-                        await assignmentResponse.json();
-
-
-                    console.log(
-                        "Faculty assignment API response:",
-                        assignmentResult
-                    );
-
-
-                    /* -------------------------------------
-                       Check API response
-                    ------------------------------------- */
-
-                    if (
-                        !assignmentResponse.ok
-                    ) {
-
-                        throw new Error(
-                            assignmentResult.detail ||
-                            "Faculty assignment failed."
-                        );
-
-                    }
-
-
-                    /* -------------------------------------
-                       Assignment successful
-                    ------------------------------------- */
-
-                    console.log(
-                        "Faculty assigned successfully!"
-                    );
-
-
-                    if (
-                        assignmentResult.assignedFaculty
-                    ) {
-
-                        console.log(
-                            "Assigned Faculty:",
-                            assignmentResult
-                                .assignedFaculty
-                                .name
-                        );
-
-                    }
-
-
-                    console.log(
-                        "Assignment Confidence:",
-                        assignmentResult.confidence
-                    );
-
-
-                    console.log(
-                        "Faculty Workload:",
-                        assignmentResult.workload
-                    );
-
-
-                } catch (assignmentError) {
-
-                    console.error(
-                        "Faculty assignment error:",
-                        assignmentError
-                    );
-
-                    /*
-                     * The query is already stored
-                     * in Firestore.
-                     *
-                     * Therefore don't delete
-                     * the query if assignment fails.
-                     */
-
-                }
-
-
                 /* =============================
-                   PROCESSING UI
+                   STEP 2 COMPLETE
                 ============================= */
 
                 updateProcessingStep(
@@ -878,27 +663,100 @@ if (queryForm) {
                 );
 
 
+                /* =============================
+                   STEP 3
+                   AI PROCESSING
+                ============================= */
+
                 updateProcessingStep(
                     "step3",
                     "active"
                 );
 
 
-                /*
-                 * Temporary AI processing
-                 * animation.
-                 */
-
-                await delay(
-                    700
+                console.log(
+                    "Starting DeptConnect AI processing..."
                 );
 
+
+                /*
+                 * Call AI backend
+                 *
+                 * IMPORTANT:
+                 * No Firebase ID token is sent.
+                 */
+
+                const aiResponse =
+                    await fetch(
+                        `${AI_API_URL}/process-query`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    queryId:
+                                        submittedQueryId
+                                })
+                        }
+                    );
+
+
+                let aiResult;
+
+                try {
+
+                    aiResult =
+                        await aiResponse.json();
+
+                } catch (parseError) {
+
+                    throw new Error(
+                        "AI service returned an invalid response."
+                    );
+
+                }
+
+
+                console.log(
+                    "AI response:",
+                    aiResult
+                );
+
+
+                if (!aiResponse.ok) {
+
+                    throw new Error(
+                        aiResult.detail ||
+                        aiResult.message ||
+                        "AI processing failed."
+                    );
+
+                }
+
+
+                currentAIResult =
+                    aiResult;
+
+
+                /* =============================
+                   STEP 3 COMPLETE
+                ============================= */
 
                 updateProcessingStep(
                     "step3",
                     "completed"
                 );
 
+
+                /* =============================
+                   STEP 4
+                   ANALYSIS COMPLETE
+                ============================= */
 
                 updateProcessingStep(
                     "step4",
@@ -907,7 +765,7 @@ if (queryForm) {
 
 
                 await delay(
-                    700
+                    500
                 );
 
 
@@ -918,16 +776,16 @@ if (queryForm) {
 
 
                 await delay(
-                    400
+                    300
                 );
 
 
-                /*
-                 * Show successful submission.
-                 */
+                /* =============================
+                   SHOW AI RESULT
+                ============================= */
 
-                showResultState(
-                    departmentValue
+                showAIResult(
+                    aiResult
                 );
 
 
@@ -955,7 +813,6 @@ if (queryForm) {
 
                     submitButton.disabled =
                         false;
-
 
                     submitButton.innerHTML = `
                         <span>
@@ -1029,7 +886,6 @@ function resetProcessingSteps() {
                     id
                 );
 
-
             if (!step) {
 
                 return;
@@ -1052,6 +908,7 @@ function resetProcessingSteps() {
 
                 icon.textContent =
                     "○";
+
             }
 
         }
@@ -1131,16 +988,17 @@ function updateProcessingStep(
 
 
 /* =========================================
-   RESULT STATE
+   SHOW AI RESULT
 ========================================= */
 
-function showResultState(
-    departmentValue
+function showAIResult(
+    aiResult
 ) {
 
     if (
         !processingState ||
-        !resultState
+        !resultState ||
+        !aiModal
     ) {
 
         return;
@@ -1176,21 +1034,922 @@ function showResultState(
 
         category.textContent =
             "Academic Query";
+
     }
+
+
+    const hasAIAnswer =
+        aiResult &&
+        aiResult.aiAnswered === true &&
+        typeof aiResult.aiAnswer === "string" &&
+        aiResult.aiAnswer.trim().length > 0;
 
 
     if (similarity) {
 
-        similarity.textContent =
-            "Pending AI analysis";
+        if (
+            typeof aiResult.similarity ===
+            "number"
+        ) {
+
+            similarity.textContent =
+                `${(
+                    aiResult.similarity * 100
+                ).toFixed(1)}% similarity`;
+
+        } else {
+
+            similarity.textContent =
+                "No similar query found";
+
+        }
+
     }
 
 
     if (nextStep) {
 
         nextStep.textContent =
-            `Submitted to ${departmentValue}`;
+            hasAIAnswer
+                ? "AI answer generated"
+                : "Faculty review required";
+
     }
+
+
+    /*
+     * Display actual AI answer.
+     */
+
+    showAIAnswer(
+        aiResult
+    );
+
+
+    /*
+     * If AI generated a valid answer,
+     * ask student whether it solved
+     * the query.
+     */
+
+    if (hasAIAnswer) {
+
+        showAIFeedback(
+            aiResult
+        );
+
+    } else {
+
+        showNoAIAnswerState(
+            aiResult
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   DISPLAY AI ANSWER
+========================================= */
+
+function showAIAnswer(
+    aiResult
+) {
+
+    let answerContainer =
+        document.getElementById(
+            "aiAnswerContainer"
+        );
+
+
+    if (!answerContainer) {
+
+        answerContainer =
+            document.createElement(
+                "div"
+            );
+
+        answerContainer.id =
+            "aiAnswerContainer";
+
+
+        answerContainer.style.marginTop =
+            "20px";
+
+        answerContainer.style.padding =
+            "18px";
+
+        answerContainer.style.borderRadius =
+            "12px";
+
+        answerContainer.style.background =
+            "#f8fafc";
+
+        answerContainer.style.border =
+            "1px solid #e2e8f0";
+
+        answerContainer.style.textAlign =
+            "left";
+
+
+        /*
+         * Insert before buttons /
+         * continue button.
+         */
+
+        const feedbackContainer =
+            document.getElementById(
+                "aiFeedbackContainer"
+            );
+
+
+        if (feedbackContainer) {
+
+            resultState.insertBefore(
+                answerContainer,
+                feedbackContainer
+            );
+
+        } else if (continueButton) {
+
+            resultState.insertBefore(
+                answerContainer,
+                continueButton
+            );
+
+        } else {
+
+            resultState.appendChild(
+                answerContainer
+            );
+
+        }
+
+    }
+
+
+    const aiAnswer =
+        aiResult &&
+        aiResult.aiAnswer
+            ? aiResult.aiAnswer
+            : null;
+
+
+    if (!aiAnswer) {
+
+        answerContainer.innerHTML = `
+            <div style="
+                font-weight:600;
+                margin-bottom:8px;
+            ">
+                AI Response
+            </div>
+
+            <div style="
+                color:#64748b;
+                line-height:1.6;
+            ">
+                No AI answer was generated.
+                Your query will require faculty review.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    answerContainer.innerHTML = `
+
+        <div style="
+            font-weight:700;
+            font-size:16px;
+            margin-bottom:10px;
+        ">
+            AI Answer
+        </div>
+
+        <div style="
+            color:#334155;
+            line-height:1.7;
+            white-space:pre-wrap;
+        ">
+            ${escapeHTML(aiAnswer)}
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================
+   AI FEEDBACK BUTTONS
+========================================= */
+
+function showAIFeedback(
+    aiResult
+) {
+
+    let feedbackContainer =
+        document.getElementById(
+            "aiFeedbackContainer"
+        );
+
+
+    if (!feedbackContainer) {
+
+        feedbackContainer =
+            document.createElement(
+                "div"
+            );
+
+        feedbackContainer.id =
+            "aiFeedbackContainer";
+
+
+        feedbackContainer.style.marginTop =
+            "20px";
+
+
+        feedbackContainer.style.textAlign =
+            "center";
+
+
+        /*
+         * Insert before Continue button.
+         */
+
+        if (continueButton) {
+
+            resultState.insertBefore(
+                feedbackContainer,
+                continueButton
+            );
+
+        } else {
+
+            resultState.appendChild(
+                feedbackContainer
+            );
+
+        }
+
+    }
+
+
+    feedbackContainer.innerHTML = `
+
+        <div style="
+            font-weight:600;
+            margin-bottom:12px;
+        ">
+            Did this answer solve your query?
+        </div>
+
+        <div style="
+            display:flex;
+            gap:10px;
+            justify-content:center;
+            flex-wrap:wrap;
+        ">
+
+            <button
+                type="button"
+                id="aiAcceptButton"
+                style="
+                    padding:11px 18px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                    background:#16a34a;
+                    color:white;
+                    font-weight:600;
+                "
+            >
+                ✓ Yes, this solved my query
+            </button>
+
+            <button
+                type="button"
+                id="aiRejectButton"
+                style="
+                    padding:11px 18px;
+                    border:none;
+                    border-radius:8px;
+                    cursor:pointer;
+                    background:#dc2626;
+                    color:white;
+                    font-weight:600;
+                "
+            >
+                No, I need faculty help
+            </button>
+
+        </div>
+    `;
+
+
+    const acceptButton =
+        document.getElementById(
+            "aiAcceptButton"
+        );
+
+
+    const rejectButton =
+        document.getElementById(
+            "aiRejectButton"
+        );
+
+
+    if (acceptButton) {
+
+        acceptButton.addEventListener(
+            "click",
+            () => {
+
+                confirmAIAnswer(
+                    aiResult
+                );
+
+            }
+        );
+
+    }
+
+
+    if (rejectButton) {
+
+        rejectButton.addEventListener(
+            "click",
+            () => {
+
+                escalateToFaculty(
+                    aiResult
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   NO AI ANSWER STATE
+========================================= */
+
+function showNoAIAnswerState(
+    aiResult
+) {
+
+    let feedbackContainer =
+        document.getElementById(
+            "aiFeedbackContainer"
+        );
+
+
+    if (!feedbackContainer) {
+
+        feedbackContainer =
+            document.createElement(
+                "div"
+            );
+
+        feedbackContainer.id =
+            "aiFeedbackContainer";
+
+
+        feedbackContainer.style.marginTop =
+            "20px";
+
+
+        feedbackContainer.style.padding =
+            "15px";
+
+
+        feedbackContainer.style.borderRadius =
+            "10px";
+
+
+        feedbackContainer.style.background =
+            "#fff7ed";
+
+
+        feedbackContainer.style.color =
+            "#9a3412";
+
+
+        if (continueButton) {
+
+            resultState.insertBefore(
+                feedbackContainer,
+                continueButton
+            );
+
+        } else {
+
+            resultState.appendChild(
+                feedbackContainer
+            );
+
+        }
+
+    }
+
+
+    feedbackContainer.innerHTML = `
+
+        <div style="
+            font-weight:700;
+            margin-bottom:8px;
+        ">
+            Faculty Review Required
+        </div>
+
+        <div style="
+            line-height:1.6;
+        ">
+            No sufficiently similar resolved
+            academic query was found.
+            Your query needs faculty assistance.
+        </div>
+
+        <button
+            type="button"
+            id="noResultEscalateButton"
+            style="
+                margin-top:14px;
+                padding:10px 18px;
+                border:none;
+                border-radius:8px;
+                background:#2563eb;
+                color:white;
+                cursor:pointer;
+                font-weight:600;
+            "
+        >
+            Forward to Faculty
+        </button>
+
+    `;
+
+
+    const button =
+        document.getElementById(
+            "noResultEscalateButton"
+        );
+
+
+    if (button) {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                escalateToFaculty(
+                    aiResult
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   AI CONFIRM
+========================================= */
+
+async function confirmAIAnswer(
+    aiResult
+) {
+
+    if (!submittedQueryId) {
+
+        showFormError(
+            "Query ID is missing."
+        );
+
+        return;
+    }
+
+
+    disableAIFeedbackButtons();
+
+
+    try {
+
+        console.log(
+            "Confirming AI answer..."
+        );
+
+
+        const response =
+            await fetch(
+                `${AI_API_URL}/ai-confirm`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            queryId:
+                                submittedQueryId,
+
+                            aiAnswer:
+                                aiResult.aiAnswer,
+
+                            similarity:
+                                typeof aiResult.similarity ===
+                                "number"
+                                    ? aiResult.similarity
+                                    : 0,
+
+                            similarQueryId:
+                                aiResult.similarQueryId ||
+                                "nil"
+
+                        })
+
+                }
+            );
+
+
+        let result;
+
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch (error) {
+
+            result = {};
+
+        }
+
+
+        console.log(
+            "AI confirm response:",
+            result
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.detail ||
+                result.message ||
+                "Unable to confirm AI answer."
+            );
+
+        }
+
+
+        /*
+         * Update UI.
+         */
+
+        showConfirmationMessage(
+            "Your query has been resolved by AI."
+        );
+
+
+        /*
+         * Continue button remains available.
+         */
+
+    } catch (error) {
+
+        console.error(
+            "AI confirmation error:",
+            error
+        );
+
+
+        enableAIFeedbackButtons();
+
+
+        showFormError(
+            error.message ||
+            "Unable to confirm AI answer."
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   ESCALATE TO FACULTY
+========================================= */
+
+async function escalateToFaculty(
+    aiResult
+) {
+
+    if (!submittedQueryId) {
+
+        showFormError(
+            "Query ID is missing."
+        );
+
+        return;
+    }
+
+
+    disableAIFeedbackButtons();
+
+
+    try {
+
+        console.log(
+            "Escalating query to faculty..."
+        );
+
+
+        /*
+         * IMPORTANT:
+         *
+         * No Firebase Authorization token
+         * is sent here.
+         *
+         * The AI backend handles the
+         * secure internal call to:
+         *
+         * /assign-faculty-internal
+         */
+
+        const response =
+            await fetch(
+                `${AI_API_URL}/ai-escalate`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            queryId:
+                                submittedQueryId,
+
+                            similarity:
+                                typeof aiResult?.similarity ===
+                                "number"
+                                    ? aiResult.similarity
+                                    : 0,
+
+                            similarQueryId:
+                                aiResult?.similarQueryId ||
+                                "nil"
+
+                        })
+
+                }
+            );
+
+
+        let result;
+
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch (error) {
+
+            result = {};
+
+        }
+
+
+        console.log(
+            "AI escalation response:",
+            result
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.detail ||
+                result.message ||
+                "Unable to forward query to faculty."
+            );
+
+        }
+
+
+        /*
+         * Show successful escalation.
+         */
+
+        showConfirmationMessage(
+            "Your query has been forwarded to the appropriate faculty member."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Faculty escalation error:",
+            error
+        );
+
+
+        enableAIFeedbackButtons();
+
+
+        showFormError(
+            error.message ||
+            "Unable to forward the query to faculty."
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   DISABLE AI FEEDBACK BUTTONS
+========================================= */
+
+function disableAIFeedbackButtons() {
+
+    const buttons =
+        document.querySelectorAll(
+            "#aiFeedbackContainer button"
+        );
+
+
+    buttons.forEach(
+        button => {
+
+            button.disabled =
+                true;
+
+            button.style.opacity =
+                "0.6";
+
+            button.style.cursor =
+                "not-allowed";
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   ENABLE AI FEEDBACK BUTTONS
+========================================= */
+
+function enableAIFeedbackButtons() {
+
+    const buttons =
+        document.querySelectorAll(
+            "#aiFeedbackContainer button"
+        );
+
+
+    buttons.forEach(
+        button => {
+
+            button.disabled =
+                false;
+
+            button.style.opacity =
+                "1";
+
+            button.style.cursor =
+                "pointer";
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   CONFIRMATION MESSAGE
+========================================= */
+
+function showConfirmationMessage(
+    message
+) {
+
+    let container =
+        document.getElementById(
+            "aiConfirmationMessage"
+        );
+
+
+    if (!container) {
+
+        container =
+            document.createElement(
+                "div"
+            );
+
+        container.id =
+            "aiConfirmationMessage";
+
+
+        container.style.marginTop =
+            "18px";
+
+
+        container.style.padding =
+            "14px";
+
+
+        container.style.borderRadius =
+            "10px";
+
+
+        container.style.background =
+            "#ecfdf5";
+
+
+        container.style.color =
+            "#166534";
+
+
+        container.style.fontWeight =
+            "600";
+
+
+        if (continueButton) {
+
+            resultState.insertBefore(
+                container,
+                continueButton
+            );
+
+        } else {
+
+            resultState.appendChild(
+                container
+            );
+
+        }
+
+    }
+
+
+    container.textContent =
+        message;
+
+
+    /*
+     * Remove feedback buttons after
+     * successful action.
+     */
+
+    const feedback =
+        document.getElementById(
+            "aiFeedbackContainer"
+        );
+
+
+    if (feedback) {
+
+        feedback.remove();
+
+    }
+
+}
+
+
+/* =========================================
+   CLOSE AI MODAL
+========================================= */
+
+function closeAiModal() {
+
+    if (!aiModal) {
+
+        return;
+    }
+
+
+    aiModal.classList.remove(
+        "show"
+    );
 
 }
 
@@ -1225,9 +1984,8 @@ if (aiModal) {
         event => {
 
             /*
-             * Don't allow the student to
-             * accidentally close the processing
-             * modal while submission is happening.
+             * Don't allow accidental closing
+             * while AI processing is running.
              */
 
             if (
@@ -1270,6 +2028,27 @@ function delay(
 
 
 /* =========================================
+   HTML ESCAPE
+========================================= */
+
+function escapeHTML(
+    value
+) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.textContent =
+        value ?? "";
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================
    SANITIZE FILE NAME
 ========================================= */
 
@@ -1293,14 +2072,6 @@ function sanitizeFileName(
 function showFormError(
     message
 ) {
-
-    /*
-     * Use browser alert for now.
-     *
-     * If your CSS already has a dedicated
-     * error component, we can replace this
-     * later.
-     */
 
     alert(
         message
@@ -1330,38 +2101,52 @@ function getFirebaseErrorMessage(
 
         case "permission-denied":
 
-            return "You do not have permission to submit this query.";
+            return (
+                "You do not have permission to submit this query."
+            );
 
 
         case "storage/unauthorized":
 
-            return "You do not have permission to upload this file.";
+            return (
+                "You do not have permission to upload this file."
+            );
 
 
         case "storage/quota-exceeded":
 
-            return "Storage limit has been exceeded.";
+            return (
+                "Storage limit has been exceeded."
+            );
 
 
         case "storage/canceled":
 
-            return "File upload was cancelled.";
+            return (
+                "File upload was cancelled."
+            );
 
 
         case "storage/invalid-format":
 
-            return "The uploaded file format is not supported.";
+            return (
+                "The uploaded file format is not supported."
+            );
 
 
         case "network-request-failed":
 
-            return "Network error. Please check your internet connection.";
+            return (
+                "Network error. Please check your internet connection."
+            );
 
 
         default:
 
-            return error.message ||
-                "Unable to submit your query.";
+            return (
+                error.message ||
+                "Unable to submit your query."
+            );
 
     }
 

@@ -3,6 +3,7 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
+from dotenv import load_dotenv
 
 import firebase_admin
 from firebase_admin import credentials
@@ -12,14 +13,26 @@ from firebase_admin import auth
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi import Depends
+from fastapi import Header
+
 from fastapi.security import HTTPBearer
 from fastapi.security import HTTPAuthorizationCredentials
+
 from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 
 from feature_engineering import calculate_features
 from workload import get_faculty_workloads
+
+
+# =========================================================
+# Environment
+# =========================================================
+
+load_dotenv()
+
+INTERNAL_API_KEY = "7f3c9a1e8b624d4a91f7c2e6a5b83012"
 
 
 # =========================================================
@@ -41,6 +54,16 @@ SERVICE_ACCOUNT_PATH = (
 
 
 # =========================================================
+# Validate Internal API Key
+# =========================================================
+
+if not INTERNAL_API_KEY:
+    raise RuntimeError(
+        "INTERNAL_API_KEY is not configured in .env"
+    )
+
+
+# =========================================================
 # FastAPI
 # =========================================================
 
@@ -50,7 +73,7 @@ app = FastAPI(
         "ML-based automatic faculty assignment "
         "service for DeptConnect"
     ),
-    version="1.0.0"
+    version="1.1.0"
 )
 
 
@@ -61,7 +84,6 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
 
-    # Local development frontend origins
     allow_origins=[
         "http://127.0.0.1:5500",
         "http://localhost:5500"
@@ -77,7 +99,8 @@ app.add_middleware(
 
     allow_headers=[
         "Authorization",
-        "Content-Type"
+        "Content-Type",
+        "X-Internal-Key"
     ],
 )
 
@@ -132,7 +155,7 @@ print(
 
 
 # =========================================================
-# Authentication
+# Firebase Authentication
 # =========================================================
 
 security = HTTPBearer()
@@ -159,6 +182,31 @@ def verify_firebase_token(
             status_code=401,
             detail="Invalid Firebase authentication token"
         )
+
+
+# =========================================================
+# Internal API Key Authentication
+# =========================================================
+
+def verify_internal_api_key(
+    x_internal_key: str = Header(default=None)
+):
+
+    if not x_internal_key:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Internal API key is required"
+        )
+
+    if x_internal_key != INTERNAL_API_KEY:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid internal API key"
+        )
+
+    return True
 
 
 # =========================================================
@@ -257,22 +305,16 @@ def get_active_faculty():
 # =========================================================
 # Get Query
 # =========================================================
-# =========================================================
-# Get Query
-# =========================================================
 
 def get_query(query_id):
 
-    # Create reference to the query document
     query_ref = (
         db.collection("queries")
         .document(query_id)
     )
 
-    # Read the document from Firestore
     snapshot = query_ref.get()
 
-    # Check whether the query exists
     if not snapshot.exists:
 
         print(
@@ -284,13 +326,10 @@ def get_query(query_id):
             detail=f"Query not found: {query_id}"
         )
 
-    # Convert Firestore document to dictionary
     data = snapshot.to_dict()
 
-    # Add the Firestore document ID
     data["queryId"] = query_id
 
-    # Debug information
     print(
         "Query successfully loaded:"
     )
@@ -326,23 +365,13 @@ def get_query(query_id):
     )
 
     return data
+
+
 # =========================================================
-# Faculty Assignment
+# CORE ML FACULTY ASSIGNMENT
 # =========================================================
 
-@app.post("/assign-faculty")
-def assign_faculty(
-
-    request: AssignmentRequest,
-
-    current_user: dict = Depends(
-        verify_firebase_token
-    )
-
-):
-
-    query_id = request.queryId
-
+def perform_faculty_assignment(query_id):
 
     # -----------------------------------------------------
     # 1. Read query
@@ -354,28 +383,7 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 2. Verify student ownership
-    # -----------------------------------------------------
-
-    query_uid = query.get(
-        "uid"
-    )
-
-    if query_uid != current_user.get(
-        "uid"
-    ):
-
-        raise HTTPException(
-            status_code=403,
-            detail=(
-                "You are not authorized "
-                "to assign this query"
-            )
-        )
-
-
-    # -----------------------------------------------------
-    # 3. Check query status
+    # 2. Check query status
     # -----------------------------------------------------
 
     if query.get("status") != "pending":
@@ -398,7 +406,7 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 4. Prevent duplicate assignment
+    # 3. Prevent duplicate assignment
     # -----------------------------------------------------
 
     existing_faculty = query.get(
@@ -426,7 +434,7 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 5. Get active faculty
+    # 4. Get active faculty
     # -----------------------------------------------------
 
     faculty_list = (
@@ -435,7 +443,7 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 6. Same department only
+    # 5. Same department only
     # -----------------------------------------------------
 
     query_department = (
@@ -474,7 +482,7 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 7. Get workload ONCE
+    # 6. Get workload ONCE
     # -----------------------------------------------------
 
     workloads = (
@@ -483,7 +491,7 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 8. Evaluate every faculty
+    # 7. Evaluate every faculty
     # -----------------------------------------------------
 
     recommendations = []
@@ -502,9 +510,9 @@ def assign_faculty(
         )
 
 
-        # -----------------------------------------------
+        # -------------------------------------------------
         # Generate model features
-        # -----------------------------------------------
+        # -------------------------------------------------
 
         features = calculate_features(
 
@@ -517,18 +525,18 @@ def assign_faculty(
         )
 
 
-        # -----------------------------------------------
+        # -------------------------------------------------
         # Convert to DataFrame
-        # -----------------------------------------------
+        # -------------------------------------------------
 
         input_data = pd.DataFrame(
             [features]
         )
 
 
-        # -----------------------------------------------
+        # -------------------------------------------------
         # ML prediction
-        # -----------------------------------------------
+        # -------------------------------------------------
 
         probability = (
 
@@ -569,7 +577,7 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 9. Rank faculty
+    # 8. Rank faculty
     # -----------------------------------------------------
 
     recommendations.sort(
@@ -591,14 +599,14 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 10. Select faculty
+    # 9. Select faculty
     # -----------------------------------------------------
 
     selected = recommendations[0]
 
 
     # -----------------------------------------------------
-    # 11. Update Firestore
+    # 10. Update Firestore
     # -----------------------------------------------------
 
     query_ref = (
@@ -627,7 +635,7 @@ def assign_faculty(
 
 
     # -----------------------------------------------------
-    # 12. Return result
+    # 11. Return result
     # -----------------------------------------------------
 
     return {
@@ -667,3 +675,95 @@ def assign_faculty(
             selected["assignedQueries"]
 
     }
+
+
+# =========================================================
+# STUDENT-FACING FACULTY ASSIGNMENT
+# =========================================================
+
+@app.post("/assign-faculty")
+def assign_faculty(
+
+    request: AssignmentRequest,
+
+    current_user: dict = Depends(
+        verify_firebase_token
+    )
+
+):
+
+    query_id = request.queryId
+
+
+    # -----------------------------------------------------
+    # 1. Read query
+    # -----------------------------------------------------
+
+    query = get_query(
+        query_id
+    )
+
+
+    # -----------------------------------------------------
+    # 2. Verify student ownership
+    # -----------------------------------------------------
+
+    query_uid = query.get(
+        "uid"
+    )
+
+
+    if query_uid != current_user.get(
+        "uid"
+    ):
+
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "You are not authorized "
+                "to assign this query"
+            )
+        )
+
+
+    # -----------------------------------------------------
+    # 3. Run ML assignment
+    # -----------------------------------------------------
+
+    return perform_faculty_assignment(
+        query_id
+    )
+
+
+# =========================================================
+# INTERNAL AI → RECOMMENDATION SYSTEM ENDPOINT
+# =========================================================
+
+@app.post("/assign-faculty-internal")
+def assign_faculty_internal(
+
+    request: AssignmentRequest,
+
+    _: bool = Depends(
+        verify_internal_api_key
+    )
+
+):
+
+    query_id = request.queryId
+
+    print(
+        "Internal faculty assignment request received."
+    )
+
+    print(
+        "Query ID:",
+        query_id
+    )
+
+    # No Firebase student token is required here.
+    # Authentication is done using X-Internal-Key.
+
+    return perform_faculty_assignment(
+        query_id
+    )
