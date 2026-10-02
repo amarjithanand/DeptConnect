@@ -1,6 +1,6 @@
-/* =========================================
+/* =========================================================
    FIREBASE IMPORTS
-========================================= */
+========================================================= */
 
 import {
     initializeApp
@@ -12,7 +12,8 @@ import {
     setPersistence,
     browserLocalPersistence,
     browserSessionPersistence,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 import {
@@ -24,39 +25,24 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 
-/* =========================================
+/* =========================================================
    FIREBASE CONFIGURATION
-========================================= */
+========================================================= */
 
 const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
-
-    authDomain:
-        "deptconnect-8b81c.firebaseapp.com",
-
-    projectId:
-        "deptconnect-8b81c",
-
-    storageBucket:
-        "deptconnect-8b81c.firebasestorage.app",
-
-    messagingSenderId:
-        "916956737819",
-
-    appId:
-        "1:916956737819:web:8fc9920e834ac99e66e3be",
-
-    measurementId:
-        "G-2B4VN12YW5"
-
+    apiKey: "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+    authDomain: "deptconnect-8b81c.firebaseapp.com",
+    projectId: "deptconnect-8b81c",
+    storageBucket: "deptconnect-8b81c.firebasestorage.app",
+    messagingSenderId: "916956737819",
+    appId: "1:916956737819:web:8fc9920e834ac99e66e3be",
+    measurementId: "G-2B4VN12YW5"
 };
 
 
-/* =========================================
+/* =========================================================
    INITIALIZE FIREBASE
-========================================= */
+========================================================= */
 
 const app = initializeApp(firebaseConfig);
 
@@ -65,9 +51,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-/* =========================================
+/* =========================================================
    DOM ELEMENTS
-========================================= */
+========================================================= */
 
 const loginForm =
     document.getElementById("loginForm");
@@ -103,68 +89,79 @@ const forgotPassword =
     document.getElementById("forgotPassword");
 
 
-/* =========================================
-   SHOW ERROR
-========================================= */
+/* =========================================================
+   SHOW LOGIN ERROR
+========================================================= */
 
 function showLoginError(message) {
+
+    if (!loginError) {
+        return;
+    }
 
     loginError.textContent = message;
 
     loginError.classList.add("show");
-
 }
 
 
-/* =========================================
+/* =========================================================
    CLEAR ERRORS
-========================================= */
+========================================================= */
 
 function clearErrors() {
 
-    loginError.textContent = "";
+    if (loginError) {
+        loginError.textContent = "";
+        loginError.classList.remove("show");
+    }
 
-    loginError.classList.remove("show");
+    if (emailError) {
+        emailError.textContent = "";
+    }
 
-    emailError.textContent = "";
-
-    passwordError.textContent = "";
-
+    if (passwordError) {
+        passwordError.textContent = "";
+    }
 }
 
 
-/* =========================================
+/* =========================================================
    LOADING STATE
-========================================= */
+========================================================= */
 
 function setLoading(isLoading) {
 
-    signinButton.disabled = isLoading;
+    if (signinButton) {
+        signinButton.disabled = isLoading;
+    }
 
     if (isLoading) {
 
-        buttonText.textContent =
-            "Signing In...";
+        if (buttonText) {
+            buttonText.textContent = "Signing In...";
+        }
 
-        loader.style.display =
-            "inline-block";
+        if (loader) {
+            loader.style.display = "inline-block";
+        }
 
     } else {
 
-        buttonText.textContent =
-            "Sign In";
+        if (buttonText) {
+            buttonText.textContent = "Sign In";
+        }
 
-        loader.style.display =
-            "none";
-
+        if (loader) {
+            loader.style.display = "none";
+        }
     }
-
 }
 
 
-/* =========================================
+/* =========================================================
    LOGIN
-========================================= */
+========================================================= */
 
 loginForm.addEventListener(
     "submit",
@@ -174,16 +171,23 @@ loginForm.addEventListener(
 
         clearErrors();
 
+
+        /* =================================================
+           GET INPUT VALUES
+        ================================================= */
+
         const email =
-            emailInput.value.trim();
+            emailInput.value
+                .trim()
+                .toLowerCase();
 
         const password =
             passwordInput.value;
 
 
-        /* =============================
+        /* =================================================
            BASIC VALIDATION
-        ============================= */
+        ================================================= */
 
         if (!email) {
 
@@ -191,7 +195,6 @@ loginForm.addEventListener(
                 "Please enter your email.";
 
             return;
-
         }
 
 
@@ -201,7 +204,6 @@ loginForm.addEventListener(
                 "Please enter your password.";
 
             return;
-
         }
 
 
@@ -210,10 +212,10 @@ loginForm.addEventListener(
 
         try {
 
-            /* =============================
+            /* =================================================
                STEP 1
                AUTH PERSISTENCE
-            ============================= */
+            ================================================= */
 
             await setPersistence(
                 auth,
@@ -223,10 +225,14 @@ loginForm.addEventListener(
             );
 
 
-            /* =============================
+            /* =================================================
                STEP 2
                FIREBASE AUTHENTICATION
-            ============================= */
+            ================================================= */
+
+            console.log(
+                "STEP 1: Authenticating student..."
+            );
 
             const userCredential =
                 await signInWithEmailAndPassword(
@@ -241,7 +247,7 @@ loginForm.addEventListener(
 
 
             console.log(
-                "STEP 1: Authentication successful"
+                "Authentication successful."
             );
 
             console.log(
@@ -250,17 +256,18 @@ loginForm.addEventListener(
             );
 
 
-            /* =============================
+            /* =================================================
                STEP 3
                FIND USER ROLE
-               
-               IMPORTANT:
-               We search the `uid` FIELD
-               instead of using the document ID.
-            ============================= */
+
+               role
+               └── randomDocumentId
+                   ├── uid
+                   └── role
+            ================================================= */
 
             console.log(
-                "STEP 2: Checking role..."
+                "STEP 2: Checking student role..."
             );
 
 
@@ -279,22 +286,18 @@ loginForm.addEventListener(
 
 
             console.log(
-                "STEP 3: Role lookup completed"
-            );
-
-            console.log(
                 "Role documents found:",
                 roleSnapshot.size
             );
 
 
-            /* =============================
+            /* =================================================
                ROLE NOT FOUND
-            ============================= */
+            ================================================= */
 
             if (roleSnapshot.empty) {
 
-                await auth.signOut();
+                await signOut(auth);
 
                 showLoginError(
                     "Your account does not have a registered role."
@@ -303,13 +306,12 @@ loginForm.addEventListener(
                 setLoading(false);
 
                 return;
-
             }
 
 
-            /* =============================
+            /* =================================================
                GET ROLE DATA
-            ============================= */
+            ================================================= */
 
             const roleData =
                 roleSnapshot.docs[0].data();
@@ -321,16 +323,15 @@ loginForm.addEventListener(
             );
 
 
-            /* =============================
+            /* =================================================
                VERIFY STUDENT ROLE
-            ============================= */
+            ================================================= */
 
             if (
-                roleData.role !==
-                "student"
+                roleData.role !== "student"
             ) {
 
-                await auth.signOut();
+                await signOut(auth);
 
                 showLoginError(
                     "This account is not registered as a student."
@@ -339,7 +340,6 @@ loginForm.addEventListener(
                 setLoading(false);
 
                 return;
-
             }
 
 
@@ -348,16 +348,26 @@ loginForm.addEventListener(
             );
 
 
-            /* =============================
+            /* =================================================
                STEP 4
                FIND STUDENT PROFILE
-               
-               IMPORTANT:
-               We search the `uid` FIELD.
-            ============================= */
+
+               students
+               └── student document
+                   ├── uid
+                   ├── studentId
+                   ├── name
+                   ├── email
+                   ├── department
+                   ├── programme
+                   ├── semester
+                   ├── isApproved
+                   ├── account_status
+                   └── student_status
+            ================================================= */
 
             console.log(
-                "STEP 4: Checking student profile..."
+                "STEP 3: Checking student profile..."
             );
 
 
@@ -376,24 +386,20 @@ loginForm.addEventListener(
 
 
             console.log(
-                "STEP 5: Student lookup completed"
-            );
-
-            console.log(
                 "Student documents found:",
                 studentSnapshot.size
             );
 
 
-            /* =============================
-               STUDENT NOT FOUND
-            ============================= */
+            /* =================================================
+               STUDENT PROFILE NOT FOUND
+            ================================================= */
 
             if (
                 studentSnapshot.empty
             ) {
 
-                await auth.signOut();
+                await signOut(auth);
 
                 showLoginError(
                     "Student profile was not found."
@@ -402,13 +408,12 @@ loginForm.addEventListener(
                 setLoading(false);
 
                 return;
-
             }
 
 
-            /* =============================
+            /* =================================================
                GET STUDENT DATA
-            ============================= */
+            ================================================= */
 
             const studentDocument =
                 studentSnapshot.docs[0];
@@ -424,17 +429,80 @@ loginForm.addEventListener(
             );
 
 
-            /* =============================
-               STEP 6
-               ACCOUNT STATUS
-            ============================= */
+            /* =================================================
+               STEP 5
+               ADMIN APPROVAL CHECK
+
+               IMPORTANT:
+
+               The student must be explicitly approved.
+
+               isApproved === true
+                   → continue
+
+               isApproved === false
+                   → registration pending
+
+               isApproved missing
+                   → registration pending
+            ================================================= */
+
+            console.log(
+                "STEP 4: Checking student approval..."
+            );
+
 
             if (
-                studentData.account_status !==
-                true
+                studentData.isApproved !== true
             ) {
 
-                await auth.signOut();
+                console.log(
+                    "Student registration is pending approval."
+                );
+
+
+                /*
+                 * Sign out first so an unapproved
+                 * student cannot remain authenticated.
+                 */
+
+                await signOut(auth);
+
+
+                /*
+                 * Redirect to the dedicated
+                 * student pending approval page.
+                 */
+
+                window.location.href =
+                    "registration-pending.html";
+
+                return;
+            }
+
+
+            console.log(
+                "Student approval verified."
+            );
+
+
+            /* =================================================
+               STEP 6
+               ACCOUNT STATUS CHECK
+
+               Must explicitly be true.
+            ================================================= */
+
+            console.log(
+                "STEP 5: Checking account status..."
+            );
+
+
+            if (
+                studentData.account_status !== true
+            ) {
+
+                await signOut(auth);
 
                 showLoginError(
                     "Your account is currently inactive."
@@ -443,21 +511,31 @@ loginForm.addEventListener(
                 setLoading(false);
 
                 return;
-
             }
 
 
-            /* =============================
+            console.log(
+                "Account status verified."
+            );
+
+
+            /* =================================================
                STEP 7
-               STUDENT STATUS
-            ============================= */
+               STUDENT STATUS CHECK
+
+               Must explicitly be true.
+            ================================================= */
+
+            console.log(
+                "STEP 6: Checking student status..."
+            );
+
 
             if (
-                studentData.student_status !==
-                true
+                studentData.student_status !== true
             ) {
 
-                await auth.signOut();
+                await signOut(auth);
 
                 showLoginError(
                     "Your student account is inactive."
@@ -466,14 +544,23 @@ loginForm.addEventListener(
                 setLoading(false);
 
                 return;
-
             }
 
 
-            /* =============================
+            console.log(
+                "Student status verified."
+            );
+
+
+            /* =================================================
                STEP 8
                STORE SESSION DATA
-            ============================= */
+            ================================================= */
+
+            console.log(
+                "STEP 7: Saving student session..."
+            );
+
 
             sessionStorage.setItem(
                 "deptconnect_uid",
@@ -489,29 +576,55 @@ loginForm.addEventListener(
 
             sessionStorage.setItem(
                 "deptconnect_student_id",
-                studentData.studentId
+                studentData.studentId || ""
             );
 
 
             sessionStorage.setItem(
                 "deptconnect_student_name",
-                studentData.name
+                studentData.name || ""
             );
 
 
             sessionStorage.setItem(
                 "deptconnect_student_email",
-                studentData.email
+                studentData.email ||
+                user.email ||
+                ""
             );
 
 
-            /* =============================
+            /*
+             * Additional useful session data
+             */
+
+            sessionStorage.setItem(
+                "deptconnect_student_department",
+                studentData.department || ""
+            );
+
+
+            sessionStorage.setItem(
+                "deptconnect_student_programme",
+                studentData.programme || ""
+            );
+
+
+            sessionStorage.setItem(
+                "deptconnect_student_semester",
+                studentData.semester !== undefined
+                    ? String(studentData.semester)
+                    : ""
+            );
+
+
+            /* =================================================
                STEP 9
                LOGIN SUCCESS
-            ============================= */
+            ================================================= */
 
             console.log(
-                "STEP 6: Student verified successfully."
+                "Student verified successfully."
             );
 
 
@@ -522,29 +635,33 @@ loginForm.addEventListener(
 
 
             console.log(
-                "Redirecting to dashboard..."
+                "Redirecting to student dashboard..."
             );
 
 
-            buttonText.textContent =
-                "Success!";
+            if (buttonText) {
+                buttonText.textContent = "Success!";
+            }
 
 
-            setTimeout(
-                () => {
+            /*
+             * Redirect immediately.
+             */
 
-                    window.location.href =
-                        "dashboard.html";
+            window.location.href =
+                "dashboard.html";
 
-                },
-                500
-            );
+        }
 
 
-        } catch (error) {
+        /* =====================================================
+           LOGIN ERROR
+        ===================================================== */
+
+        catch (error) {
 
             console.error(
-                "Login error:",
+                "Student login error:",
                 error
             );
 
@@ -555,20 +672,35 @@ loginForm.addEventListener(
 
 
             setLoading(false);
-
         }
 
     }
 );
 
 
-/* =========================================
+/* =========================================================
    FIREBASE ERROR HANDLING
-========================================= */
+========================================================= */
 
 function handleFirebaseError(error) {
 
-    switch (error.code) {
+    console.error(
+        "Firebase error code:",
+        error?.code
+    );
+
+    console.error(
+        "Firebase error message:",
+        error?.message
+    );
+
+
+    switch (error?.code) {
+
+
+        /* =================================================
+           INVALID CREDENTIAL
+        ================================================= */
 
         case "auth/invalid-credential":
 
@@ -579,6 +711,10 @@ function handleFirebaseError(error) {
             break;
 
 
+        /* =================================================
+           USER NOT FOUND
+        ================================================= */
+
         case "auth/user-not-found":
 
             showLoginError(
@@ -587,6 +723,10 @@ function handleFirebaseError(error) {
 
             break;
 
+
+        /* =================================================
+           WRONG PASSWORD
+        ================================================= */
 
         case "auth/wrong-password":
 
@@ -597,13 +737,25 @@ function handleFirebaseError(error) {
             break;
 
 
+        /* =================================================
+           INVALID EMAIL
+        ================================================= */
+
         case "auth/invalid-email":
 
-            emailError.textContent =
-                "Please enter a valid email address.";
+            if (emailError) {
+
+                emailError.textContent =
+                    "Please enter a valid email address.";
+
+            }
 
             break;
 
+
+        /* =================================================
+           USER DISABLED IN FIREBASE AUTH
+        ================================================= */
 
         case "auth/user-disabled":
 
@@ -614,6 +766,10 @@ function handleFirebaseError(error) {
             break;
 
 
+        /* =================================================
+           TOO MANY REQUESTS
+        ================================================= */
+
         case "auth/too-many-requests":
 
             showLoginError(
@@ -622,6 +778,10 @@ function handleFirebaseError(error) {
 
             break;
 
+
+        /* =================================================
+           NETWORK ERROR
+        ================================================= */
 
         case "auth/network-request-failed":
 
@@ -632,25 +792,39 @@ function handleFirebaseError(error) {
             break;
 
 
+        /* =================================================
+           FIRESTORE PERMISSION ERROR
+        ================================================= */
+
+        case "permission-denied":
+
+        case "firestore/permission-denied":
+
+            showLoginError(
+                "Access denied. Please check your account permissions."
+            );
+
+            break;
+
+
+        /* =================================================
+           DEFAULT
+        ================================================= */
+
         default:
 
             showLoginError(
                 "Unable to sign in. Please try again."
             );
 
-            console.error(
-                error.code,
-                error.message
-            );
-
+            break;
     }
-
 }
 
 
-/* =========================================
+/* =========================================================
    FORGOT PASSWORD
-========================================= */
+========================================================= */
 
 forgotPassword.addEventListener(
     "click",
@@ -660,9 +834,16 @@ forgotPassword.addEventListener(
 
         clearErrors();
 
-        const email =
-            emailInput.value.trim();
 
+        const email =
+            emailInput.value
+                .trim()
+                .toLowerCase();
+
+
+        /* =================================================
+           EMAIL REQUIRED
+        ================================================= */
 
         if (!email) {
 
@@ -672,7 +853,6 @@ forgotPassword.addEventListener(
             emailInput.focus();
 
             return;
-
         }
 
 
@@ -688,8 +868,10 @@ forgotPassword.addEventListener(
                 "Password reset email sent. Check your inbox."
             );
 
+        }
 
-        } catch (error) {
+
+        catch (error) {
 
             console.error(
                 "Password reset error:",
@@ -700,44 +882,57 @@ forgotPassword.addEventListener(
             handleFirebaseError(
                 error
             );
-
         }
 
     }
 );
 
 
-/* =========================================
-   CLEAR ERRORS WHEN TYPING
-========================================= */
+/* =========================================================
+   CLEAR ERRORS WHEN TYPING EMAIL
+========================================================= */
 
 emailInput.addEventListener(
     "input",
     () => {
 
-        emailError.textContent = "";
+        if (emailError) {
+            emailError.textContent = "";
+        }
 
-        loginError.textContent = "";
+        if (loginError) {
 
-        loginError.classList.remove(
-            "show"
-        );
+            loginError.textContent = "";
+
+            loginError.classList.remove(
+                "show"
+            );
+        }
 
     }
 );
 
 
+/* =========================================================
+   CLEAR ERRORS WHEN TYPING PASSWORD
+========================================================= */
+
 passwordInput.addEventListener(
     "input",
     () => {
 
-        passwordError.textContent = "";
+        if (passwordError) {
+            passwordError.textContent = "";
+        }
 
-        loginError.textContent = "";
+        if (loginError) {
 
-        loginError.classList.remove(
-            "show"
-        );
+            loginError.textContent = "";
+
+            loginError.classList.remove(
+                "show"
+            );
+        }
 
     }
 );

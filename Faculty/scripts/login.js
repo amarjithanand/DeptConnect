@@ -1,3 +1,7 @@
+/* =========================================================
+   FIREBASE IMPORTS
+========================================================= */
+
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
@@ -21,467 +25,439 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
 
-/* =========================================
+/* =========================================================
    FIREBASE CONFIG
-========================================= */
+========================================================= */
 
 const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
-
-    authDomain:
-        "deptconnect-8b81c.firebaseapp.com",
-
-    projectId:
-        "deptconnect-8b81c",
-
-    storageBucket:
-        "deptconnect-8b81c.firebasestorage.app",
-
-    messagingSenderId:
-        "916956737819",
-
-    appId:
-        "1:916956737819:web:8fc9920e834ac99e66e3be",
-
-    measurementId:
-        "G-2B4VN12YW5"
-
+    apiKey: "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+    authDomain: "deptconnect-8b81c.firebaseapp.com",
+    projectId: "deptconnect-8b81c",
+    storageBucket: "deptconnect-8b81c.firebasestorage.app",
+    messagingSenderId: "916956737819",
+    appId: "1:916956737819:web:8fc9920e834ac99e66e3be",
+    measurementId: "G-2B4VN12YW5"
 };
 
 
-/* =========================================
+/* =========================================================
    INITIALIZE FIREBASE
-========================================= */
+========================================================= */
 
-const app =
-    initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const auth =
-    getAuth(app);
+const auth = getAuth(app);
 
-const db =
-    getFirestore(app);
+const db = getFirestore(app);
 
 
-/* =========================================
+/* =========================================================
    DOM ELEMENTS
-========================================= */
+========================================================= */
 
-const form =
-    document.getElementById(
-        "facultyLoginForm"
-    );
+const form = document.getElementById("facultyLoginForm");
 
-const emailInput =
-    document.getElementById(
-        "email"
-    );
+const emailInput = document.getElementById("email");
 
-const passwordInput =
-    document.getElementById(
-        "password"
-    );
+const passwordInput = document.getElementById("password");
 
-const rememberMe =
-    document.getElementById(
-        "rememberMe"
-    );
+const rememberMe = document.getElementById("rememberMe");
 
-const signinButton =
-    document.getElementById(
-        "signinButton"
-    );
+const signinButton = document.getElementById("signinButton");
 
-const buttonText =
-    document.getElementById(
-        "buttonText"
-    );
+const buttonText = document.getElementById("buttonText");
 
-const loader =
-    document.getElementById(
-        "loader"
-    );
+const loader = document.getElementById("loader");
 
-const loginError =
-    document.getElementById(
-        "loginError"
-    );
+const loginError = document.getElementById("loginError");
 
-const forgotPassword =
-    document.getElementById(
-        "forgotPassword"
-    );
+const forgotPassword = document.getElementById("forgotPassword");
 
 
-/* =========================================
+/* =========================================================
    LOGIN
-========================================= */
+========================================================= */
 
-form.addEventListener(
-    "submit",
-    async (event) => {
+form.addEventListener("submit", async (event) => {
 
-        event.preventDefault();
+    event.preventDefault();
 
-        clearErrors();
+    clearErrors();
 
 
-        const email =
-            emailInput.value
-                .trim()
-                .toLowerCase();
+    /* =====================================================
+       GET FORM VALUES
+    ===================================================== */
+
+    const email = emailInput.value
+        .trim()
+        .toLowerCase();
+
+    const password = passwordInput.value;
 
 
-        const password =
-            passwordInput.value;
+    /* =====================================================
+       VALIDATION
+    ===================================================== */
+
+    if (!email) {
+
+        showError(
+            "emailError",
+            "Please enter your institutional email."
+        );
+
+        return;
+    }
 
 
-        /* =====================================
-           VALIDATION
-        ===================================== */
+    if (!password) {
 
-        if (!email) {
+        showError(
+            "passwordError",
+            "Please enter your password."
+        );
 
-            showError(
-                "emailError",
-                "Please enter your institutional email."
-            );
-
-            return;
-
-        }
+        return;
+    }
 
 
-        if (!password) {
-
-            showError(
-                "passwordError",
-                "Please enter your password."
-            );
-
-            return;
-
-        }
+    setLoading(true);
 
 
-        setLoading(true);
+    try {
+
+        /* =================================================
+           1. SET AUTH PERSISTENCE
+        ================================================= */
+
+        await setPersistence(
+            auth,
+            rememberMe.checked
+                ? browserLocalPersistence
+                : browserSessionPersistence
+        );
 
 
-        try {
+        /* =================================================
+           2. FIREBASE AUTHENTICATION
+        ================================================= */
 
-            /* =================================
-               1. FIREBASE AUTHENTICATION
-            ================================= */
-
-            await setPersistence(
+        const credential =
+            await signInWithEmailAndPassword(
                 auth,
-                rememberMe.checked
-                    ? browserLocalPersistence
-                    : browserSessionPersistence
+                email,
+                password
             );
 
+        const user = credential.user;
 
-            const credential =
-                await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-
-            const user =
-                credential.user;
+        console.log(
+            "Authenticated UID:",
+            user.uid
+        );
 
 
-            console.log(
-                "Authenticated UID:",
+        /* =================================================
+           3. VERIFY FACULTY ROLE
+           
+           Firestore structure:
+           
+           role
+           └── randomDocumentId
+               ├── uid
+               └── role
+        ================================================= */
+
+        console.log(
+            "Checking faculty role..."
+        );
+
+        const roleQuery = query(
+            collection(db, "role"),
+            where(
+                "uid",
+                "==",
                 user.uid
+            )
+        );
+
+        const roleSnapshot =
+            await getDocs(roleQuery);
+
+        console.log(
+            "Role documents found:",
+            roleSnapshot.size
+        );
+
+
+        if (roleSnapshot.empty) {
+
+            await signOut(auth);
+
+            throw new Error(
+                "No role document found for this account."
             );
+        }
 
 
-            /* =================================
-               2. FIND FACULTY ROLE
-               
-               Your structure:
-               
-               role
-               └── randomDocumentId
-                    ├── uid
-                    └── role
-            ================================= */
+        const roleData =
+            roleSnapshot.docs[0].data();
 
-            console.log(
-                "Checking faculty role..."
+        console.log(
+            "Role:",
+            roleData.role
+        );
+
+
+        /* =================================================
+           4. CHECK FACULTY ROLE
+        ================================================= */
+
+        if (
+            roleData.role !== "faculty"
+        ) {
+
+            await signOut(auth);
+
+            throw new Error(
+                "This account is not authorized as faculty."
             );
+        }
 
 
-            const roleQuery =
-                query(
-                    collection(
-                        db,
-                        "role"
-                    ),
-                    where(
-                        "uid",
-                        "==",
-                        user.uid
-                    )
-                );
+        /* =================================================
+           5. FIND FACULTY PROFILE
+           
+           Faculty structure:
+           
+           faculty
+           └── randomDocumentId
+               ├── uid
+               ├── facultyId
+               ├── name
+               ├── email
+               ├── department
+               ├── designation
+               ├── subjects[]
+               ├── isApproved
+               ├── account_status
+               └── faculty_status
+        ================================================= */
 
+        console.log(
+            "Loading faculty profile..."
+        );
 
-            const roleSnapshot =
-                await getDocs(
-                    roleQuery
-                );
-
-
-            console.log(
-                "Role documents found:",
-                roleSnapshot.size
-            );
-
-
-            if (
-                roleSnapshot.empty
-            ) {
-
-                await signOut(auth);
-
-                throw new Error(
-                    "No role document found for this account."
-                );
-
-            }
-
-
-            const roleData =
-                roleSnapshot
-                    .docs[0]
-                    .data();
-
-
-            console.log(
-                "Role:",
-                roleData.role
-            );
-
-
-            /* =================================
-               3. VERIFY FACULTY ROLE
-            ================================= */
-
-            if (
-                roleData.role !==
-                "faculty"
-            ) {
-
-                await signOut(auth);
-
-                throw new Error(
-                    "This account is not authorized as faculty."
-                );
-
-            }
-
-
-            /* =================================
-               4. FIND FACULTY PROFILE
-               
-               Your structure:
-               
-               faculty
-               └── randomDocumentId
-                    ├── uid
-                    ├── facultyId
-                    ├── name
-                    ├── email
-                    ├── department
-                    ├── designation
-                    ├── subjects[]
-                    └── ...
-            ================================= */
-
-            console.log(
-                "Loading faculty profile..."
-            );
-
-
-            const facultyQuery =
-                query(
-                    collection(
-                        db,
-                        "faculty"
-                    ),
-                    where(
-                        "uid",
-                        "==",
-                        user.uid
-                    )
-                );
-
-
-            const facultySnapshot =
-                await getDocs(
-                    facultyQuery
-                );
-
-
-            console.log(
-                "Faculty documents found:",
-                facultySnapshot.size
-            );
-
-
-            if (
-                facultySnapshot.empty
-            ) {
-
-                await signOut(auth);
-
-                throw new Error(
-                    "Faculty profile does not exist."
-                );
-
-            }
-
-
-            const facultyData =
-                facultySnapshot
-                    .docs[0]
-                    .data();
-
-
-            console.log(
-                "Faculty profile:",
-                facultyData
-            );
-
-
-            /* =================================
-               5. CHECK ACCOUNT STATUS
-            ================================= */
-
-            if (
-                facultyData.account_status ===
-                false
-            ) {
-
-                await signOut(auth);
-
-                throw new Error(
-                    "Your faculty account is disabled."
-                );
-
-            }
-
-
-            if (
-                facultyData.faculty_status ===
-                false
-            ) {
-
-                await signOut(auth);
-
-                throw new Error(
-                    "Your faculty account is inactive."
-                );
-
-            }
-
-
-            /* =================================
-               6. SAVE FACULTY SESSION
-            ================================= */
-
-            sessionStorage.setItem(
-                "userRole",
-                "faculty"
-            );
-
-
-            sessionStorage.setItem(
-                "facultyUid",
+        const facultyQuery = query(
+            collection(db, "faculty"),
+            where(
+                "uid",
+                "==",
                 user.uid
+            )
+        );
+
+        const facultySnapshot =
+            await getDocs(facultyQuery);
+
+        console.log(
+            "Faculty documents found:",
+            facultySnapshot.size
+        );
+
+
+        /* =================================================
+           FACULTY PROFILE NOT FOUND
+        ================================================= */
+
+        if (facultySnapshot.empty) {
+
+            await signOut(auth);
+
+            throw new Error(
+                "Faculty profile does not exist."
             );
+        }
 
 
-            sessionStorage.setItem(
-                "facultyId",
-                facultyData.facultyId ||
-                ""
-            );
+        const facultyData =
+            facultySnapshot.docs[0].data();
+
+        console.log(
+            "Faculty profile:",
+            facultyData
+        );
 
 
-            sessionStorage.setItem(
-                "facultyName",
-                facultyData.name ||
-                ""
-            );
+        /* =================================================
+           6. CHECK ADMIN APPROVAL
+           
+           IMPORTANT:
+           
+           Only approved faculty can continue.
+           
+           false OR missing = NOT APPROVED
+        ================================================= */
 
-
-            sessionStorage.setItem(
-                "facultyDepartment",
-                facultyData.department ||
-                ""
-            );
-
-
-            sessionStorage.setItem(
-                "facultySubjects",
-                JSON.stringify(
-                    facultyData.subjects ||
-                    []
-                )
-            );
-
-
-            /* =================================
-               7. SUCCESS
-            ================================= */
+        if (
+            facultyData.isApproved !== true
+        ) {
 
             console.log(
-                "Faculty authentication successful."
+                "Faculty registration is pending approval."
             );
 
-
-            /* =================================
-               8. REDIRECT
-            ================================= */
+            await signOut(auth);
 
             window.location.href =
-                "dashboard.html";
+                "faculty-registration-pending.html";
 
-
-        } catch (error) {
-
-            console.error(
-                "Faculty login error:",
-                error
-            );
-
-
-            showLoginError(
-                getLoginError(
-                    error
-                )
-            );
-
-
-        } finally {
-
-            setLoading(false);
-
+            return;
         }
 
+
+        /* =================================================
+           7. CHECK ACCOUNT STATUS
+           
+           Must explicitly be true.
+        ================================================= */
+
+        if (
+            facultyData.account_status !== true
+        ) {
+
+            await signOut(auth);
+
+            throw new Error(
+                "Your faculty account is disabled."
+            );
+        }
+
+
+        /* =================================================
+           8. CHECK FACULTY STATUS
+           
+           Must explicitly be true.
+        ================================================= */
+
+        if (
+            facultyData.faculty_status !== true
+        ) {
+
+            await signOut(auth);
+
+            throw new Error(
+                "Your faculty account is inactive."
+            );
+        }
+
+
+        /* =================================================
+           9. SAVE FACULTY SESSION
+        ================================================= */
+
+        sessionStorage.setItem(
+            "userRole",
+            "faculty"
+        );
+
+
+        sessionStorage.setItem(
+            "facultyUid",
+            user.uid
+        );
+
+
+        sessionStorage.setItem(
+            "facultyId",
+            facultyData.facultyId || ""
+        );
+
+
+        sessionStorage.setItem(
+            "facultyName",
+            facultyData.name || ""
+        );
+
+
+        sessionStorage.setItem(
+            "facultyEmail",
+            facultyData.email ||
+            user.email ||
+            ""
+        );
+
+
+        sessionStorage.setItem(
+            "facultyDepartment",
+            facultyData.department || ""
+        );
+
+
+        sessionStorage.setItem(
+            "facultyDesignation",
+            facultyData.designation || ""
+        );
+
+
+        sessionStorage.setItem(
+            "facultySubjects",
+            JSON.stringify(
+                facultyData.subjects || []
+            )
+        );
+
+
+        sessionStorage.setItem(
+            "facultyProfileImg",
+            facultyData.profileImg || ""
+        );
+
+
+        /* =================================================
+           10. SUCCESS
+        ================================================= */
+
+        console.log(
+            "Faculty authentication successful."
+        );
+
+
+        /* =================================================
+           11. REDIRECT TO FACULTY DASHBOARD
+        ================================================= */
+
+        window.location.href =
+            "faculty/dashboard.html";
+
     }
-);
+
+    catch (error) {
+
+        console.error(
+            "Faculty login error:",
+            error
+        );
+
+        showLoginError(
+            getLoginError(error)
+        );
+
+    }
+
+    finally {
+
+        setLoading(false);
+
+    }
+
+});
 
 
-/* =========================================
+/* =========================================================
    FORGOT PASSWORD
-========================================= */
+========================================================= */
 
 forgotPassword.addEventListener(
     "click",
@@ -489,11 +465,12 @@ forgotPassword.addEventListener(
 
         event.preventDefault();
 
+        clearErrors();
 
-        const email =
-            emailInput.value
-                .trim()
-                .toLowerCase();
+
+        const email = emailInput.value
+            .trim()
+            .toLowerCase();
 
 
         if (!email) {
@@ -506,7 +483,6 @@ forgotPassword.addEventListener(
             emailInput.focus();
 
             return;
-
         }
 
 
@@ -522,19 +498,17 @@ forgotPassword.addEventListener(
                 "Password reset email sent. Check your institutional inbox."
             );
 
+        }
 
-        } catch (error) {
+        catch (error) {
 
             console.error(
                 "Password reset error:",
                 error
             );
 
-
             showLoginError(
-                getLoginError(
-                    error
-                )
+                getLoginError(error)
             );
 
         }
@@ -543,45 +517,49 @@ forgotPassword.addEventListener(
 );
 
 
-/* =========================================
+/* =========================================================
    LOADING STATE
-========================================= */
+========================================================= */
 
-function setLoading(
-    loading
-) {
+function setLoading(loading) {
 
-    signinButton.disabled =
-        loading;
+    if (signinButton) {
 
+        signinButton.disabled = loading;
 
-    loader.style.display =
-        loading
-            ? "inline-block"
-            : "none";
+    }
 
 
-    buttonText.textContent =
-        loading
-            ? "Signing In..."
-            : "Sign In";
+    if (loader) {
+
+        loader.style.display =
+            loading
+                ? "inline-block"
+                : "none";
+
+    }
+
+
+    if (buttonText) {
+
+        buttonText.textContent =
+            loading
+                ? "Signing In..."
+                : "Sign In";
+
+    }
 
 }
 
 
-/* =========================================
+/* =========================================================
    SHOW FIELD ERROR
-========================================= */
+========================================================= */
 
-function showError(
-    id,
-    message
-) {
+function showError(id, message) {
 
     const element =
-        document.getElementById(
-            id
-        );
+        document.getElementById(id);
 
 
     if (element) {
@@ -594,13 +572,16 @@ function showError(
 }
 
 
-/* =========================================
-   SHOW GENERAL ERROR
-========================================= */
+/* =========================================================
+   SHOW GENERAL LOGIN ERROR
+========================================================= */
 
-function showLoginError(
-    message
-) {
+function showLoginError(message) {
+
+    if (!loginError) {
+        return;
+    }
+
 
     loginError.textContent =
         message;
@@ -612,43 +593,49 @@ function showLoginError(
 }
 
 
-/* =========================================
+/* =========================================================
    CLEAR ERRORS
-========================================= */
+========================================================= */
 
 function clearErrors() {
 
     document
-        .querySelectorAll(
-            ".error-message"
-        )
-        .forEach(
-            element => {
+        .querySelectorAll(".error-message")
+        .forEach(element => {
 
-                element.textContent =
-                    "";
+            element.textContent = "";
 
-            }
-        );
+        });
 
 
-    loginError.textContent =
-        "";
+    if (loginError) {
 
+        loginError.textContent = "";
 
-    loginError.style.display =
-        "none";
+        loginError.style.display =
+            "none";
+
+    }
 
 }
 
 
-/* =========================================
+/* =========================================================
    FIREBASE ERROR HANDLER
-========================================= */
+========================================================= */
 
-function getLoginError(
-    error
-) {
+function getLoginError(error) {
+
+    if (!error) {
+
+        return "Unable to sign in.";
+
+    }
+
+
+    /* =====================================================
+       AUTH ERRORS
+    ===================================================== */
 
     if (
         error.code ===
@@ -682,6 +669,16 @@ function getLoginError(
 
     if (
         error.code ===
+        "auth/invalid-email"
+    ) {
+
+        return "Please enter a valid email address.";
+
+    }
+
+
+    if (
+        error.code ===
         "auth/too-many-requests"
     ) {
 
@@ -702,6 +699,20 @@ function getLoginError(
 
     if (
         error.code ===
+        "auth/user-disabled"
+    ) {
+
+        return "This Firebase account has been disabled.";
+
+    }
+
+
+    /* =====================================================
+       FIRESTORE ERROR
+    ===================================================== */
+
+    if (
+        error.code ===
         "permission-denied"
     ) {
 
@@ -710,7 +721,17 @@ function getLoginError(
     }
 
 
-    return error.message ||
-        "Unable to sign in.";
+    /* =====================================================
+       CUSTOM APPLICATION ERRORS
+    ===================================================== */
+
+    if (error.message) {
+
+        return error.message;
+
+    }
+
+
+    return "Unable to sign in.";
 
 }
