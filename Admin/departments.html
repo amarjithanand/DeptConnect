@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Departments | DeptConnect Admin</title>
+
+    <link
+        rel="stylesheet"
+        href="styles/departments.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                DC
+            </div>
+
+            <div>
+                <h2>DeptConnect</h2>
+                <span>Admin Portal</span>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a href="dashboard.html">
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a href="students.html">
+                <span>👨‍🎓</span>
+                Students
+            </a>
+
+            <a href="faculty.html">
+                <span>👨‍🏫</span>
+                Faculty
+            </a>
+
+            <a
+                href="departments.html"
+                class="active"
+            >
+                <span>🏢</span>
+                Departments
+            </a>
+
+            <a href="subjects.html">
+                <span>📚</span>
+                Subjects
+            </a>
+
+            <a href="queries.html">
+                <span>💬</span>
+                Queries
+            </a>
+
+            <a href="notifications.html">
+                <span>🔔</span>
+                Notifications
+            </a>
+
+            <a href="ai-monitoring.html">
+                <span>🤖</span>
+                AI Monitoring
+            </a>
+
+            <a href="activity-logs.html">
+                <span>📋</span>
+                Activity Logs
+            </a>
+
+            <a href="settings.html">
+                <span>⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+        >
+            <span>↪</span>
+            Logout
+        </button>
+
+    </aside>
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Departments</h1>
+
+                <p>
+                    Manage academic departments
+                </p>
+
+            </div>
+
+
+            <div class="admin-info">
+
+                <div class="admin-avatar">
+                    A
+                </div>
+
+                <div>
+
+                    <strong id="adminEmail">
+                        Admin
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================
+             STATISTICS
+        ====================================== -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🏢
+                </div>
+
+                <div>
+                    <span>Total Departments</span>
+                    <strong id="totalCount">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon active-icon">
+                    ✓
+                </div>
+
+                <div>
+                    <span>Active</span>
+                    <strong id="activeCount">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon inactive-icon">
+                    ⏸
+                </div>
+
+                <div>
+                    <span>Inactive</span>
+                    <strong id="inactiveCount">0</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             TOOLBAR
+        ====================================== -->
+
+        <section class="toolbar">
+
+            <div class="search-box">
+
+                <span>⌕</span>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search departments..."
+                >
+
+            </div>
+
+
+            <select id="statusFilter">
+
+                <option value="all">
+                    All Status
+                </option>
+
+                <option value="active">
+                    Active
+                </option>
+
+                <option value="inactive">
+                    Inactive
+                </option>
+
+            </select>
+
+
+            <button
+                id="refreshBtn"
+                class="secondary-btn"
+            >
+                ↻ Refresh
+            </button>
+
+
+            <button
+                id="addDepartmentBtn"
+                class="primary-btn"
+            >
+                + Add Department
+            </button>
+
+        </section>
+
+
+        <!-- =====================================
+             DEPARTMENT LIST
+        ====================================== -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Department Directory</h2>
+
+                    <p id="resultCount">
+                        0 departments
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="loading"
+                class="loading"
+            >
+                Loading departments...
+            </div>
+
+
+            <div
+                id="departmentList"
+                class="department-list"
+            ></div>
+
+
+            <div
+                id="noResults"
+                class="no-results"
+            >
+
+                <div class="empty-icon">
+                    🏢
+                </div>
+
+                <h3>
+                    No departments found
+                </h3>
+
+                <p>
+                    Add a department or change your search filters.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         ADD / EDIT MODAL
+    ========================================== -->
+
+    <div
+        id="departmentModal"
+        class="modal-overlay"
+    >
+
+        <div class="modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2 id="modalTitle">
+                        Add Department
+                    </h2>
+
+                    <p>
+                        Enter department information
+                    </p>
+
+                </div>
+
+                <button
+                    id="closeModalBtn"
+                    class="close-btn"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="departmentForm">
+
+                <div class="form-group">
+
+                    <label for="departmentName">
+                        Department Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="departmentName"
+                        placeholder="e.g. Computer Applications"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="departmentCode">
+                        Department Code
+                    </label>
+
+                    <input
+                        type="text"
+                        id="departmentCode"
+                        placeholder="e.g. MCA"
+                        maxlength="20"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="departmentDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="departmentDescription"
+                        rows="4"
+                        placeholder="Enter department description..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="departmentStatus">
+                        Status
+                    </label>
+
+                    <select id="departmentStatus">
+
+                        <option value="true">
+                            Active
+                        </option>
+
+                        <option value="false">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    id="formError"
+                    class="form-error"
+                ></div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelBtn"
+                        class="secondary-btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                        id="saveBtn"
+                    >
+                        Save Department
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         DETAILS MODAL
+    ========================================== -->
+
+    <div
+        id="detailsModal"
+        class="modal-overlay"
+    >
+
+        <div class="modal details-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        Department Details
+                    </h2>
+
+                    <p>
+                        Department information
+                    </p>
+
+                </div>
+
+                <button
+                    id="closeDetailsBtn"
+                    class="close-btn"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="details-body">
+
+                <div class="detail-row">
+
+                    <span>
+                        Department Name
+                    </span>
+
+                    <strong id="detailsName">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Department Code
+                    </span>
+
+                    <strong id="detailsCode">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Status
+                    </span>
+
+                    <strong id="detailsStatus">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-description">
+
+                    <span>
+                        Description
+                    </span>
+
+                    <p id="detailsDescription">
+                        —
+                    </p>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>
+                        Created
+                    </span>
+
+                    <strong id="detailsCreated">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         FIREBASE
+    ========================================== -->
+
+    <script type="module">
+
+        import {
+            initializeApp
+        }
+        from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signOut
+        }
+        from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+
+        import {
+            getFirestore
+        }
+        from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+        const firebaseConfig = {
+
+            apiKey:
+                "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+
+            authDomain:
+                "deptconnect-8b81c.firebaseapp.com",
+
+            projectId:
+                "deptconnect-8b81c",
+
+            storageBucket:
+                "deptconnect-8b81c.firebasestorage.app",
+
+            messagingSenderId:
+                "916956737819",
+
+            appId:
+                "1:916956737819:web:8fc9920e834ac99e66e3be",
+
+            measurementId:
+                "G-2B4VN12YW5"
+
+        };
+
+
+        const app =
+            initializeApp(firebaseConfig);
+
+
+        const auth =
+            getAuth(app);
+
+
+        const db =
+            getFirestore(app);
+
+
+        window.deptConnectFirebase = {
+            auth,
+            db,
+            onAuthStateChanged,
+            signOut
+        };
+
+    </script>
+
+
+    <script
+        type="module"
+        src="scripts/departments.js"
+    ></script>
+
+</body>
+
+</html>

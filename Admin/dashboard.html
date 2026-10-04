@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DeptConnect - Admin Dashboard</title>
+
+    <link rel="stylesheet" href="styles/dashboard.css">
+</head>
+
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>DeptConnect</h2>
+            <span>Admin Portal</span>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="dashboard.html" class="nav-item active">
+                Dashboard
+            </a>
+
+            <a href="students.html" class="nav-item">
+                Students
+            </a>
+
+            <a href="faculty.html" class="nav-item">
+                Faculty
+            </a>
+
+            <a href="departments.html" class="nav-item">
+                Departments
+            </a>
+
+            <a href="subjects.html" class="nav-item">
+                Subjects
+            </a>
+
+            <a href="queries.html" class="nav-item">
+                Queries
+            </a>
+
+            <a href="ai-monitoring.html" class="nav-item">
+                AI Monitoring
+            </a>
+
+            <a href="activity-logs.html" class="nav-item">
+                Activity Logs
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button id="logoutBtn" class="logout-btn">
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>Manage and monitor DeptConnect</p>
+            </div>
+
+            <div class="admin-info" style="display : none;">
+                <span id="adminEmail">Loading...</span>
+            </div>
+
+        </header>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <h3>Total Students</h3>
+                <p id="totalStudents">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Faculty</h3>
+                <p id="totalFaculty">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Total Queries</h3>
+                <p id="totalQueries">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Pending Queries</h3>
+                <p id="pendingQueries">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Resolved Queries</h3>
+                <p id="resolvedQueries">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>AI Processed</h3>
+                <p id="aiProcessed">0</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= QUICK ACTIONS ================= -->
+
+        <section class="section">
+
+            <h2>Quick Actions</h2>
+
+            <div class="quick-actions">
+
+                <a href="students.html">
+                    Manage Students
+                </a>
+
+                <a href="faculty.html">
+                    Manage Faculty
+                </a>
+
+                <a href="queries.html">
+                    Manage Queries
+                </a>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SYSTEM STATUS ================= -->
+
+        <section class="section">
+
+            <h2>System Overview</h2>
+
+            <div class="system-card">
+
+                <div class="system-row">
+                    <span>Authentication</span>
+                    <span class="status active-status">Active</span>
+                </div>
+
+                <div class="system-row">
+                    <span>Firestore Database</span>
+                    <span class="status active-status">Connected</span>
+                </div>
+
+                <div class="system-row">
+                    <span>AI Processing</span>
+                    <span class="status active-status">Available</span>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Dashboard JavaScript -->
+
+    <script type="module" src="scripts/dashboard.js"></script>
+
+</body>
+</html>

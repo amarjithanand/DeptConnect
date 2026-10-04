@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        AI Monitoring | DeptConnect Admin
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles/ai-monitoring.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            DC
+        </div>
+
+        <div>
+
+            <h2>DeptConnect</h2>
+
+            <span>Admin Panel</span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="students.html">
+            Students
+        </a>
+
+        <a href="faculty.html">
+            Faculty
+        </a>
+
+        <a href="departments.html">
+            Departments
+        </a>
+
+        <a href="subjects.html">
+            Subjects
+        </a>
+
+        <a href="queries.html">
+            Queries
+        </a>
+
+        <a href="notifications.html">
+            Notifications
+        </a>
+
+        <a
+            href="ai-monitoring.html"
+            class="active"
+        >
+            AI Monitoring
+        </a>
+
+        <a href="activity-logs.html">
+            Activity Logs
+        </a>
+
+        <a href="settings.html">
+            Settings
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <button
+            id="logoutButton"
+            class="logout-button"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="main-content">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h1>
+                AI Monitoring
+            </h1>
+
+            <p>
+                Monitor AI processing, confidence and query resolution
+            </p>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+            <div class="admin-info">
+
+                <span id="adminEmail">
+                    Loading...
+                </span>
+
+            </div>
+
+
+            <button
+                id="refreshButton"
+                class="refresh-button"
+            >
+                Refresh
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================
+         AI HEALTH
+    ====================================== -->
+
+    <section class="health-card">
+
+        <div class="health-left">
+
+            <div
+                id="healthIndicator"
+                class="health-indicator checking"
+            >
+                <span class="health-dot"></span>
+
+                <div>
+
+                    <strong id="healthTitle">
+                        Checking AI activity...
+                    </strong>
+
+                    <small id="healthDescription">
+                        Analyzing recent AI processing activity
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="health-components">
+
+            <div class="component">
+
+                <span class="component-dot" id="firestoreStatusDot"></span>
+
+                <div>
+
+                    <strong>
+                        Firestore
+                    </strong>
+
+                    <small id="firestoreStatus">
+                        Checking
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="component">
+
+                <span class="component-dot" id="semanticStatusDot"></span>
+
+                <div>
+
+                    <strong>
+                        AI Processing
+                    </strong>
+
+                    <small id="semanticStatus">
+                        Checking
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="component">
+
+                <span class="component-dot" id="responseStatusDot"></span>
+
+                <div>
+
+                    <strong>
+                        AI Responses
+                    </strong>
+
+                    <small id="responseStatus">
+                        Checking
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         STATISTICS
+    ====================================== -->
+
+    <section class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Queries
+            </div>
+
+            <div
+                id="totalQueries"
+                class="stat-value"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card purple">
+
+            <div class="stat-label">
+                AI Processed
+            </div>
+
+            <div
+                id="aiProcessed"
+                class="stat-value"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card green">
+
+            <div class="stat-label">
+                AI Answered
+            </div>
+
+            <div
+                id="aiAnswered"
+                class="stat-value"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card orange">
+
+            <div class="stat-label">
+                Escalated
+            </div>
+
+            <div
+                id="aiEscalated"
+                class="stat-value"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card blue">
+
+            <div class="stat-label">
+                AI Resolution Rate
+            </div>
+
+            <div
+                id="resolutionRate"
+                class="stat-value"
+            >
+                0%
+            </div>
+
+        </div>
+
+
+        <div class="stat-card red">
+
+            <div class="stat-label">
+                Escalation Rate
+            </div>
+
+            <div
+                id="escalationRate"
+                class="stat-value"
+            >
+                0%
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         AI QUALITY
+    ====================================== -->
+
+    <section class="quality-grid">
+
+
+        <div class="quality-card">
+
+            <div class="quality-header">
+
+                <div>
+
+                    <span>
+                        Average AI Confidence
+                    </span>
+
+                    <h2 id="averageConfidence">
+                        0%
+                    </h2>
+
+                </div>
+
+                <div class="quality-icon purple-icon">
+                    AI
+                </div>
+
+            </div>
+
+
+            <div class="progress-track">
+
+                <div
+                    id="confidenceProgress"
+                    class="progress-fill purple-fill"
+                    style="width:0%"
+                ></div>
+
+            </div>
+
+
+            <small>
+                Based on processed queries
+            </small>
+
+        </div>
+
+
+
+        <div class="quality-card">
+
+            <div class="quality-header">
+
+                <div>
+
+                    <span>
+                        Average Similarity
+                    </span>
+
+                    <h2 id="averageSimilarity">
+                        0%
+                    </h2>
+
+                </div>
+
+                <div class="quality-icon blue-icon">
+                    SS
+                </div>
+
+            </div>
+
+
+            <div class="progress-track">
+
+                <div
+                    id="similarityProgress"
+                    class="progress-fill blue-fill"
+                    style="width:0%"
+                ></div>
+
+            </div>
+
+
+            <small>
+                Semantic retrieval similarity
+            </small>
+
+        </div>
+
+
+
+        <div class="quality-card">
+
+            <div class="quality-header">
+
+                <div>
+
+                    <span>
+                        High Confidence Answers
+                    </span>
+
+                    <h2 id="highConfidence">
+                        0
+                    </h2>
+
+                </div>
+
+                <div class="quality-icon green-icon">
+                    ✓
+                </div>
+
+            </div>
+
+
+            <small>
+                Confidence ≥ 80%
+            </small>
+
+        </div>
+
+
+
+        <div class="quality-card">
+
+            <div class="quality-header">
+
+                <div>
+
+                    <span>
+                        Low Confidence Queries
+                    </span>
+
+                    <h2 id="lowConfidence">
+                        0
+                    </h2>
+
+                </div>
+
+                <div class="quality-icon red-icon">
+                    !
+                </div>
+
+            </div>
+
+
+            <small>
+                Confidence &lt; 60%
+            </small>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         CHART ROW 1
+    ====================================== -->
+
+    <section class="chart-grid">
+
+
+        <div class="chart-card large-chart">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h3>
+                        AI Processing Trend
+                    </h3>
+
+                    <p>
+                        AI processed and answered queries over the last 7 days
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas id="processingChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h3>
+                        AI Resolution
+                    </h3>
+
+                    <p>
+                        Distribution of query outcomes
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-container pie-container">
+
+                <canvas id="resolutionChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         CHART ROW 2
+    ====================================== -->
+
+    <section class="chart-grid">
+
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h3>
+                        Confidence Distribution
+                    </h3>
+
+                    <p>
+                        AI confidence levels
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas id="confidenceChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h3>
+                        Escalation Reasons
+                    </h3>
+
+                    <p>
+                        Why queries were sent for faculty handling
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas id="escalationChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         RECENT AI ACTIVITY
+    ====================================== -->
+
+    <section class="activity-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h3>
+                    Recent AI Activity
+                </h3>
+
+                <p>
+                    Latest AI-processed queries
+                </p>
+
+            </div>
+
+            <span id="activityCount">
+                0 records
+            </span>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Query
+                        </th>
+
+                        <th>
+                            Department
+                        </th>
+
+                        <th>
+                            Confidence
+                        </th>
+
+                        <th>
+                            AI Status
+                        </th>
+
+                        <th>
+                            Assignment
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="activityTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         LOW CONFIDENCE QUERIES
+    ====================================== -->
+
+    <section class="activity-card low-confidence-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h3>
+                    Low Confidence Queries
+                </h3>
+
+                <p>
+                    Queries that may require faculty attention
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="lowConfidenceList"
+            class="low-confidence-list"
+        >
+        </div>
+
+    </section>
+
+
+
+</main>
+
+
+
+<!-- =========================================
+     TOAST
+========================================= -->
+
+<div
+    id="toast"
+    class="toast"
+>
+</div>
+
+
+
+<!-- =========================================
+     FIREBASE
+========================================= -->
+
+<script type="module">
+
+    import {
+        initializeApp
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+
+    import {
+        getAuth,
+        onAuthStateChanged,
+        signOut
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+
+    import {
+        getFirestore
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+
+        apiKey:
+            "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+
+        authDomain:
+            "deptconnect-8b81c.firebaseapp.com",
+
+        projectId:
+            "deptconnect-8b81c",
+
+        storageBucket:
+            "deptconnect-8b81c.firebasestorage.app",
+
+        messagingSenderId:
+            "916956737819",
+
+        appId:
+            "1:916956737819:web:8fc9920e834ac99e66e3be",
+
+        measurementId:
+            "G-2B4VN12YW5"
+
+    };
+
+
+    const app =
+        initializeApp(
+            firebaseConfig
+        );
+
+
+    const auth =
+        getAuth(app);
+
+
+    const db =
+        getFirestore(app);
+
+
+    window.deptConnectFirebase = {
+
+        auth,
+
+        db,
+
+        onAuthStateChanged,
+
+        signOut
+
+    };
+
+</script>
+
+
+
+<!-- =========================================
+     CHART.JS
+========================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js"
+></script>
+
+
+
+<script
+    type="module"
+    src="scripts/ai-monitoring.js"
+></script>
+
+
+</body>
+
+</html>

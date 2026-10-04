@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Activity Logs | DeptConnect Admin
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="styles/activity-logs.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            DC
+        </div>
+
+        <div>
+
+            <h2>DeptConnect</h2>
+
+            <span>Admin Panel</span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="students.html">
+            Students
+        </a>
+
+        <a href="faculty.html">
+            Faculty
+        </a>
+
+        <a href="departments.html">
+            Departments
+        </a>
+
+        <a href="subjects.html">
+            Subjects
+        </a>
+
+        <a href="queries.html">
+            Queries
+        </a>
+
+
+
+        <a href="ai-monitoring.html">
+            AI Monitoring
+        </a>
+
+        <a
+            href="activity-logs.html"
+            class="active"
+        >
+            Activity Logs
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <button
+            id="logoutButton"
+            class="logout-button"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================================
+     MAIN CONTENT
+========================================= -->
+
+<main class="main-content">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h1>
+                Activity Logs
+            </h1>
+
+            <p>
+                Monitor recent activity across the DeptConnect system
+            </p>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+            <span
+                id="adminEmail"
+                class="admin-email"
+            >
+                Loading...
+            </span>
+
+
+            <button
+                id="refreshButton"
+                class="refresh-button"
+            >
+                Refresh
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================
+         INFORMATION NOTICE
+    ====================================== -->
+
+    <div class="info-banner">
+
+        <div class="info-icon">
+            i
+        </div>
+
+        <div>
+
+            <strong>
+                System Activity Monitor
+            </strong>
+
+            <p>
+                Activity is generated from existing student, faculty,
+                query, response and notification records.
+                A dedicated audit-log collection can be added later
+                for permanent action tracking.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================
+         STATISTICS
+    ====================================== -->
+
+    <section class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <span>
+                Total Activities
+            </span>
+
+            <strong id="totalActivities">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card blue">
+
+            <span>
+                Today
+            </span>
+
+            <strong id="todayActivities">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card green">
+
+            <span>
+                Query Activities
+            </span>
+
+            <strong id="queryActivities">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card purple">
+
+            <span>
+                AI Activities
+            </span>
+
+            <strong id="aiActivities">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card orange">
+
+            <span>
+                Response Activities
+            </span>
+
+            <strong id="responseActivities">
+                0
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card red">
+
+            <span>
+                User Activities
+            </span>
+
+            <strong id="userActivities">
+                0
+            </strong>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         FILTERS
+    ====================================== -->
+
+    <section class="filter-card">
+
+        <div class="filter-title">
+
+            <h3>
+                Activity Filters
+            </h3>
+
+            <button
+                id="clearFilters"
+                class="clear-button"
+            >
+                Clear Filters
+            </button>
+
+        </div>
+
+
+        <div class="filters">
+
+
+            <div class="filter-group">
+
+                <label for="searchInput">
+                    Search
+                </label>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search activity..."
+                >
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <label for="typeFilter">
+                    Activity Type
+                </label>
+
+                <select id="typeFilter">
+
+                    <option value="all">
+                        All Activities
+                    </option>
+
+                    <option value="query">
+                        Queries
+                    </option>
+
+                    <option value="ai">
+                        AI
+                    </option>
+
+                    <option value="response">
+                        Responses
+                    </option>
+
+                    <option value="user">
+                        Users
+                    </option>
+
+                    <option value="notification">
+                        Notifications
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <label for="sourceFilter">
+                    Source
+                </label>
+
+                <select id="sourceFilter">
+
+                    <option value="all">
+                        All Sources
+                    </option>
+
+                    <option value="student">
+                        Student
+                    </option>
+
+                    <option value="faculty">
+                        Faculty
+                    </option>
+
+                    <option value="ai">
+                        AI
+                    </option>
+
+                    <option value="system">
+                        System
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <label for="dateFilter">
+                    Time
+                </label>
+
+                <select id="dateFilter">
+
+                    <option value="all">
+                        All Time
+                    </option>
+
+                    <option value="today">
+                        Today
+                    </option>
+
+                    <option value="7days">
+                        Last 7 Days
+                    </option>
+
+                    <option value="30days">
+                        Last 30 Days
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         ACTIVITY TIMELINE
+    ====================================== -->
+
+    <section class="activity-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h3>
+                    System Activity
+                </h3>
+
+                <p>
+                    Latest activities recorded from the system
+                </p>
+
+            </div>
+
+
+            <span id="activityCount">
+                0 activities
+            </span>
+
+        </div>
+
+
+        <div
+            id="activityTimeline"
+            class="activity-timeline"
+        >
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         ACTIVITY TABLE
+    ====================================== -->
+
+    <section class="activity-card">
+
+        <div class="section-header">
+
+            <div>
+
+                <h3>
+                    Activity Details
+                </h3>
+
+                <p>
+                    Detailed activity records
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Activity
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Source
+                        </th>
+
+                        <th>
+                            Description
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="activityTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================================
+     TOAST
+========================================= -->
+
+<div
+    id="toast"
+    class="toast"
+>
+</div>
+
+
+
+<!-- =========================================
+     FIREBASE
+========================================= -->
+
+<script type="module">
+
+    import {
+        initializeApp
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+
+    import {
+        getAuth,
+        onAuthStateChanged,
+        signOut
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+
+    import {
+        getFirestore
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+
+        apiKey:
+            "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+
+        authDomain:
+            "deptconnect-8b81c.firebaseapp.com",
+
+        projectId:
+            "deptconnect-8b81c",
+
+        storageBucket:
+            "deptconnect-8b81c.firebasestorage.app",
+
+        messagingSenderId:
+            "916956737819",
+
+        appId:
+            "1:916956737819:web:8fc9920e834ac99e66e3be",
+
+        measurementId:
+            "G-2B4VN12YW5"
+
+    };
+
+
+    const app =
+        initializeApp(
+            firebaseConfig
+        );
+
+
+    const auth =
+        getAuth(app);
+
+
+    const db =
+        getFirestore(app);
+
+
+    window.deptConnectFirebase = {
+
+        auth,
+        db,
+        onAuthStateChanged,
+        signOut
+
+    };
+
+</script>
+
+
+
+<script
+    type="module"
+    src="scripts/activity-logs.js"
+></script>
+
+
+</body>
+
+</html>

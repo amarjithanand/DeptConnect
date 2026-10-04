@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DeptConnect - Student Management</title>
+
+    <link rel="stylesheet" href="styles/students.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>DeptConnect</h2>
+            <span>Admin Portal</span>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="dashboard.html" class="nav-item">
+                Dashboard
+            </a>
+
+            <a href="students.html" class="nav-item active">
+                Students
+            </a>
+
+            <a href="faculty.html" class="nav-item">
+                Faculty
+            </a>
+
+            <a href="departments.html" class="nav-item">
+                Departments
+            </a>
+
+            <a href="subjects.html" class="nav-item">
+                Subjects
+            </a>
+
+            <a href="queries.html" class="nav-item">
+                Queries
+            </a>
+
+            <a href="notifications.html" class="nav-item">
+                Notifications
+            </a>
+
+            <a href="ai-monitoring.html" class="nav-item">
+                AI Monitoring
+            </a>
+
+            <a href="activity-logs.html" class="nav-item">
+                Activity Logs
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button id="logoutBtn" class="logout-btn">
+                Logout
+            </button>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Student Management</h1>
+                <p>Manage student registrations and accounts</p>
+            </div>
+
+            <span id="adminEmail"></span>
+
+        </header>
+
+
+        <!-- SUMMARY -->
+
+        <section class="summary-grid">
+
+            <div class="summary-card">
+                <span>Total Students</span>
+                <strong id="totalStudents">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Pending Approval</span>
+                <strong id="pendingStudents">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Approved Students</span>
+                <strong id="approvedStudents">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Inactive Students</span>
+                <strong id="inactiveStudents">0</strong>
+            </div>
+
+        </section>
+
+
+        <!-- CONTROLS -->
+
+        <section class="controls">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by name, email or student ID..."
+            >
+
+            <select id="statusFilter">
+
+                <option value="all">
+                    All Students
+                </option>
+
+                <option value="pending">
+                    Pending Approval
+                </option>
+
+                <option value="approved">
+                    Approved
+                </option>
+
+                <option value="inactive">
+                    Inactive
+                </option>
+
+            </select>
+
+            <select id="departmentFilter">
+
+                <option value="all">
+                    All Departments
+                </option>
+
+            </select>
+
+        </section>
+
+
+        <!-- STUDENT TABLE -->
+
+        <section class="table-card">
+
+            <div class="table-header">
+                <h2>Students</h2>
+
+                <button
+                    id="refreshBtn"
+                    class="refresh-btn"
+                >
+                    Refresh
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Programme</th>
+                            <th>Semester</th>
+                            <th>Status</th>
+                            <th>Approval</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="studentsTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <p
+                id="emptyMessage"
+                class="empty-message"
+            >
+                No students found.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- STUDENT DETAILS MODAL -->
+
+    <div
+        id="studentModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2>Student Details</h2>
+
+                <button id="closeModal">
+                    ×
+                </button>
+
+            </div>
+
+            <div id="studentDetails"></div>
+
+        </div>
+
+    </div>
+
+
+    <script
+        type="module"
+        src="scripts/students.js"
+    ></script>
+
+</body>
+</html>

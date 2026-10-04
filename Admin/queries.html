@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Query Management | DeptConnect Admin</title>
+
+    <link
+        rel="stylesheet"
+        href="styles/queries.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            DC
+        </div>
+
+        <div>
+
+            <h2>DeptConnect</h2>
+
+            <span>Admin Panel</span>
+
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-nav">
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="students.html">
+            Students
+        </a>
+
+        <a href="faculty.html">
+            Faculty
+        </a>
+
+        <a href="departments.html">
+            Departments
+        </a>
+
+        <a href="subjects.html">
+            Subjects
+        </a>
+
+        <a
+            href="queries.html"
+            class="active"
+        >
+            Queries
+        </a>
+
+        <a href="notifications.html">
+            Notifications
+        </a>
+
+        <a href="ai-monitoring.html">
+            AI Monitoring
+        </a>
+
+        <a href="activity-logs.html">
+            Activity Logs
+        </a>
+
+        <a href="settings.html">
+            Settings
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <button
+            id="logoutButton"
+            class="logout-button"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="main-content">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h1>Query Management</h1>
+
+            <p>
+                Manage, monitor and reassign student queries
+            </p>
+
+        </div>
+
+
+        <div class="admin-info">
+
+            <span id="adminEmail">
+                Loading...
+            </span>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================
+         STATISTICS
+    ====================================== -->
+
+    <section class="stats-grid">
+
+
+        <div class="stat-card">
+
+            <div class="stat-label">
+                Total Queries
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card pending-card">
+
+            <div class="stat-label">
+                Pending
+            </div>
+
+            <div
+                class="stat-value"
+                id="pendingCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card progress-card">
+
+            <div class="stat-label">
+                In Progress
+            </div>
+
+            <div
+                class="stat-value"
+                id="progressCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card resolved-card">
+
+            <div class="stat-label">
+                Resolved
+            </div>
+
+            <div
+                class="stat-value"
+                id="resolvedCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card ai-card">
+
+            <div class="stat-label">
+                AI Answered
+            </div>
+
+            <div
+                class="stat-value"
+                id="aiCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="stat-card unassigned-card">
+
+            <div class="stat-label">
+                Unassigned
+            </div>
+
+            <div
+                class="stat-value"
+                id="unassignedCount"
+            >
+                0
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         TOOLBAR
+    ====================================== -->
+
+    <section class="toolbar">
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search queries, students, courses..."
+            >
+
+        </div>
+
+
+        <select id="statusFilter">
+
+            <option value="all">
+                All Status
+            </option>
+
+            <option value="pending">
+                Pending
+            </option>
+
+            <option value="in-progress">
+                In Progress
+            </option>
+
+            <option value="resolved">
+                Resolved
+            </option>
+
+        </select>
+
+
+        <select id="departmentFilter">
+
+            <option value="all">
+                All Departments
+            </option>
+
+        </select>
+
+
+        <select id="priorityFilter">
+
+            <option value="all">
+                All Priorities
+            </option>
+
+            <option value="low">
+                Low
+            </option>
+
+            <option value="medium">
+                Medium
+            </option>
+
+            <option value="high">
+                High
+            </option>
+
+        </select>
+
+
+        <select id="assignmentFilter">
+
+            <option value="all">
+                All Assignments
+            </option>
+
+            <option value="assigned">
+                Assigned
+            </option>
+
+            <option value="unassigned">
+                Unassigned
+            </option>
+
+        </select>
+
+
+        <select id="aiFilter">
+
+            <option value="all">
+                AI: All
+            </option>
+
+            <option value="processed">
+                AI Processed
+            </option>
+
+            <option value="answered">
+                AI Answered
+            </option>
+
+            <option value="not-processed">
+                Not Processed
+            </option>
+
+        </select>
+
+
+        <button
+            id="refreshButton"
+            class="refresh-button"
+        >
+            Refresh
+        </button>
+
+
+    </section>
+
+
+
+    <!-- RESULT INFO -->
+
+    <div class="result-bar">
+
+        <span id="resultCount">
+            Loading queries...
+        </span>
+
+    </div>
+
+
+
+    <!-- =====================================
+         QUERY LIST
+    ====================================== -->
+
+    <section id="queryList" class="query-list">
+    </section>
+
+
+    <div
+        id="noResults"
+        class="no-results"
+        style="display:none;"
+    >
+
+        <div class="empty-icon">
+            Q
+        </div>
+
+        <h3>
+            No queries found
+        </h3>
+
+        <p>
+            Try changing the search or filter options.
+        </p>
+
+    </div>
+
+
+
+</main>
+
+
+
+<!-- =========================================
+     DETAILS MODAL
+========================================= -->
+
+<div
+    id="detailsModal"
+    class="modal-overlay"
+>
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Query Details
+                </h2>
+
+                <p id="detailsQueryId">
+                    -
+                </p>
+
+            </div>
+
+            <button
+                class="close-button"
+                data-close="detailsModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            id="detailsContent"
+            class="modal-content"
+        >
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                id="detailsReassignButton"
+                class="primary-button"
+            >
+                Reassign Query
+            </button>
+
+            <button
+                id="detailsStatusButton"
+                class="secondary-button"
+            >
+                Change Status
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================
+     REASSIGN MODAL
+========================================= -->
+
+<div
+    id="reassignModal"
+    class="modal-overlay"
+>
+
+    <div class="modal small-modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Reassign Query
+                </h2>
+
+                <p>
+                    Assign this query to another faculty member
+                </p>
+
+            </div>
+
+            <button
+                class="close-button"
+                data-close="reassignModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+            <div class="assignment-query-info">
+
+                <strong id="reassignQueryTitle">
+                    Query
+                </strong>
+
+                <span id="currentFacultyText">
+                    Currently assigned: Unassigned
+                </span>
+
+            </div>
+
+
+            <label for="facultySelect">
+                Select Faculty
+            </label>
+
+            <select
+                id="facultySelect"
+                class="full-input"
+            >
+
+                <option value="">
+                    Select faculty
+                </option>
+
+            </select>
+
+
+            <div
+                id="facultyInfo"
+                class="faculty-info"
+                style="display:none;"
+            >
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                class="secondary-button"
+                data-close="reassignModal"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="confirmReassignButton"
+                class="primary-button"
+            >
+                Reassign Query
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================
+     STATUS MODAL
+========================================= -->
+
+<div
+    id="statusModal"
+    class="modal-overlay"
+>
+
+    <div class="modal small-modal">
+
+        <div class="modal-header">
+
+            <div>
+
+                <h2>
+                    Change Query Status
+                </h2>
+
+                <p>
+                    Update the current status
+                </p>
+
+            </div>
+
+            <button
+                class="close-button"
+                data-close="statusModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+            <label for="newStatus">
+                Query Status
+            </label>
+
+            <select
+                id="newStatus"
+                class="full-input"
+            >
+
+                <option value="pending">
+                    Pending
+                </option>
+
+                <option value="in-progress">
+                    In Progress
+                </option>
+
+                <option value="resolved">
+                    Resolved
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                class="secondary-button"
+                data-close="statusModal"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="confirmStatusButton"
+                class="primary-button"
+            >
+                Update Status
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================
+     TOAST
+========================================= -->
+
+<div
+    id="toast"
+    class="toast"
+>
+</div>
+
+
+
+<!-- =========================================
+     FIREBASE
+========================================= -->
+
+<script type="module">
+
+    import {
+        initializeApp
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+
+    import {
+        getAuth,
+        onAuthStateChanged,
+        signOut
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+
+    import {
+        getFirestore
+    }
+    from
+    "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+
+        apiKey:
+            "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
+
+        authDomain:
+            "deptconnect-8b81c.firebaseapp.com",
+
+        projectId:
+            "deptconnect-8b81c",
+
+        storageBucket:
+            "deptconnect-8b81c.firebasestorage.app",
+
+        messagingSenderId:
+            "916956737819",
+
+        appId:
+            "1:916956737819:web:8fc9920e834ac99e66e3be",
+
+        measurementId:
+            "G-2B4VN12YW5"
+
+    };
+
+
+    const app =
+        initializeApp(
+            firebaseConfig
+        );
+
+
+    const auth =
+        getAuth(app);
+
+
+    const db =
+        getFirestore(app);
+
+
+    window.deptConnectFirebase = {
+
+        auth,
+
+        db,
+
+        onAuthStateChanged,
+
+        signOut
+
+    };
+
+</script>
+
+
+
+<script
+    type="module"
+    src="scripts/queries.js"
+></script>
+
+
+</body>
+
+</html>
