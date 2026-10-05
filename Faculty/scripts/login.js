@@ -429,7 +429,7 @@ form.addEventListener("submit", async (event) => {
         ================================================= */
 
         window.location.href =
-            "faculty/dashboard.html";
+            "dashboard.html";
 
     }
 
