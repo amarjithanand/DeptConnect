@@ -1,154 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>Activity Logs | DeptConnect Admin</title>
 
-    <title>
-        Activity Logs | DeptConnect Admin
-    </title>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link
-        rel="stylesheet"
-        href="styles/activity-logs.css"
-    >
-
+    <!-- Unified Styles -->
+    <link rel="stylesheet" href="styles/activity-logs.css">
+    <link rel="stylesheet" href="styles/admin-common.css">
 </head>
-
 
 <body>
 
+    <!-- ================= SIDEBAR ================= -->
 
-<!-- =========================================
-     SIDEBAR
-========================================= -->
+    <aside class="sidebar">
 
-<aside class="sidebar">
-
-    <div class="brand">
-
-        <div class="brand-logo">
-            DC
+        <div class="brand">
+            <div class="brand-icon">DC</div>
+            <div class="brand-text">
+                <h2>DeptConnect</h2>
+                <span>Admin Portal</span>
+            </div>
         </div>
 
-        <div>
+        <nav class="sidebar-nav">
 
-            <h2>DeptConnect</h2>
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
 
-            <span>Admin Panel</span>
+            <a href="students.html" class="nav-item">
+                <span class="nav-icon">👨‍🎓</span>
+                <span>Students</span>
+            </a>
 
-        </div>
+            <a href="faculty.html" class="nav-item">
+                <span class="nav-icon">👨‍🏫</span>
+                <span>Faculty</span>
+            </a>
 
-    </div>
+            <a href="departments.html" class="nav-item">
+                <span class="nav-icon">🏢</span>
+                <span>Departments</span>
+            </a>
 
+            <a href="subjects.html" class="nav-item">
+                <span class="nav-icon">📚</span>
+                <span>Subjects</span>
+            </a>
 
-    <nav class="sidebar-nav">
+            <a href="queries.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>Queries</span>
+            </a>
 
-        <a href="dashboard.html">
-            Dashboard
-        </a>
+            <a href="ai-monitoring.html" class="nav-item">
+                <span class="nav-icon">🤖</span>
+                <span>AI Monitoring</span>
+            </a>
 
-        <a href="students.html">
-            Students
-        </a>
+            <a href="activity-logs.html" class="nav-item active">
+                <span class="nav-icon">📋</span>
+                <span>Activity Logs</span>
+            </a>
 
-        <a href="faculty.html">
-            Faculty
-        </a>
+        </nav>
 
-        <a href="departments.html">
-            Departments
-        </a>
+        <div class="sidebar-bottom">
 
-        <a href="subjects.html">
-            Subjects
-        </a>
-
-        <a href="queries.html">
-            Queries
-        </a>
-
-
-
-        <a href="ai-monitoring.html">
-            AI Monitoring
-        </a>
-
-        <a
-            href="activity-logs.html"
-            class="active"
-        >
-            Activity Logs
-        </a>
-
-    </nav>
-
-
-    <div class="sidebar-bottom">
-
-        <button
-            id="logoutButton"
-            class="logout-button"
-        >
-            Logout
-        </button>
-
-    </div>
-
-</aside>
-
-
-
-<!-- =========================================
-     MAIN CONTENT
-========================================= -->
-
-<main class="main-content">
-
-
-    <!-- TOPBAR -->
-
-    <header class="topbar">
-
-        <div>
-
-            <h1>
-                Activity Logs
-            </h1>
-
-            <p>
-                Monitor recent activity across the DeptConnect system
-            </p>
-
-        </div>
-
-
-        <div class="topbar-actions">
-
-            <span
-                id="adminEmail"
-                class="admin-email"
-            >
-                Loading...
-            </span>
-
-
-            <button
-                id="refreshButton"
-                class="refresh-button"
-            >
-                Refresh
+            <button id="logoutBtn" class="logout-btn">
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
             </button>
 
         </div>
 
-    </header>
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+                <h1>Activity Logs</h1>
+                <p>Monitor recent activity across the DeptConnect system</p>
+            </div>
+
+            <div class="topbar-actions">
+
+                <button id="refreshButton" class="btn btn-secondary">
+                    ↻ Refresh
+                </button>
+
+                <div class="admin-chip">
+                    <div class="admin-avatar">AD</div>
+                    <div class="admin-meta">
+                        <span id="adminEmail">Administrator</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </header>
 
 
 

@@ -4,8 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>DeptConnect - Admin Dashboard</title>
+    <title>Dashboard | DeptConnect Admin</title>
 
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Unified Styles -->
+    <link rel="stylesheet" href="styles/admin-common.css">
     <link rel="stylesheet" href="styles/dashboard.css">
 </head>
 
@@ -16,42 +23,53 @@
     <aside class="sidebar">
 
         <div class="brand">
-            <h2>DeptConnect</h2>
-            <span>Admin Portal</span>
+            <div class="brand-icon">DC</div>
+            <div class="brand-text">
+                <h2>DeptConnect</h2>
+                <span>Admin Portal</span>
+            </div>
         </div>
 
         <nav class="sidebar-nav">
 
             <a href="dashboard.html" class="nav-item active">
-                Dashboard
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
             </a>
 
             <a href="students.html" class="nav-item">
-                Students
+                <span class="nav-icon">👨‍🎓</span>
+                <span>Students</span>
             </a>
 
             <a href="faculty.html" class="nav-item">
-                Faculty
+                <span class="nav-icon">👨‍🏫</span>
+                <span>Faculty</span>
             </a>
 
             <a href="departments.html" class="nav-item">
-                Departments
+                <span class="nav-icon">🏢</span>
+                <span>Departments</span>
             </a>
 
             <a href="subjects.html" class="nav-item">
-                Subjects
+                <span class="nav-icon">📚</span>
+                <span>Subjects</span>
             </a>
 
             <a href="queries.html" class="nav-item">
-                Queries
+                <span class="nav-icon">💬</span>
+                <span>Queries</span>
             </a>
 
             <a href="ai-monitoring.html" class="nav-item">
-                AI Monitoring
+                <span class="nav-icon">🤖</span>
+                <span>AI Monitoring</span>
             </a>
 
             <a href="activity-logs.html" class="nav-item">
-                Activity Logs
+                <span class="nav-icon">📋</span>
+                <span>Activity Logs</span>
             </a>
 
         </nav>
@@ -59,7 +77,8 @@
         <div class="sidebar-bottom">
 
             <button id="logoutBtn" class="logout-btn">
-                Logout
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
             </button>
 
         </div>
@@ -75,11 +94,14 @@
 
             <div>
                 <h1>Admin Dashboard</h1>
-                <p>Manage and monitor DeptConnect</p>
+                <p>Manage and monitor DeptConnect query ecosystem</p>
             </div>
 
-            <div class="admin-info" style="display : none;">
-                <span id="adminEmail">Loading...</span>
+            <div class="admin-chip">
+                <div class="admin-avatar">AD</div>
+                <div class="admin-meta">
+                    <span id="adminEmail">Administrator</span>
+                </div>
             </div>
 
         </header>
@@ -138,10 +160,17 @@
                     Manage Faculty
                 </a>
 
+                <a href="departments.html">
+                    Manage Departments
+                </a>
+
+                <a href="subjects.html">
+                    Manage Subjects
+                </a>
+
                 <a href="queries.html">
                     Manage Queries
                 </a>
-
 
             </div>
 

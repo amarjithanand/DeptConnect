@@ -106,6 +106,9 @@ const refreshButton =
 
 const logoutButton =
     document.getElementById(
+        "logoutBtn"
+    ) ||
+    document.getElementById(
         "logoutButton"
     );
 

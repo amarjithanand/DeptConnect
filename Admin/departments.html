@@ -1,119 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Departments | DeptConnect Admin</title>
 
-    <link
-        rel="stylesheet"
-        href="styles/departments.css"
-    >
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Unified Styles -->
+    <link rel="stylesheet" href="styles/departments.css">
+    <link rel="stylesheet" href="styles/admin-common.css">
 </head>
-
 
 <body>
 
-    <!-- =========================================
-         SIDEBAR
-    ========================================== -->
+    <!-- ================= SIDEBAR ================= -->
 
     <aside class="sidebar">
 
         <div class="brand">
-
-            <div class="brand-icon">
-                DC
-            </div>
-
-            <div>
+            <div class="brand-icon">DC</div>
+            <div class="brand-text">
                 <h2>DeptConnect</h2>
                 <span>Admin Portal</span>
             </div>
-
         </div>
-
 
         <nav class="sidebar-nav">
 
-            <a href="dashboard.html">
-                <span>▦</span>
-                Dashboard
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
             </a>
 
-            <a href="students.html">
-                <span>👨‍🎓</span>
-                Students
+            <a href="students.html" class="nav-item">
+                <span class="nav-icon">👨‍🎓</span>
+                <span>Students</span>
             </a>
 
-            <a href="faculty.html">
-                <span>👨‍🏫</span>
-                Faculty
+            <a href="faculty.html" class="nav-item">
+                <span class="nav-icon">👨‍🏫</span>
+                <span>Faculty</span>
             </a>
 
-            <a
-                href="departments.html"
-                class="active"
-            >
-                <span>🏢</span>
-                Departments
+            <a href="departments.html" class="nav-item active">
+                <span class="nav-icon">🏢</span>
+                <span>Departments</span>
             </a>
 
-            <a href="subjects.html">
-                <span>📚</span>
-                Subjects
+            <a href="subjects.html" class="nav-item">
+                <span class="nav-icon">📚</span>
+                <span>Subjects</span>
             </a>
 
-            <a href="queries.html">
-                <span>💬</span>
-                Queries
+            <a href="queries.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span>Queries</span>
             </a>
 
-            <a href="notifications.html">
-                <span>🔔</span>
-                Notifications
+            <a href="ai-monitoring.html" class="nav-item">
+                <span class="nav-icon">🤖</span>
+                <span>AI Monitoring</span>
             </a>
 
-            <a href="ai-monitoring.html">
-                <span>🤖</span>
-                AI Monitoring
-            </a>
-
-            <a href="activity-logs.html">
-                <span>📋</span>
-                Activity Logs
-            </a>
-
-            <a href="settings.html">
-                <span>⚙</span>
-                Settings
+            <a href="activity-logs.html" class="nav-item">
+                <span class="nav-icon">📋</span>
+                <span>Activity Logs</span>
             </a>
 
         </nav>
 
+        <div class="sidebar-bottom">
 
-        <button
-            id="logoutBtn"
-            class="logout-btn"
-        >
-            <span>↪</span>
-            Logout
-        </button>
+            <button id="logoutBtn" class="logout-btn">
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </button>
+
+        </div>
 
     </aside>
 
 
-    <!-- =========================================
-         MAIN CONTENT
-    ========================================== -->
+    <!-- ================= MAIN CONTENT ================= -->
 
     <main class="main-content">
 
@@ -122,34 +95,15 @@
         <header class="topbar">
 
             <div>
-
                 <h1>Departments</h1>
-
-                <p>
-                    Manage academic departments
-                </p>
-
+                <p>Manage academic departments</p>
             </div>
 
-
-            <div class="admin-info">
-
-                <div class="admin-avatar">
-                    A
+            <div class="admin-chip">
+                <div class="admin-avatar">AD</div>
+                <div class="admin-meta">
+                    <span id="adminEmail">Administrator</span>
                 </div>
-
-                <div>
-
-                    <strong id="adminEmail">
-                        Admin
-                    </strong>
-
-                    <span>
-                        Administrator
-                    </span>
-
-                </div>
-
             </div>
 
         </header>
