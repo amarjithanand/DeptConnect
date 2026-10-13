@@ -63,6 +63,7 @@ const addSubjectBtn =
     document.getElementById("addSubjectBtn");
 
 const subjectList =
+    document.getElementById("subjectTableBody") ||
     document.getElementById("subjectList");
 
 const loading =
@@ -400,6 +401,8 @@ function populateDepartmentFilters() {
         }
     );
 
+    updateStatistics();
+
 }
 
 
@@ -537,16 +540,28 @@ function updateStatistics() {
         ).length;
 
 
-    totalCount.textContent =
-        total;
+    if (totalCount) {
+        totalCount.textContent = total;
+    }
 
 
-    activeCount.textContent =
-        active;
+    if (activeCount) {
+        activeCount.textContent = active;
+    }
 
 
-    inactiveCount.textContent =
-        inactive;
+    if (inactiveCount) {
+        inactiveCount.textContent = inactive;
+    }
+
+
+    const departmentsCount =
+        document.getElementById("departmentsCount");
+
+    if (departmentsCount) {
+        departmentsCount.textContent =
+            allDepartments.length;
+    }
 
 }
 
@@ -827,18 +842,17 @@ function renderSubjects(
    CREATE CARD
 ========================================= */
 
-function createSubjectCard(
+function createSubjectRow(
     subject
 ) {
 
-    const article =
+    const tr =
         document.createElement(
-            "article"
+            "tr"
         );
 
-
-    article.className =
-        "subject-card";
+    tr.className =
+        "subject-row";
 
 
     const active =
@@ -851,123 +865,111 @@ function createSubjectCard(
         );
 
 
-    article.innerHTML = `
+    tr.innerHTML = `
 
-        <div class="subject-main">
+        <td>
+            <span class="code-badge">
+                ${escapeHTML(
+                    subject.code ||
+                    "NO CODE"
+                )}
+            </span>
+        </td>
 
-            <div class="subject-icon">
-                📚
-            </div>
+        <td>
+            <strong class="subject-title-cell">
+                ${escapeHTML(
+                    subject.name ||
+                    "Unnamed Subject"
+                )}
+            </strong>
+        </td>
 
+        <td>
+            ${escapeHTML(
+                departmentName ||
+                "—"
+            )}
+        </td>
 
-            <div class="subject-info">
+        <td>
+            <span class="semester-pill">
+                Sem ${escapeHTML(
+                    String(
+                        subject.semester ||
+                        "—"
+                    )
+                )}
+            </span>
+        </td>
 
-                <div class="subject-title">
+        <td class="desc-cell" title="${escapeHTML(subject.description || "")}">
+            ${escapeHTML(
+                subject.description ||
+                "—"
+            )}
+        </td>
 
-                    <h3>
-                        ${escapeHTML(
-                            subject.name ||
-                            "Unnamed Subject"
-                        )}
-                    </h3>
-
-                    <span class="status ${
-                        active
-                            ? "active"
-                            : "inactive"
-                    }">
-
-                        ${
-                            active
-                                ? "Active"
-                                : "Inactive"
-                        }
-
-                    </span>
-
-                </div>
-
-
-                <div class="subject-meta">
-
-                    <span class="code">
-                        ${escapeHTML(
-                            subject.code ||
-                            "NO CODE"
-                        )}
-                    </span>
-
-                    <span>
-                        ${escapeHTML(
-                            departmentName
-                        )}
-                    </span>
-
-                    <span>
-                        Semester ${
-                            subject.semester ||
-                            "—"
-                        }
-                    </span>
-
-                </div>
-
-
-                <p>
-                    ${escapeHTML(
-                        subject.description ||
-                        "No description available."
-                    )}
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="subject-actions">
-
-            <button
-                class="action-btn view-btn"
-                data-action="view"
-            >
-                View
-            </button>
-
-
-            <button
-                class="action-btn edit-btn"
-                data-action="edit"
-            >
-                Edit
-            </button>
-
-
-            <button
-                class="action-btn toggle-btn"
-                data-action="toggle"
-            >
+        <td>
+            <span class="badge ${
+                active
+                    ? "active"
+                    : "inactive"
+            }">
                 ${
                     active
-                        ? "Deactivate"
-                        : "Activate"
+                        ? "Active"
+                        : "Inactive"
                 }
-            </button>
+            </span>
+        </td>
 
+        <td>
+            <div class="actions">
 
-            <button
-                class="action-btn delete-btn"
-                data-action="delete"
-            >
-                Delete
-            </button>
+                <button
+                    class="view-btn"
+                    data-action="view"
+                    title="View details"
+                >
+                    View
+                </button>
 
-        </div>
+                <button
+                    class="edit-btn"
+                    data-action="edit"
+                    title="Edit subject"
+                >
+                    Edit
+                </button>
+
+                <button
+                    class="status-btn"
+                    data-action="toggle"
+                    title="${active ? "Deactivate" : "Activate"} subject"
+                >
+                    ${
+                        active
+                            ? "Deactivate"
+                            : "Activate"
+                    }
+                </button>
+
+                <button
+                    class="delete-btn"
+                    data-action="delete"
+                    title="Delete subject"
+                >
+                    Delete
+                </button>
+
+            </div>
+        </td>
 
     `;
 
 
-    article
+    tr
         .querySelector(
             '[data-action="view"]'
         )
@@ -985,7 +987,7 @@ function createSubjectCard(
         );
 
 
-    article
+    tr
         .querySelector(
             '[data-action="edit"]'
         )
@@ -1003,7 +1005,7 @@ function createSubjectCard(
         );
 
 
-    article
+    tr
         .querySelector(
             '[data-action="toggle"]'
         )
@@ -1021,7 +1023,7 @@ function createSubjectCard(
         );
 
 
-    article
+    tr
         .querySelector(
             '[data-action="delete"]'
         )
@@ -1039,7 +1041,7 @@ function createSubjectCard(
         );
 
 
-    article.addEventListener(
+    tr.addEventListener(
         "click",
         event => {
 
@@ -1062,7 +1064,18 @@ function createSubjectCard(
     );
 
 
-    return article;
+    return tr;
+
+}
+
+
+function createSubjectCard(
+    subject
+) {
+
+    return createSubjectRow(
+        subject
+    );
 
 }
 

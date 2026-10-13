@@ -18,7 +18,7 @@
 
 <body>
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- ================= SIDEBAR (NAVBAR ON THE LEFT) ================= -->
 
     <aside class="sidebar">
 
@@ -86,15 +86,16 @@
     </aside>
 
 
-    <!-- ================= MAIN ================= -->
+    <!-- ================= MAIN CONTENT ================= -->
 
     <main class="main-content">
 
+        <!-- TOPBAR -->
         <header class="topbar">
 
             <div>
-                <h1>Subjects</h1>
-                <p>Manage academic subjects</p>
+                <h1>Subject Management</h1>
+                <p>Manage academic curriculum and subject records</p>
             </div>
 
             <div class="admin-chip">
@@ -107,86 +108,47 @@
         </header>
 
 
-        <!-- STATISTICS -->
+        <!-- SUMMARY STATISTICS -->
+        <section class="summary-grid">
 
-        <section class="stats-grid">
-
-            <div class="stat-card">
-
-                <div class="stat-icon">
-                    📚
-                </div>
-
-                <div>
-                    <span>Total Subjects</span>
-                    <strong id="totalCount">0</strong>
-                </div>
-
+            <div class="summary-card">
+                <span>Total Subjects</span>
+                <strong id="totalCount">0</strong>
             </div>
 
-
-            <div class="stat-card">
-
-                <div class="stat-icon active-icon">
-                    ✓
-                </div>
-
-                <div>
-                    <span>Active</span>
-                    <strong id="activeCount">0</strong>
-                </div>
-
+            <div class="summary-card">
+                <span>Active Subjects</span>
+                <strong id="activeCount">0</strong>
             </div>
 
+            <div class="summary-card">
+                <span>Inactive Subjects</span>
+                <strong id="inactiveCount">0</strong>
+            </div>
 
-            <div class="stat-card">
-
-                <div class="stat-icon inactive-icon">
-                    ⏸
-                </div>
-
-                <div>
-                    <span>Inactive</span>
-                    <strong id="inactiveCount">0</strong>
-                </div>
-
+            <div class="summary-card">
+                <span>Departments</span>
+                <strong id="departmentsCount">0</strong>
             </div>
 
         </section>
 
 
-        <!-- TOOLBAR -->
+        <!-- CONTROLS & FILTERS -->
+        <section class="controls">
 
-        <section class="toolbar">
-
-            <div class="search-box">
-
-                <span>⌕</span>
-
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Search subjects..."
-                >
-
-            </div>
-
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by subject name, code or department..."
+            >
 
             <select id="departmentFilter">
-
-                <option value="all">
-                    All Departments
-                </option>
-
+                <option value="all">All Departments</option>
             </select>
 
-
             <select id="semesterFilter">
-
-                <option value="all">
-                    All Semesters
-                </option>
-
+                <option value="all">All Semesters</option>
                 <option value="1">Semester 1</option>
                 <option value="2">Semester 2</option>
                 <option value="3">Semester 3</option>
@@ -195,308 +157,170 @@
                 <option value="6">Semester 6</option>
                 <option value="7">Semester 7</option>
                 <option value="8">Semester 8</option>
-
             </select>
-
 
             <select id="statusFilter">
-
-                <option value="all">
-                    All Status
-                </option>
-
-                <option value="active">
-                    Active
-                </option>
-
-                <option value="inactive">
-                    Inactive
-                </option>
-
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
             </select>
-
-
-            <button
-                id="refreshBtn"
-                class="secondary-btn"
-            >
-                ↻ Refresh
-            </button>
-
-
-            <button
-                id="addSubjectBtn"
-                class="primary-btn"
-            >
-                + Add Subject
-            </button>
 
         </section>
 
 
-        <!-- SUBJECT LIST -->
+        <!-- SUBJECTS TABLE (UNIFORM WITH FACULTY & STUDENTS) -->
+        <section class="table-card">
 
-        <section class="content-card">
-
-            <div class="section-header">
+            <div class="table-header">
 
                 <div>
+                    <h2>Academic Subjects</h2>
+                    <span id="resultCount" class="result-count">0 subjects</span>
+                </div>
 
-                    <h2>
-                        Subject Directory
-                    </h2>
-
-                    <p id="resultCount">
-                        0 subjects
-                    </p>
-
+                <div class="table-actions">
+                    <button id="refreshBtn" class="refresh-btn">
+                        ↻ Refresh
+                    </button>
+                    <button id="addSubjectBtn" class="primary-btn">
+                        + Add Subject
+                    </button>
                 </div>
 
             </div>
 
 
-            <div
-                id="loading"
-                class="loading"
-            >
+            <div id="loading" class="loading">
                 Loading subjects...
             </div>
 
 
-            <div
-                id="subjectList"
-                class="subject-list"
-            ></div>
+            <div class="table-wrapper">
 
+                <table>
 
-            <div
-                id="noResults"
-                class="no-results"
-            >
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
 
-                <div class="empty-icon">
-                    📚
-                </div>
+                    <tbody id="subjectTableBody">
+                    </tbody>
 
-                <h3>
-                    No subjects found
-                </h3>
-
-                <p>
-                    Add a subject or change your filters.
-                </p>
+                </table>
 
             </div>
+
+
+            <p id="noResults" class="empty-message">
+                No subjects found matching your filters.
+            </p>
 
         </section>
 
     </main>
 
 
-    <!-- ADD / EDIT MODAL -->
+    <!-- ADD / EDIT SUBJECT MODAL -->
+    <div id="subjectModal" class="modal">
 
-    <div
-        id="subjectModal"
-        class="modal-overlay"
-    >
-
-        <div class="modal">
+        <div class="modal-content">
 
             <div class="modal-header">
 
                 <div>
-
-                    <h2 id="modalTitle">
-                        Add Subject
-                    </h2>
-
-                    <p>
-                        Enter subject information
-                    </p>
-
+                    <h2 id="modalTitle">Add Subject</h2>
+                    <p>Enter subject information</p>
                 </div>
 
-                <button
-                    id="closeModalBtn"
-                    class="close-btn"
-                >
+                <button id="closeModalBtn" type="button" class="close-modal" aria-label="Close modal">
                     ×
                 </button>
 
             </div>
 
-
             <form id="subjectForm">
 
                 <div class="form-group">
-
-                    <label for="subjectName">
-                        Subject Name
-                    </label>
-
+                    <label for="subjectName">Subject Name</label>
                     <input
                         type="text"
                         id="subjectName"
-                        placeholder="e.g. Web Development"
+                        placeholder="e.g. Data Structures & Algorithms"
                         required
                     >
-
                 </div>
-
 
                 <div class="form-row">
 
                     <div class="form-group">
-
-                        <label for="subjectCode">
-                            Subject Code
-                        </label>
-
+                        <label for="subjectCode">Subject Code</label>
                         <input
                             type="text"
                             id="subjectCode"
-                            placeholder="e.g. WD"
+                            placeholder="e.g. CS201"
                             maxlength="20"
                             required
                         >
-
                     </div>
-
 
                     <div class="form-group">
-
-                        <label for="subjectSemester">
-                            Semester
-                        </label>
-
-                        <select
-                            id="subjectSemester"
-                            required
-                        >
-
-                            <option value="">
-                                Select Semester
-                            </option>
-
-                            <option value="1">
-                                Semester 1
-                            </option>
-
-                            <option value="2">
-                                Semester 2
-                            </option>
-
-                            <option value="3">
-                                Semester 3
-                            </option>
-
-                            <option value="4">
-                                Semester 4
-                            </option>
-
-                            <option value="5">
-                                Semester 5
-                            </option>
-
-                            <option value="6">
-                                Semester 6
-                            </option>
-
-                            <option value="7">
-                                Semester 7
-                            </option>
-
-                            <option value="8">
-                                Semester 8
-                            </option>
-
+                        <label for="subjectSemester">Semester</label>
+                        <select id="subjectSemester" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
                         </select>
-
                     </div>
 
                 </div>
 
-
                 <div class="form-group">
-
-                    <label for="subjectDepartment">
-                        Department
-                    </label>
-
-                    <select
-                        id="subjectDepartment"
-                        required
-                    >
-
-                        <option value="">
-                            Select Department
-                        </option>
-
+                    <label for="subjectDepartment">Department</label>
+                    <select id="subjectDepartment" required>
+                        <option value="">Select Department</option>
                     </select>
-
                 </div>
 
-
                 <div class="form-group">
-
-                    <label for="subjectDescription">
-                        Description
-                    </label>
-
+                    <label for="subjectDescription">Description</label>
                     <textarea
                         id="subjectDescription"
-                        rows="4"
+                        rows="3"
                         placeholder="Enter subject description..."
                     ></textarea>
-
                 </div>
-
 
                 <div class="form-group">
-
-                    <label for="subjectStatus">
-                        Status
-                    </label>
-
+                    <label for="subjectStatus">Status</label>
                     <select id="subjectStatus">
-
-                        <option value="true">
-                            Active
-                        </option>
-
-                        <option value="false">
-                            Inactive
-                        </option>
-
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
                     </select>
-
                 </div>
 
-
-                <div
-                    id="formError"
-                    class="form-error"
-                ></div>
-
+                <div id="formError" class="form-error"></div>
 
                 <div class="modal-actions">
-
-                    <button
-                        type="button"
-                        id="cancelBtn"
-                        class="secondary-btn"
-                    >
+                    <button type="button" id="cancelBtn" class="secondary-btn">
                         Cancel
                     </button>
-
-                    <button
-                        type="submit"
-                        id="saveBtn"
-                        class="primary-btn"
-                    >
+                    <button type="submit" id="saveBtn" class="primary-btn">
                         Save Subject
                     </button>
-
                 </div>
 
             </form>
@@ -507,128 +331,58 @@
 
 
     <!-- DETAILS MODAL -->
+    <div id="detailsModal" class="modal">
 
-    <div
-        id="detailsModal"
-        class="modal-overlay"
-    >
-
-        <div class="modal details-modal">
+        <div class="modal-content">
 
             <div class="modal-header">
 
                 <div>
-
-                    <h2>
-                        Subject Details
-                    </h2>
-
-                    <p>
-                        Subject information
-                    </p>
-
+                    <h2>Subject Details</h2>
+                    <p>Academic subject overview</p>
                 </div>
 
-                <button
-                    id="closeDetailsBtn"
-                    class="close-btn"
-                >
+                <button id="closeDetailsBtn" type="button" class="close-modal" aria-label="Close modal">
                     ×
                 </button>
 
             </div>
 
-
             <div class="details-body">
 
                 <div class="detail-row">
-
-                    <span>
-                        Subject Name
-                    </span>
-
-                    <strong id="detailsName">
-                        —
-                    </strong>
-
+                    <span>Subject Name</span>
+                    <strong id="detailsName">—</strong>
                 </div>
-
 
                 <div class="detail-row">
-
-                    <span>
-                        Subject Code
-                    </span>
-
-                    <strong id="detailsCode">
-                        —
-                    </strong>
-
+                    <span>Subject Code</span>
+                    <strong id="detailsCode">—</strong>
                 </div>
-
 
                 <div class="detail-row">
-
-                    <span>
-                        Department
-                    </span>
-
-                    <strong id="detailsDepartment">
-                        —
-                    </strong>
-
+                    <span>Department</span>
+                    <strong id="detailsDepartment">—</strong>
                 </div>
-
 
                 <div class="detail-row">
-
-                    <span>
-                        Semester
-                    </span>
-
-                    <strong id="detailsSemester">
-                        —
-                    </strong>
-
+                    <span>Semester</span>
+                    <strong id="detailsSemester">—</strong>
                 </div>
-
 
                 <div class="detail-row">
-
-                    <span>
-                        Status
-                    </span>
-
-                    <strong id="detailsStatus">
-                        —
-                    </strong>
-
+                    <span>Status</span>
+                    <strong id="detailsStatus">—</strong>
                 </div>
-
 
                 <div class="detail-description">
-
-                    <span>
-                        Description
-                    </span>
-
-                    <p id="detailsDescription">
-                        —
-                    </p>
-
+                    <span>Description</span>
+                    <p id="detailsDescription">—</p>
                 </div>
 
-
                 <div class="detail-row">
-
-                    <span>
-                        Created
-                    </span>
-
-                    <strong id="detailsCreated">
-                        —
-                    </strong>
-
+                    <span>Created</span>
+                    <strong id="detailsCreated">—</strong>
                 </div>
 
             </div>
@@ -638,85 +392,52 @@
     </div>
 
 
-    <!-- FIREBASE -->
-
+    <!-- FIREBASE INITIALIZATION -->
     <script type="module">
-
         import {
             initializeApp
-        }
-        from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
         import {
             getAuth,
             onAuthStateChanged,
             signOut
-        }
-        from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
         import {
             getFirestore
-        }
-        from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
         const firebaseConfig = {
-
             apiKey:
                 "AIzaSyDfYZmMD6GpE1I0dLKzt7UG8dBm4TN6Ijg",
-
             authDomain:
                 "deptconnect-8b81c.firebaseapp.com",
-
             projectId:
                 "deptconnect-8b81c",
-
             storageBucket:
                 "deptconnect-8b81c.firebasestorage.app",
-
             messagingSenderId:
                 "916956737819",
-
             appId:
                 "1:916956737819:web:8fc9920e834ac99e66e3be",
-
             measurementId:
                 "G-2B4VN12YW5"
-
         };
 
-
-        const app =
-            initializeApp(firebaseConfig);
-
-
-        const auth =
-            getAuth(app);
-
-
-        const db =
-            getFirestore(app);
-
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
         window.deptConnectFirebase = {
-
             auth,
             db,
             onAuthStateChanged,
             signOut
-
         };
-
     </script>
 
-
-    <script
-        type="module"
-        src="scripts/subjects.js"
-    ></script>
+    <script type="module" src="scripts/subjects.js"></script>
 
 </body>
-
 </html>
