@@ -401,50 +401,6 @@
                                     Select department
                                 </option>
 
-                                <option value="MCA">
-                                    MCA
-                                </option>
-
-                                <option value="computer-science">
-                                    Computer Science
-                                </option>
-
-                                <option value="information-technology">
-                                    Information Technology
-                                </option>
-
-                                <option value="electronics">
-                                    Electronics
-                                </option>
-
-                                <option value="electrical">
-                                    Electrical
-                                </option>
-
-                                <option value="mechanical">
-                                    Mechanical
-                                </option>
-
-                                <option value="civil">
-                                    Civil
-                                </option>
-
-                                <option value="mathematics">
-                                    Mathematics
-                                </option>
-
-                                <option value="physics">
-                                    Physics
-                                </option>
-
-                                <option value="chemistry">
-                                    Chemistry
-                                </option>
-
-                                <option value="other">
-                                    Other
-                                </option>
-
                             </select>
 
                             <small
@@ -522,12 +478,18 @@
 
                             <div class="subject-input-wrapper">
 
-                                <input
-                                    type="text"
+                                <select
                                     id="subjectInput"
-                                    placeholder="e.g. Web Development"
-                                    maxlength="60"
+                                    class="subject-select"
                                 >
+                                    <option
+                                        value=""
+                                        disabled
+                                        selected
+                                    >
+                                        Select department first
+                                    </option>
+                                </select>
 
                                 <button
                                     type="button"
@@ -547,8 +509,7 @@
 
 
                             <small class="input-hint">
-                                Add at least one subject.
-                                Press Enter to add.
+                                Choose courses from your department and click Add. Add at least one subject.
                             </small>
 
 

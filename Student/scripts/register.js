@@ -18,6 +18,7 @@ import {
     setDoc,
     addDoc,
     collection,
+    getDocs,
     serverTimestamp,
     Timestamp
 } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
@@ -87,6 +88,113 @@ const toast =
 
 const toastMessage =
     document.getElementById("toastMessage");
+
+const departmentSelect =
+    document.getElementById("department");
+
+
+/* =========================================
+   LOAD DEPARTMENTS FROM FIRESTORE
+========================================= */
+
+async function loadDepartments() {
+
+    if (!departmentSelect) {
+        return;
+    }
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "departments"
+                )
+            );
+
+        const departments = [];
+
+        snapshot.forEach(
+            documentSnapshot => {
+
+                const data =
+                    documentSnapshot.data();
+
+                if (data.status !== false) {
+                    departments.push({
+                        id: documentSnapshot.id,
+                        ...data
+                    });
+                }
+
+            }
+        );
+
+        departments.sort(
+            (a, b) =>
+                (a.name || "")
+                    .localeCompare(
+                        b.name || ""
+                    )
+        );
+
+        departmentSelect.innerHTML = `
+            <option value="" disabled selected>
+                Select department
+            </option>
+        `;
+
+        departments.forEach(
+            dept => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                const code =
+                    (dept.code || "").trim();
+
+                const name =
+                    (dept.name || "").trim();
+
+                const value =
+                    code || name;
+
+                option.value =
+                    value;
+
+                option.dataset.code =
+                    code;
+
+                option.dataset.name =
+                    name;
+
+                option.textContent =
+                    code && name && code.toLowerCase() !== name.toLowerCase()
+                        ? `${name} (${code})`
+                        : (name || code);
+
+                departmentSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Error loading departments:",
+            error
+        );
+
+    }
+
+}
+
+loadDepartments();
 
 
 /* =========================================

@@ -8,7 +8,10 @@ from firebase_admin import firestore
 # FIREBASE CONFIGURATION
 # =========================================================
 
-SERVICE_ACCOUNT_FILE = "serviceAccountKey.json"
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, "serviceAccountKey.json")
 
 
 if not firebase_admin._apps:

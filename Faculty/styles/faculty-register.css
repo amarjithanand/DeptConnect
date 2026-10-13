@@ -649,9 +649,39 @@ body {
 }
 
 
-.subject-input-wrapper input {
+.subject-input-wrapper input,
+.subject-input-wrapper select {
 
     flex: 1;
+
+    height: 48px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 9px;
+
+    padding: 0 14px;
+
+    font-size: 13px;
+
+    font-family: inherit;
+
+    background: white;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+.subject-input-wrapper select:focus {
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,0.08);
 
 }
 

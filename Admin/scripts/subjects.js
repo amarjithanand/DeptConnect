@@ -335,10 +335,11 @@ function populateDepartmentFilters() {
             const name =
                 department.name || "";
 
-
             const code =
                 department.code || "";
 
+            const value =
+                code || name;
 
             /*
                 Filter dropdown
@@ -349,16 +350,13 @@ function populateDepartmentFilters() {
                     "option"
                 );
 
-
             filterOption.value =
-                department.id;
-
+                value;
 
             filterOption.textContent =
-                code
+                code && name && code.toLowerCase() !== name.toLowerCase()
                     ? `${name} (${code})`
-                    : name;
-
+                    : (name || code);
 
             departmentFilter.appendChild(
                 filterOption
@@ -366,28 +364,38 @@ function populateDepartmentFilters() {
 
 
             /*
-                Form dropdown
+                Form dropdown (Active departments only)
             */
 
-            const formOption =
-                document.createElement(
-                    "option"
+            if (department.status !== false) {
+
+                const formOption =
+                    document.createElement(
+                        "option"
+                    );
+
+                formOption.value =
+                    value;
+
+                formOption.dataset.id =
+                    department.id;
+
+                formOption.dataset.code =
+                    code;
+
+                formOption.dataset.name =
+                    name;
+
+                formOption.textContent =
+                    code && name && code.toLowerCase() !== name.toLowerCase()
+                        ? `${name} (${code})`
+                        : (name || code);
+
+                subjectDepartment.appendChild(
+                    formOption
                 );
 
-
-            formOption.value =
-                department.id;
-
-
-            formOption.textContent =
-                code
-                    ? `${name} (${code})`
-                    : name;
-
-
-            subjectDepartment.appendChild(
-                formOption
-            );
+            }
 
         }
     );
@@ -557,6 +565,12 @@ function getDepartmentName(
             item =>
                 item.id ===
                 departmentId
+                ||
+                item.code ===
+                departmentId
+                ||
+                item.name ===
+                departmentId
         );
 
 
@@ -565,13 +579,6 @@ function getDepartmentName(
         return department.name;
 
     }
-
-
-    /*
-        Supports existing data where
-        department may already contain
-        a string such as "computer-science".
-    */
 
     return departmentId ||
         "Not specified";
@@ -686,6 +693,15 @@ function applyFilters() {
             filtered.filter(
                 subject =>
                     subject.department ===
+                    selectedDepartment
+                    ||
+                    subject.departmentId ===
+                    selectedDepartment
+                    ||
+                    subject.departmentCode ===
+                    selectedDepartment
+                    ||
+                    subject.departmentName ===
                     selectedDepartment
             );
 
@@ -1120,8 +1136,35 @@ function openEditModal(
         subject.code || "";
 
 
+    let matchedDept =
+        subject.department ||
+        subject.departmentId ||
+        "";
+
+    for (
+        const opt
+        of subjectDepartment.options
+    ) {
+
+        if (
+            opt.value === matchedDept
+            ||
+            opt.dataset?.id === matchedDept
+            ||
+            opt.dataset?.code === matchedDept
+            ||
+            opt.dataset?.name === matchedDept
+        ) {
+
+            matchedDept = opt.value;
+            break;
+
+        }
+
+    }
+
     subjectDepartment.value =
-        subject.department || "";
+        matchedDept;
 
 
     subjectSemester.value =
@@ -1306,6 +1349,21 @@ subjectForm.addEventListener(
                     : "Saving...";
 
 
+            const selectedDept =
+                allDepartments.find(
+                    d =>
+                        d.id === department
+                        ||
+                        d.code === department
+                        ||
+                        d.name === department
+                );
+
+            const deptKey =
+                (selectedDept && selectedDept.code)
+                    ? selectedDept.code
+                    : (selectedDept ? selectedDept.name : department);
+
             const subjectData = {
 
                 name:
@@ -1315,7 +1373,16 @@ subjectForm.addEventListener(
                     code,
 
                 department:
-                    department,
+                    deptKey,
+
+                departmentId:
+                    selectedDept ? selectedDept.id : "",
+
+                departmentName:
+                    selectedDept ? selectedDept.name : "",
+
+                departmentCode:
+                    selectedDept ? (selectedDept.code || "") : "",
 
                 semester:
                     semester,

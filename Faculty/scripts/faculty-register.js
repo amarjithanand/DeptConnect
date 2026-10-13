@@ -186,6 +186,299 @@ let subjects = [];
 
 
 /* =========================================================
+   LOAD DEPARTMENTS FROM FIRESTORE
+========================================================= */
+
+async function loadDepartments() {
+
+    if (!departmentInput) {
+        return;
+    }
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "departments"
+                )
+            );
+
+        const departments = [];
+
+        snapshot.forEach(
+            docSnap => {
+
+                const data =
+                    docSnap.data();
+
+                if (data.status !== false) {
+                    departments.push({
+                        id: docSnap.id,
+                        ...data
+                    });
+                }
+
+            }
+        );
+
+        departments.sort(
+            (a, b) =>
+                (a.name || "")
+                    .localeCompare(
+                        b.name || ""
+                    )
+        );
+
+        departmentInput.innerHTML = `
+            <option value="" disabled selected>
+                Select department
+            </option>
+        `;
+
+        departments.forEach(
+            dept => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                const code =
+                    (dept.code || "").trim();
+
+                const name =
+                    (dept.name || "").trim();
+
+                const value =
+                    code || name;
+
+                option.value =
+                    value;
+
+                option.dataset.code =
+                    code;
+
+                option.dataset.name =
+                    name;
+
+                option.textContent =
+                    code && name && code.toLowerCase() !== name.toLowerCase()
+                        ? `${name} (${code})`
+                        : (name || code);
+
+                departmentInput.appendChild(
+                    option
+                );
+
+            }
+        );
+
+        if (departmentInput.value) {
+            updateSubjectDropdown(
+                departmentInput.value
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Error loading departments:",
+            error
+        );
+
+    }
+
+}
+
+loadDepartments();
+
+
+/* =========================================================
+   SUBJECTS FILTERED BY SELECTED DEPARTMENT
+========================================================= */
+
+let allSubjects = [];
+let subjectsFetched = false;
+
+async function fetchAllSubjects() {
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "subjects"
+                )
+            );
+
+        allSubjects = [];
+
+        snapshot.forEach(
+            docSnap => {
+
+                const data =
+                    docSnap.data();
+
+                if (data.status !== false) {
+                    allSubjects.push({
+                        id: docSnap.id,
+                        ...data
+                    });
+                }
+
+            }
+        );
+
+        subjectsFetched = true;
+
+    } catch (error) {
+
+        console.error(
+            "Error fetching subjects:",
+            error
+        );
+
+    }
+
+}
+
+async function updateSubjectDropdown(
+    selectedDept
+) {
+
+    if (!subjectInput) {
+        return;
+    }
+
+    if (!subjectsFetched) {
+        await fetchAllSubjects();
+    }
+
+    if (!selectedDept) {
+
+        subjectInput.innerHTML = `
+            <option value="" disabled selected>
+                Select department first
+            </option>
+        `;
+
+        return;
+
+    }
+
+    const normDept =
+        selectedDept
+            .trim()
+            .toLowerCase();
+
+    const matchingSubjects =
+        allSubjects.filter(
+            item => {
+
+                const d =
+                    (item.department || "").trim().toLowerCase();
+
+                const dId =
+                    (item.departmentId || "").trim().toLowerCase();
+
+                const dCode =
+                    (item.departmentCode || "").trim().toLowerCase();
+
+                const dName =
+                    (item.departmentName || "").trim().toLowerCase();
+
+                return (
+                    d === normDept
+                    ||
+                    dId === normDept
+                    ||
+                    dCode === normDept
+                    ||
+                    dName === normDept
+                );
+
+            }
+        );
+
+    matchingSubjects.sort(
+        (a, b) =>
+            (a.name || "")
+                .localeCompare(
+                    b.name || ""
+                )
+    );
+
+    if (matchingSubjects.length === 0) {
+
+        subjectInput.innerHTML = `
+            <option value="" disabled selected>
+                No courses added yet for this department
+            </option>
+        `;
+
+        return;
+
+    }
+
+    subjectInput.innerHTML = `
+        <option value="" disabled selected>
+            Select course to add
+        </option>
+    `;
+
+    matchingSubjects.forEach(
+        item => {
+
+            const opt =
+                document.createElement(
+                    "option"
+                );
+
+            const name =
+                item.name || "";
+
+            const code =
+                item.code || "";
+
+            opt.value =
+                name || code;
+
+            opt.textContent =
+                code && name && code.toLowerCase() !== name.toLowerCase()
+                    ? `${name} (${code})`
+                    : (name || code);
+
+            subjectInput.appendChild(
+                opt
+            );
+
+        }
+    );
+
+}
+
+if (departmentInput) {
+
+    departmentInput.addEventListener(
+        "change",
+        () => {
+
+            updateSubjectDropdown(
+                departmentInput.value
+            );
+
+        }
+    );
+
+}
+
+fetchAllSubjects();
+
+
+/* =========================================================
    MESSAGE HANDLING
 ========================================================= */
 
@@ -428,6 +721,22 @@ function addSubject() {
 
 
     if (!value) {
+
+        if (!departmentInput.value) {
+
+            showMessage(
+                "Please select a department first.",
+                "error"
+            );
+
+        } else {
+
+            showMessage(
+                "Please select a course to add.",
+                "error"
+            );
+
+        }
 
         return;
 

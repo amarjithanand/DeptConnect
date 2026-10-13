@@ -164,6 +164,8 @@ onAuthStateChanged(
         );
 
 
+        await loadDepartments();
+
         await loadStudentProfile(
             user.uid
         );
@@ -259,6 +261,120 @@ async function loadStudentProfile(uid) {
 
 
 /* =========================================================
+   LOAD DEPARTMENTS FROM FIRESTORE
+========================================================= */
+
+let departmentsLoaded = false;
+
+async function loadDepartments() {
+
+    if (!department) {
+        return;
+    }
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "departments"
+                )
+            );
+
+        const departments = [];
+
+        snapshot.forEach(
+            docSnap => {
+
+                const data =
+                    docSnap.data();
+
+                if (data.status !== false) {
+                    departments.push({
+                        id: docSnap.id,
+                        ...data
+                    });
+                }
+
+            }
+        );
+
+        departments.sort(
+            (a, b) =>
+                (a.name || "")
+                    .localeCompare(
+                        b.name || ""
+                    )
+        );
+
+        department.innerHTML = `
+            <option value="" disabled selected>
+                Select department
+            </option>
+        `;
+
+        departments.forEach(
+            dept => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                const code =
+                    (dept.code || "").trim();
+
+                const name =
+                    (dept.name || "").trim();
+
+                const value =
+                    code || name;
+
+                option.value =
+                    value;
+
+                option.dataset.code =
+                    code;
+
+                option.dataset.name =
+                    name;
+
+                option.textContent =
+                    code && name && code.toLowerCase() !== name.toLowerCase()
+                        ? `${name} (${code})`
+                        : (name || code);
+
+                department.appendChild(
+                    option
+                );
+
+            }
+        );
+
+        departmentsLoaded = true;
+
+        if (studentData && studentData.department) {
+            setStudentDepartment(
+                studentData.department
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Error loading departments:",
+            error
+        );
+
+    }
+
+}
+
+loadDepartments();
+
+
+/* =========================================================
    SET STUDENT DEPARTMENT
 ========================================================= */
 
@@ -292,11 +408,23 @@ function setStudentDepartment(
     ) {
 
         if (
+            option.value
+                .trim()
+                .toLowerCase()
+            ===
+            normalized
+            ||
             option.textContent
                 .trim()
                 .toLowerCase()
             ===
             normalized
+            ||
+            (option.dataset?.code &&
+                option.dataset.code.toLowerCase() === normalized)
+            ||
+            (option.dataset?.name &&
+                option.dataset.name.toLowerCase() === normalized)
         ) {
 
             matchingOption =
@@ -309,7 +437,7 @@ function setStudentDepartment(
     }
 
 
-    if (!matchingOption) {
+    if (!matchingOption && departmentsLoaded) {
 
         matchingOption =
             document.createElement(
@@ -332,10 +460,195 @@ function setStudentDepartment(
     }
 
 
-    department.value =
-        matchingOption.value;
+    if (matchingOption) {
+
+        department.value =
+            matchingOption.value;
+
+    }
+
+    updateSubjectDropdown(
+        department ? department.value : ""
+    );
 
 }
+
+
+/* =========================================================
+   SUBJECT / COURSE SELECTION DEPENDENT ON DEPARTMENT
+========================================================= */
+
+let allSubjects = [];
+let subjectsFetched = false;
+
+async function fetchAllSubjects() {
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "subjects"
+                )
+            );
+
+        allSubjects = [];
+
+        snapshot.forEach(
+            docSnap => {
+
+                const data =
+                    docSnap.data();
+
+                if (data.status !== false) {
+                    allSubjects.push({
+                        id: docSnap.id,
+                        ...data
+                    });
+                }
+
+            }
+        );
+
+        subjectsFetched = true;
+
+    } catch (error) {
+
+        console.error(
+            "Error fetching subjects:",
+            error
+        );
+
+    }
+
+}
+
+async function updateSubjectDropdown(
+    selectedDept
+) {
+
+    if (!subject) {
+        return;
+    }
+
+    if (!subjectsFetched) {
+        await fetchAllSubjects();
+    }
+
+    if (!selectedDept) {
+
+        subject.innerHTML = `
+            <option value="" disabled selected>
+                Select department first
+            </option>
+            <option value="General Query">
+                General Query / Doubt
+            </option>
+        `;
+
+        return;
+
+    }
+
+    const normDept =
+        selectedDept
+            .trim()
+            .toLowerCase();
+
+    const matchingSubjects =
+        allSubjects.filter(
+            item => {
+
+                const d =
+                    (item.department || "").trim().toLowerCase();
+
+                const dId =
+                    (item.departmentId || "").trim().toLowerCase();
+
+                const dCode =
+                    (item.departmentCode || "").trim().toLowerCase();
+
+                const dName =
+                    (item.departmentName || "").trim().toLowerCase();
+
+                return (
+                    d === normDept
+                    ||
+                    dId === normDept
+                    ||
+                    dCode === normDept
+                    ||
+                    dName === normDept
+                );
+
+            }
+        );
+
+    matchingSubjects.sort(
+        (a, b) =>
+            (a.name || "")
+                .localeCompare(
+                    b.name || ""
+                )
+    );
+
+    subject.innerHTML = `
+        <option value="" disabled selected>
+            Select course / subject
+        </option>
+        <option value="General Query">
+            General Query / Doubt
+        </option>
+    `;
+
+    matchingSubjects.forEach(
+        item => {
+
+            const opt =
+                document.createElement(
+                    "option"
+                );
+
+            const name =
+                item.name || "";
+
+            const code =
+                item.code || "";
+
+            opt.value =
+                name || code;
+
+            opt.textContent =
+                code && name && code.toLowerCase() !== name.toLowerCase()
+                    ? `${name} (${code})`
+                    : (name || code);
+
+            subject.appendChild(
+                opt
+            );
+
+        }
+    );
+
+}
+
+if (department) {
+
+    department.addEventListener(
+        "change",
+        () => {
+
+            updateSubjectDropdown(
+                department.value
+            );
+
+        }
+    );
+
+}
+
+fetchAllSubjects();
 
 
 /* =========================================================
@@ -532,7 +845,7 @@ if (queryForm) {
             if (!courseValue) {
 
                 showFormError(
-                    "Please enter the subject or course."
+                    "Please select a subject or course."
                 );
 
                 return;

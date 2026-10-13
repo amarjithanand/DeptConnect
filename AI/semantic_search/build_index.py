@@ -14,9 +14,11 @@ from sentence_transformers import SentenceTransformer
 # CONFIGURATION
 # =========================================================
 
-SERVICE_ACCOUNT_FILE = "serviceAccountKey.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-INDEX_FOLDER = "faiss_index"
+SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, "serviceAccountKey.json")
+
+INDEX_FOLDER = os.path.join(BASE_DIR, "faiss_index")
 
 INDEX_FILE = os.path.join(
     INDEX_FOLDER,
